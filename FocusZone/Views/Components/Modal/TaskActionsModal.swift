@@ -65,9 +65,9 @@ struct TaskActionsModal: View {
                 
                 // Action Buttons
                 VStack(spacing: 1) {
-                    if !task.isActive && !task.isPaused {
+                    if !task.isActive && !task.isPaused && !task.isCompleted {
                         TaskActionButton(
-                            title: "Start Task",
+                            title: "Add timer",
                             icon: "play.fill",
                             color: task.color,
                             action: {
@@ -88,16 +88,17 @@ struct TaskActionsModal: View {
                             }
                         )
                     }
-                    
-                    TaskActionButton(
-                        title: "Edit Task",
-                        icon: "pencil",
-                        color: .blue,
-                        action: {
-                            onEdit()
-                            dismiss()
-                        }
-                    )
+                    if !task.isActive && !task.isPaused {
+                        TaskActionButton(
+                            title: "Edit Task",
+                            icon: "pencil",
+                            color: .blue,
+                            action: {
+                                onEdit()
+                                dismiss()
+                            }
+                        )
+                    }
                     
                     TaskActionButton(
                         title: "Duplicate Task",

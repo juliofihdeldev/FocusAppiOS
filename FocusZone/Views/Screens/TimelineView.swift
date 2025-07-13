@@ -24,7 +24,8 @@ struct TimelineView: View {
                                     icon: task.icon,
                                     color: viewModel.taskColor(task),
                                     isCompleted: task.isCompleted, 
-                                    durationMinutes: task.durationMinutes
+                                    durationMinutes: task.durationMinutes,
+                                    task: task
                                 )
                                 .onTapGesture {
                                     selectedTaskForActions = task
