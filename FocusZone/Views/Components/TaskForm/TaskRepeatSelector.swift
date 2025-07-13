@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct TaskRepeatSelector: View {
-    @Binding var repeatRule: String
+    @Binding var repeatRule: RepeatRule
     
-    let repeatOptions = ["Once", "Daily", "Weekly", "Monthly"]
+    let repeatOptions = RepeatRule.allCases
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -26,8 +26,8 @@ struct TaskRepeatSelector: View {
                             repeatRule = option
                         }
                     }) {
-                        Text(option)
-                            .font(AppFonts.body())
+                        Text(option.rawValue)
+                            .font(AppFonts.caption())
                             .foregroundColor(repeatRule == option ? .white : .gray)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
@@ -44,7 +44,7 @@ struct TaskRepeatSelector: View {
 }
 
 #Preview {
-    @State var repeatRule = "Once"
+    @State var repeatRule = RepeatRule.once
     
     return TaskRepeatSelector(repeatRule: $repeatRule)
 }

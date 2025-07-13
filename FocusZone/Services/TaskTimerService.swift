@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import SwiftData
 
 class TaskTimerService: ObservableObject {
     @Published var currentTask: Task?
@@ -7,16 +8,21 @@ class TaskTimerService: ObservableObject {
     
     private var timer: Timer?
     private var startTime: Date?
+    private var modelContext: ModelContext?
+    
+    func setModelContext(_ context: ModelContext) {
+        self.modelContext = context
+    }
     
     // Start a task
-    func startTask(_ task: Task) {
+    @MainActor func startTask(_ task: Task) {
         stopCurrentTask()
         
-        var updatedTask = task
-        updatedTask.status = .inProgress(startedAt: Date())
-        updatedTask.actualStartTime = Date()
+        task.status = .inProgress
+        task.actualStartTime = Date()
+        saveContext()
         
-        currentTask = updatedTask
+        currentTask = task
         startTime = Date()
         elapsedSeconds = task.timeSpentMinutes * 60
         
@@ -24,39 +30,41 @@ class TaskTimerService: ObservableObject {
     }
     
     // Pause the current task
-    func pauseTask() {
-        guard var task = currentTask else { return }
+    @MainActor func pauseTask() {
+        guard let task = currentTask else { return }
         
         stopTimer()
         
         let totalTimeSpent = task.timeSpentMinutes + (elapsedSeconds / 60)
-        task.status = .paused(timeSpent: totalTimeSpent, pausedAt: Date())
+        task.status = .paused
         task.timeSpentMinutes = totalTimeSpent
-        
-        currentTask = task
+        task.updatedAt = Date()
+        saveContext()
     }
     
     // Resume a paused task
-    func resumeTask() {
-        guard var task = currentTask, task.isPaused else { return }
+    @MainActor func resumeTask() {
+        guard let task = currentTask, task.isPaused else { return }
         
-        task.status = .inProgress(startedAt: Date())
-        currentTask = task
+        task.status = .inProgress
+        task.updatedAt = Date()
+        saveContext()
         
         startTimer()
     }
     
     // Complete the current task
-    func completeTask() {
-        guard var task = currentTask else { return }
+    @MainActor func completeTask() {
+        guard let task = currentTask else { return }
         
         stopTimer()
         
         let totalTimeSpent = task.timeSpentMinutes + (elapsedSeconds / 60)
-        task.status = .completed(timeSpent: totalTimeSpent, completedAt: Date())
+        task.isCompleted = true
+        task.status = .completed
         task.timeSpentMinutes = totalTimeSpent
-        
-        currentTask = task
+        task.updatedAt = Date()
+        saveContext()
         
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -116,5 +124,17 @@ class TaskTimerService: ObservableObject {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    // MARK: - Private Methods
+    private func saveContext() {
+        guard let modelContext = modelContext else { return }
+        
+        do {
+            try modelContext.save()
+            print("TaskTimerService: Context saved successfully")
+        } catch {
+            print("TaskTimerService: Error saving context: \(error)")
+        }
     }
 }

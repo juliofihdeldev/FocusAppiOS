@@ -1,9 +1,11 @@
 
 import SwiftUI
+import SwiftData
 
 struct TimelineView: View {
     @StateObject private var viewModel = TimelineViewModel()
     @StateObject private var timerService = TaskTimerService()
+    @Environment(\.modelContext) private var modelContext
     @State private var selectedDate: Date = Date()
     @State private var showAddTaskForm = false
     @State private var editingTask: Task?
@@ -11,7 +13,10 @@ struct TimelineView: View {
 
     var body: some View {
         VStack {
-            DateHeader(selectedDate: $selectedDate )
+            DateHeader(
+                selectedDate: $selectedDate,
+                tasksForDate: viewModel.getTaskDateCounts()
+            )
             ScrollViewReader { proxy in
                 ScrollView {
                     
@@ -36,7 +41,12 @@ struct TimelineView: View {
                     .padding()
                 }
                 .onAppear {
-                    viewModel.loadTodayTasks()
+                    viewModel.setModelContext(modelContext)
+                    timerService.setModelContext(modelContext)
+                    viewModel.loadTodayTasks(for: selectedDate)
+                }
+                .onChange(of: selectedDate) { newDate in
+                    viewModel.loadTodayTasks(for: newDate)
                 }
             }
             HStack(alignment: .center) {
@@ -68,7 +78,9 @@ struct TimelineView: View {
            
         }
         .sheet(item: $editingTask) { task in
-            TaskFormView() // In real implementation, pass the task to edit
+            TaskFormView(
+                taskToEdit: task
+            )
         }
         .sheet(item: $selectedTaskForActions) { task in
             TaskActionsModal(

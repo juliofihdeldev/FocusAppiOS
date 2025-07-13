@@ -10,18 +10,29 @@ struct PreviewTask {
 struct TaskFormView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
-
+    
+    // Task to edit (nil for new task)
+    let taskToEdit: Task?
+    
     @State private var taskTitle: String = ""
     @State private var selectedDate: Date = Date()
     @State private var startTime: Date = Date()
     @State private var duration: Int = 15
     @State private var selectedColor: Color = .pink
-    @State private var repeatRule: String = "Once"
+    @State private var selectedTaskType: TaskType? = nil
+    @State private var selectedIcon: String = "📝"
+    @State private var repeatRule: RepeatRule = .once
     @State private var alerts: [String] = ["At start of task"]
     @State private var showSubtasks: Bool = false
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    init(taskToEdit: Task? = nil) {
+        self.taskToEdit = taskToEdit
+    }
 
 
     var body: some View {
@@ -49,21 +60,22 @@ struct TaskFormView: View {
                         
                         TaskRepeatSelector(repeatRule: $repeatRule)
                         
-                        // Create Task Button
+                        // Create/Update Task Button
                         Button(action: {
-                            dismiss()
+                            saveTask()
                         }) {
-                            Text("Create Task")
+                            Text(taskToEdit == nil ? "Create Task" : "Update Task")
                                 .font(AppFonts.headline())
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.pink)
+                                        .fill(selectedColor)
                                 )
                         }
                         .buttonStyle(PlainButtonStyle())
+                        .disabled(taskTitle.isEmpty)
                         
                         TaskAlertsSection(alerts: $alerts)
                         
@@ -79,6 +91,82 @@ struct TaskFormView: View {
             .background(AppColors.background.ignoresSafeArea())
         }
         .navigationBarHidden(true)
+        .onAppear {
+            loadTaskData()
+        }
+    }
+    
+    // MARK: - Methods
+    
+    private func loadTaskData() {
+        guard let task = taskToEdit else { return }
+        
+        taskTitle = task.title
+        selectedDate = task.startTime
+        startTime = task.startTime
+        duration = task.durationMinutes
+        selectedColor = task.color
+        selectedTaskType = task.taskType
+        selectedIcon = task.icon
+        repeatRule = task.repeatRule
+    }
+    
+    private func saveTask() {
+        // Combine selectedDate and startTime
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: startTime)
+        
+        guard let finalStartTime = calendar.date(from: DateComponents(
+            year: dateComponents.year,
+            month: dateComponents.month,
+            day: dateComponents.day,
+            hour: timeComponents.hour,
+            minute: timeComponents.minute
+        )) else {
+            return
+        }
+        
+        if let taskToEdit = taskToEdit {
+            // Update existing task
+            taskToEdit.title = taskTitle
+            taskToEdit.icon = selectedIcon
+            taskToEdit.startTime = finalStartTime
+            taskToEdit.durationMinutes = duration
+            taskToEdit.color = selectedColor
+            taskToEdit.taskType = selectedTaskType
+            taskToEdit.repeatRule = repeatRule
+            taskToEdit.updatedAt = Date()
+            
+            do {
+                try modelContext.save()
+                print("TaskFormView: Task updated successfully")
+            } catch {
+                print("TaskFormView: Error updating task: \(error)")
+            }
+        } else {
+            // Create new task
+            let newTask = Task(
+                title: taskTitle,
+                icon: selectedIcon,
+                startTime: finalStartTime,
+                durationMinutes: duration,
+                color: selectedColor,
+                taskType: selectedTaskType,
+                repeatRule: repeatRule
+            )
+            
+            modelContext.insert(newTask)
+            
+            do {
+                try modelContext.save()
+                print("TaskFormView: Task created successfully")
+            } catch {
+                print("TaskFormView: Error creating task: \(error)")
+            }
+        }
+        
+        dismiss()
     }
 }
 

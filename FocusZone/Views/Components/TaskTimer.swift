@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct TaskTimer: View {
     @StateObject private var timerService = TaskTimerService()
+    @Environment(\.modelContext) private var modelContext
     let task: Task
     
     var body: some View {
@@ -67,7 +69,7 @@ struct TaskTimer: View {
                         .background(task.color)
                         .cornerRadius(25)
                     }
-                } else if timerService.currentTask?.isActive == true {
+                } else if timerService.currentTask?.isActive ?? false {
                     // Pause button
                     Button(action: {
                         timerService.pauseTask()
@@ -99,7 +101,7 @@ struct TaskTimer: View {
                         .background(Color.green)
                         .cornerRadius(25)
                     }
-                } else if timerService.currentTask?.isPaused == true {
+                } else if timerService.currentTask?.isPaused ?? false {
                     // Resume button
                     Button(action: {
                         timerService.resumeTask()
@@ -155,6 +157,9 @@ struct TaskTimer: View {
                 .fill(AppColors.card)
                 .shadow(radius: 4)
         )
+        .onAppear {
+            timerService.setModelContext(modelContext)
+        }
     }
     
     private func statusText(for status: TaskStatus) -> String {

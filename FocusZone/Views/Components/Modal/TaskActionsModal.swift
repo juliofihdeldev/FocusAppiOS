@@ -88,17 +88,16 @@ struct TaskActionsModal: View {
                             }
                         )
                     }
-                    if !task.isActive && !task.isPaused {
-                        TaskActionButton(
-                            title: "Edit Task",
-                            icon: "pencil",
-                            color: .blue,
-                            action: {
-                                onEdit()
-                                dismiss()
-                            }
-                        )
-                    }
+                    
+                    TaskActionButton(
+                        title: "Edit Task",
+                        icon: "pencil",
+                        color: .blue,
+                        action: {
+                            onEdit()
+                            dismiss()
+                        }
+                    )
                     
                     TaskActionButton(
                         title: "Duplicate Task",
