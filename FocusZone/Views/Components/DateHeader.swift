@@ -18,6 +18,9 @@ struct DateHeader: View {
                 .font(AppFonts.title())
                 .foregroundColor(AppColors.textPrimary)
                 .padding(.horizontal)
+            
+            
+       
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
@@ -70,6 +73,7 @@ struct DateHeader: View {
                 .padding(.horizontal)
             }
         }
+        Spacer(minLength: 0)
     }
 
     func shortWeekdayString(from date: Date) -> String {

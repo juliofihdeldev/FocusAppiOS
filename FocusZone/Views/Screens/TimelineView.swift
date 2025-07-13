@@ -92,6 +92,7 @@ struct TimelineView: View {
                 onDelete: { deleteTask(task) }
             )
         }
+        Spacer(minLength: 0)
     }
     
     // MARK: - Task Actions
