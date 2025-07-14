@@ -118,6 +118,8 @@ class TimelineViewModel: ObservableObject {
     }
     
     func addTask(_ task: Task) {
+        print("Log>>>>>",task.title)
+        print("Log>>>>>", task.icon)
         guard let modelContext = modelContext else { return }
         modelContext.insert(task)
         saveContext()

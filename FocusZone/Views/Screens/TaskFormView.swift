@@ -56,6 +56,8 @@ struct TaskFormView: View {
                         
                         TaskDurationSelector(duration: $duration)
                         
+                        TaskIconPicker(selectedIcon: $selectedIcon)
+                        
                         TaskColorPicker(selectedColor: $selectedColor)
                         
                         TaskRepeatSelector(repeatRule: $repeatRule)
@@ -137,6 +139,8 @@ struct TaskFormView: View {
             taskToEdit.taskType = selectedTaskType
             taskToEdit.repeatRule = repeatRule
             taskToEdit.updatedAt = Date()
+            taskToEdit.isCompleted = false
+            
             
             do {
                 try modelContext.save()

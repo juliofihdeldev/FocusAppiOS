@@ -154,12 +154,12 @@ struct TaskTimer: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.card)
+                .fill(AppColors.background)
                 .shadow(radius: 4)
         )
-        .onAppear {
-            timerService.setModelContext(modelContext)
-        }
+//        .onAppear {
+//            timerService.setModelContext(modelContext)
+//        }
     }
     
     private func statusText(for status: TaskStatus) -> String {
