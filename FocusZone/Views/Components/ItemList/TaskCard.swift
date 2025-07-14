@@ -1,84 +1,141 @@
 import SwiftUI
 
- struct TaskCard: View {
+struct TaskCard: View {
     var title: String
     var time: String
     var icon: String
     var color: Color
     var isCompleted: Bool
     var durationMinutes: Int = 60
-    var task: Task? = nil // Optional task for advanced progress tracking
+    var task: Task? = nil
     
     @State private var currentTime = Date()
-    
     private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        let minHeight: CGFloat = 50
-        let maxHeight: CGFloat = 200
-        // Scale height based on duration (15min = minHeight, 240min+ = maxHeight)
-        let scaledHeight = minHeight + (CGFloat(durationMinutes) / 240.0) * (maxHeight - minHeight)
-        let height = isCompleted ? minHeight : max(minHeight, min(maxHeight, scaledHeight))
-        
-        // Calculate progress based on task timing
+        // Calculate height based on duration (1 minute = 2 points, minimum 60pt)
+        let baseHeight: CGFloat = max(60, CGFloat(durationMinutes) * 1)
         let progressInfo = calculateProgress()
-        let shouldShowProgress = progressInfo.shouldShow
-        let progressPercentage = progressInfo.percentage
-        let progressColor = progressInfo.color
-        let taskState = getTaskState()
-    
-        HStack(alignment: .center, spacing: 12) {
-               ZStack {
-                   if !isCompleted  &&  shouldShowProgress  {
-                        Rectangle()
-                               .fill(LinearGradient(
-                               gradient: Gradient(colors: [
-                                   taskState.progressColor.opacity(0.9),
-                                   taskState.progressColor.opacity(0.9),
-                                   Color.clear
-                               ]),
-                               startPoint: .top,
-                               endPoint: .bottom
-                           ))
-                           .frame(width: 50, height: height )
-                           .cornerRadius(2)
-                           .offset(y:-40)
-                   }
-                   
-                   Text(icon)
-                       .frame(width: 50, height: height)
+        let progressHeight = baseHeight * CGFloat(progressInfo.percentage)
+        
+        HStack(alignment: .top, spacing: 0) {
+            // Left side - Timeline with progress
+            VStack(spacing: 0) {
+                // Timeline pill/capsule
+                ZStack(alignment: .bottom) {
+                    // Background capsule (total duration)
+                    Capsule()
+                        .fill(color.opacity(0.3))
+                        .frame(width: 60, height: baseHeight)
                     
-               }
-               .background(isCompleted ? color : AppColors.lightGray)
-               .cornerRadius(40)
-               .overlay(
-                   RoundedRectangle(cornerRadius: 40)
-                    .stroke(isCompleted ? color  : AppColors.accent.opacity(0.3), lineWidth: 2)
-               )
+                    // Progress fill (only for active tasks)
+                    if progressInfo.shouldShow && !isCompleted {
+                        VStack {
+                            Spacer()
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            progressInfo.color,
+                                            progressInfo.color.opacity(0.8)
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(width:60, height: max(60, progressHeight))
+                                .animation(.easeInOut(duration: 0.5), value: progressHeight)
+                        }
+                    }
+                    
+                    // Completed state - full fill
+                    if isCompleted {
+                        Capsule()
+                            .fill(color)
+                            .frame(width: 60, height: baseHeight)
+                    }
+                    
+                    // Icon container
+                    ZStack {
+                        Circle()
+                            .fill(getIconBackgroundColor())
+                            .frame(width: 50, height: 0)
                         
-               VStack(alignment: .leading, spacing: 4) {
-                   Text(time)
-                       .font(AppFonts.caption())
-                       .foregroundColor(AppColors.textSecondary)
-                   
-                   Text(title)
-                       .font(AppFonts.headline())
-                       .foregroundColor(AppColors.textPrimary)
-               }
-
-               Spacer()
-               
-               if isCompleted {
-                   Image(systemName: "checkmark.circle.fill")
-                       .foregroundColor(AppColors.accent)
-               } else {
-                   EmptyView()
-               }
-           }
-           .padding(
-               .horizontal, 16
-           )
-
+                        Text(icon)
+                            .font(.title2)
+                            .foregroundColor(.white)
+                    }
+                    .offset(y: -20) // Slightly below center
+                    Spacer(minLength: 0)
+                }
+                
+                // Timeline connector (dashed line)
+                if shouldShowConnector() {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 2, height: 30)
+                        .overlay(
+                            Rectangle()
+                                .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                                .frame(width: 2, height: 30)
+                        )
+                }
+            }
+            
+          
+            // Right side - Task content
+            VStack(alignment: .leading, spacing: 8) {
+                Spacer(minLength: 0)
+                // Time and status
+                HStack {
+                    Text(formatTimeRange())
+                        .font(AppFonts.body())
+                        .foregroundColor(.gray)
+                    
+                    Spacer()
+                    
+                    // Status indicator
+                    if isCompleted {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                            .font(.title3)
+                    } else if progressInfo.shouldShow {
+                        Circle()
+                            .stroke(progressInfo.color, lineWidth: 3)
+                            .frame(width: 24, height: 24)
+                            .overlay(
+                                Circle()
+                                    .trim(from: 0, to: CGFloat(progressInfo.percentage))
+                                    .stroke(progressInfo.color, lineWidth: 3)
+                                    .rotationEffect(.degrees(-90))
+                                    .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
+                            )
+                    } else {
+                        Circle()
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 3)
+                            .frame(width: 24, height: 24)
+                    }
+                }
+                
+                // Task title
+                Text(title)
+                    .font(AppFonts.headline())
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                
+                // Progress text for active tasks
+                if progressInfo.shouldShow && !isCompleted {
+                    Text(getProgressText())
+                        .font(AppFonts.caption())
+                        .foregroundColor(progressInfo.color)
+                }
+                
+                Spacer(minLength: 0)
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 16)
+            .frame(height: baseHeight)
+        }
         .onReceive(timer) { _ in
             currentTime = Date()
         }
@@ -110,14 +167,13 @@ import SwiftUI
             let elapsed = now.timeIntervalSince(taskStartTime)
             let progress = min(1.0, elapsed / totalDuration)
             
-            // Color based on progress and task status
             let progressColor: Color
-            if task.isActive {
-                progressColor = .green // Currently running
-            } else if progress > 0.8 {
-                progressColor = .orange // Almost overdue
+            if progress < 0.7 {
+                progressColor = .green
+            } else if progress < 0.9 {
+                progressColor = .orange
             } else {
-                progressColor = color // Normal progress
+                progressColor = .red
             }
             
             return (true, progress, progressColor)
@@ -125,65 +181,162 @@ import SwiftUI
         
         // If task is overdue (past end time)
         if now > taskEndTime {
-            let progressColor: Color = task.isActive ? .red : .orange
-            return (true, 1.0, progressColor)
+            return (true, 1.0, .red)
         }
         
         return (false, 0.0, color)
     }
     
-    // MARK: - Task State and Formatting
-    private func getTaskState() -> (backgroundColor: Color, progressColor: Color, textColor: Color) {
+    // MARK: - Helper Methods
+    private func getIconBackgroundColor() -> Color {
+        if isCompleted {
+            return .green
+        } else if task != nil {
+            let progressInfo = calculateProgress()
+            if progressInfo.shouldShow {
+                return progressInfo.color
+            }
+        }
+        return color
+    }
+    
+    private func shouldShowConnector() -> Bool {
+        // Show connector for all tasks except maybe the last one
+        return true
+    }
+    
+    private func formatTimeRange() -> String {
         guard let task = task else {
-            return (AppColors.lightGray, color, .gray)
+            return time
         }
         
-        let now = currentTime
-        let taskStartTime = task.startTime
-        let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
         
-        if task.isCompleted {
-            return (color.opacity(0.2), .green, .white)
-        } else if task.isActive {
-            return (.green.opacity(0.2), .green, .white)
-        } else if now >= taskStartTime && now <= taskEndTime {
-            // Should be active but isn't
-            return (.orange.opacity(0.2), .orange, .white)
-        } else if now > taskEndTime {
-            // Overdue
-            return (.red.opacity(0.2), .red, .white)
+        let startTime = task.startTime
+        let endTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+        
+        let startString = formatter.string(from: startTime).lowercased()
+        let endString = formatter.string(from: endTime).lowercased()
+        
+        let duration = formatDuration()
+        
+        return "\(startString) - \(endString) (\(duration))"
+    }
+    
+    private func formatDuration() -> String {
+        let hours = durationMinutes / 60
+        let minutes = durationMinutes % 60
+        
+        if hours > 0 {
+            return minutes > 0 ? "\(hours) hrs, \(minutes) min" : "\(hours) hrs"
         } else {
-            // Not started yet
-            return (AppColors.lightGray, color, .gray)
+            return "\(minutes) min"
         }
     }
     
-    private func formatTaskTime(_ task: Task) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
+    private func getProgressText() -> String {
+        guard let task = task else { return "" }
         
         let now = currentTime
-        let taskStartTime = task.startTime
         let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
         
-        if task.isActive {
-            return "LIVE"
-        } else if now < taskStartTime {
-            return formatter.string(from: taskStartTime)
-        } else if now >= taskStartTime && now <= taskEndTime {
-            return "NOW"
-        } else if now > taskEndTime {
-            return "LATE"
+        if now <= taskEndTime {
+            let remaining = taskEndTime.timeIntervalSince(now)
+            let remainingMinutes = Int(remaining / 60)
+            
+            if remainingMinutes > 60 {
+                let hours = remainingMinutes / 60
+                let mins = remainingMinutes % 60
+                return "\(hours)h \(mins)m remaining"
+            } else {
+                return "\(remainingMinutes)m remaining"
+            }
         } else {
-            return formatter.string(from: taskStartTime)
+            let overdue = now.timeIntervalSince(taskEndTime)
+            let overdueMinutes = Int(overdue / 60)
+            return "\(overdueMinutes)m overdue"
         }
     }
 }
 
+// MARK: - Timeline View Container
+struct _TimelineView: View {
+    @State private var selectedDate = Date()
+    @State private var tasks: [Task] = sampleTasks
+    
+    var body: some View {
+        ZStack {
+            // Dark background
+            Color.black.ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Date Header
+                DateHeader(selectedDate: $selectedDate)
+                    .padding(.bottom, 20)
+                
+                // Timeline
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(tasks) { task in
+                            TaskCard(
+                                title: task.title,
+                                time: "",
+                                icon: task.icon,
+                                color: task.color,
+                                isCompleted: task.isCompleted,
+                                durationMinutes: task.durationMinutes,
+                                task: task
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Sample Data
+let sampleTasks: [Task] = [
+    Task(
+        id: UUID(),
+        title: "Rise and Shine",
+        icon: "🌅",
+        startTime: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 30,
+        color: .pink,
+        isCompleted: true
+    ),
+    Task(
+        id: UUID(),
+        title: "Keep working",
+        icon: "💼",
+        startTime: Calendar.current.date(bySettingHour: 16, minute: 11, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 150, // 2h 30min
+        color: .green,
+        isCompleted: false
+    ),
+    Task(
+        id: UUID(),
+        title: "Go for a Run!",
+        icon: "🏃‍♂️",
+        startTime: Calendar.current.date(bySettingHour: 19, minute: 15, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 90, // 1h 30min
+        color: .orange,
+        isCompleted: false
+    ),
+    Task(
+        id: UUID(),
+        title: "Wind Down",
+        icon: "🌙",
+        startTime: Calendar.current.date(bySettingHour: 22, minute: 30, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 60,
+        color: .blue,
+        isCompleted: false
+    )
+]
 
 #Preview {
-    TaskCard(title: "Task 1", time: "1h 30m", icon: "⏰", color: .blue, isCompleted: true , durationMinutes:220
-    )
-    TaskCard(title: "Task 1", time: "1h 30m", icon: "⏰", color: .red, isCompleted: false , durationMinutes:120)
-
+    _TimelineView()
 }

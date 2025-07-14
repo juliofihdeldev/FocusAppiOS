@@ -48,7 +48,7 @@ class Task {
         self.icon = icon
         self.startTime = startTime
         self.durationMinutes = durationMinutes
-        self.isCompleted = isCompleted
+        self.isCompleted =  max(0, durationMinutes - timeSpentMinutes) > 0 ? false : true
         self.taskTypeRawValue = taskType?.rawValue
         self.statusRawValue = status.rawValue
         self.timeSpentMinutes = timeSpentMinutes
