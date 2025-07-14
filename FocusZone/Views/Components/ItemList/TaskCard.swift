@@ -234,30 +234,58 @@ struct TaskCard: View {
             return "\(minutes) min"
         }
     }
-    
     private func getProgressText() -> String {
         guard let task = task else { return "" }
         
         let now = currentTime
+        let taskStartTime = task.startTime
         let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
         
-        if now <= taskEndTime {
+        // If task hasn't started yet
+        if now < taskStartTime {
+            let timeUntilStart = taskStartTime.timeIntervalSince(now)
+            let minutesUntilStart = Int(timeUntilStart / 60)
+            if minutesUntilStart > 60 {
+                let hours = minutesUntilStart / 60
+                let mins = minutesUntilStart % 60
+                return "Starts in \(hours)h \(mins)m"
+            } else {
+                return "Starts in \(minutesUntilStart)m"
+            }
+        }
+        
+        // If task is currently active
+        if now >= taskStartTime && now <= taskEndTime {
             let remaining = taskEndTime.timeIntervalSince(now)
             let remainingMinutes = Int(remaining / 60)
             
             if remainingMinutes > 60 {
                 let hours = remainingMinutes / 60
                 let mins = remainingMinutes % 60
-                return "\(hours)h \(mins)m remaining"
-            } else {
+                return mins > 0 ? "\(hours)h \(mins)m remaining" : "\(hours)h remaining"
+            } else if remainingMinutes > 0 {
                 return "\(remainingMinutes)m remaining"
+            } else {
+                // Less than a minute remaining
+                let remainingSeconds = Int(remaining)
+                return "\(remainingSeconds)s remaining"
             }
         } else {
+            // Task is overdue
             let overdue = now.timeIntervalSince(taskEndTime)
             let overdueMinutes = Int(overdue / 60)
-            return "\(overdueMinutes)m overdue"
+            
+            if overdueMinutes > 60 {
+                let hours = overdueMinutes / 60
+                let mins = overdueMinutes % 60
+                return mins > 0 ? "\(hours)h \(mins)m overdue" : "\(hours)h overdue"
+            } else {
+                return "\(overdueMinutes)m overdue"
+            }
         }
     }
+    
+
 }
 
 // MARK: - Timeline View Container
@@ -313,7 +341,7 @@ let sampleTasks: [Task] = [
         title: "Keep working",
         icon: "💼",
         startTime: Calendar.current.date(bySettingHour: 16, minute: 11, second: 0, of: Date()) ?? Date(),
-        durationMinutes: 150, // 2h 30min
+        durationMinutes: 120, // 2h 30min
         color: .green,
         isCompleted: false
     ),
