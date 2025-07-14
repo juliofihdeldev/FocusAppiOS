@@ -26,7 +26,7 @@ struct TimelineView: View {
                     .padding(.bottom, 16)
                     .padding(.top, 46)
                     
-                    
+    
                     // Main Content Area
                     ScrollViewReader { proxy in
                         ScrollView(.vertical, showsIndicators: false) {

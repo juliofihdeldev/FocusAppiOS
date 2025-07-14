@@ -65,9 +65,10 @@ struct TaskActionsModal: View {
                 
                 // Action Buttons
                 VStack(spacing: 1) {
-                    if !task.isActive && !task.isPaused && !task.isCompleted {
+//                    if !task.isActive && !task.isPaused && !task.isCompleted
+                    if  !task.isCompleted {
                         TaskActionButton(
-                            title: "Add timer",
+                            title: "Launch timer",
                             icon: "play.fill",
                             color: task.color,
                             action: {

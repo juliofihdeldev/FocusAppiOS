@@ -35,7 +35,7 @@ class TimelineViewModel: ObservableObject {
             
             // Create sample data if no tasks exist
             if tasks.isEmpty {
-                createSampleTasks()
+//                createSampleTasks()
                 tasks = try modelContext.fetch(descriptor)
                 print("TimelineViewModel: After creating samples: \(tasks.count) tasks")
             }
@@ -72,6 +72,24 @@ class TimelineViewModel: ObservableObject {
         saveContext()
         refreshTasks()
     }
+    
+    func _deleteTask(_ task: Task) {
+        guard let modelContext = modelContext else { return }
+
+          // First remove from local array for immediate UI update
+          if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+              tasks.remove(at: index)
+          }
+          
+          // Then delete from persistent storage
+        modelContext.delete(task)
+
+          
+          // Force a refresh to ensure consistency
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+              self.refreshTasks()
+          }
+      }
     
     func duplicateTask(_ task: Task) {
         guard let modelContext = modelContext else { return }
