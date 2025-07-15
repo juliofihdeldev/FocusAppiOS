@@ -22,7 +22,6 @@ struct TimelineView: View {
                     DateHeader(
                         selectedDate: $selectedDate
                     )
-            
                     .padding(.bottom, 16)
                     
                     // Main Content Area
@@ -116,8 +115,6 @@ struct TimelineView: View {
                 onDelete: { deleteTask(task) }
             )
         }
-
-
     }
     
     // MARK: - Setup Methods
@@ -129,7 +126,6 @@ struct TimelineView: View {
     }
     
     // MARK: - Task Actions
-    
     private func deleteTask(_ task: Task) {
         withAnimation(.easeInOut(duration: 0.3)) {
             viewModel.deleteTask(task)
