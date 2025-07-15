@@ -22,11 +22,9 @@ struct TimelineView: View {
                     DateHeader(
                         selectedDate: $selectedDate
                     )
-                    .frame(height: 0)
+            
                     .padding(.bottom, 16)
-                    .padding(.top, 46)
                     
-    
                     // Main Content Area
                     ScrollViewReader { proxy in
                         ScrollView(.vertical, showsIndicators: false) {
@@ -245,21 +243,6 @@ struct UpdatedDateHeader: View {
                 .foregroundColor(AppColors.accent)
             }
             .padding(.horizontal, 20)
-            
-            // Week Days Scroll
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(currentWeek, id: \.self) { date in
-                        DateDayView(
-                            date: date,
-                            selectedDate: $selectedDate,
-                            isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate),
-                            isToday: Calendar.current.isDateInToday(date)
-                        )
-                    }
-                }
-                .padding(.horizontal, 20)
-            }
         }
         .padding(.vertical, 8)
         .background(AppColors.background)
@@ -268,54 +251,6 @@ struct UpdatedDateHeader: View {
     private func monthYearString(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: date)
-    }
-}
-
-// MARK: - Individual Day View Component
-
-struct DateDayView: View {
-    let date: Date
-    @Binding var selectedDate: Date
-    let isSelected: Bool
-    let isToday: Bool
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            Text(shortWeekdayString(from: date))
-                .font(AppFonts.caption())
-                .foregroundColor(AppColors.textSecondary)
-            
-            Text(dayString(from: date))
-                .font(AppFonts.body())
-                .fontWeight(isSelected ? .bold : .medium)
-                .foregroundColor(isSelected ? .white : (isToday ? AppColors.accent : AppColors.textPrimary))
-                .frame(width: 36, height: 36)
-                .background(
-                    Circle()
-                        .fill(isSelected ? AppColors.accent : (isToday ? AppColors.accent.opacity(0.1) : Color.clear))
-                )
-                .overlay(
-                    Circle()
-                        .stroke(isToday && !isSelected ? AppColors.accent.opacity(0.3) : Color.clear, lineWidth: 1)
-                )
-        }
-        .onTapGesture {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                selectedDate = date
-            }
-        }
-    }
-    
-    private func shortWeekdayString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE"
-        return formatter.string(from: date)
-    }
-    
-    private func dayString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d"
         return formatter.string(from: date)
     }
 }

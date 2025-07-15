@@ -298,11 +298,10 @@ struct _TimelineView: View {
             // Dark background
             Color.black.ignoresSafeArea()
             
-            VStack(spacing: 0) {
+            VStack(spacing:   40) {
                 // Date Header
                 DateHeader(selectedDate: $selectedDate)
-                    .padding(.bottom, 20)
-                
+            
                 // Timeline
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 0) {
@@ -319,6 +318,7 @@ struct _TimelineView: View {
                         }
                     }
                     .padding(.horizontal, 16)
+                    .padding(.vertical, 48)
                 }
             }
         }
