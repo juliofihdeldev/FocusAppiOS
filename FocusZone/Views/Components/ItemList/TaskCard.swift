@@ -22,16 +22,15 @@ struct TaskCard: View {
             // Left side - Timeline with progress
             VStack(spacing: 0) {
                 // Timeline pill/capsule
-                ZStack(alignment: .bottom) {
+                ZStack {
                     // Background capsule (total duration)
                     Capsule()
                         .fill(color.opacity(0.3))
                         .frame(width: 60, height: baseHeight)
                     
-                    // Progress fill (only for active tasks)
+                    // Progress fill (only for active tasks) - aligned to top
                     if progressInfo.shouldShow && !isCompleted {
-                        VStack {
-                            Spacer()
+                        VStack(spacing: 0) {
                             Capsule()
                                 .fill(
                                     LinearGradient(
@@ -43,9 +42,12 @@ struct TaskCard: View {
                                         endPoint: .bottom
                                     )
                                 )
-                                .frame(width:60, height: max(60, progressHeight))
+                                .frame(width: 60, height: progressHeight)
                                 .animation(.easeInOut(duration: 0.5), value: progressHeight)
+                            
+                            Spacer(minLength: 0) // Push progress to top
                         }
+                        .frame(width: 60, height: baseHeight)
                     }
                     
                     // Completed state - full fill
@@ -55,18 +57,23 @@ struct TaskCard: View {
                             .frame(width: 60, height: baseHeight)
                     }
                     
-                    // Icon container
-                    ZStack {
-                        Circle()
-                            .fill(getIconBackgroundColor())
-                            .frame(width: 50, height: 0)
+                    // Icon container - perfectly centered
+                    VStack {
+                        Spacer()
                         
-                        Text(icon)
-                            .font(.title2)
-                            .foregroundColor(.white)
+                        ZStack {
+//                            Circle()
+//                                .fill(getIconBackgroundColor())
+//                                .frame(width: 50, height: 50)
+                            
+                            Text(icon)
+                                .font(.title2)
+                                .foregroundColor(.white)
+                        }
+                        
+                        Spacer()
                     }
-                    .offset(y: -20) // Slightly below center
-                    Spacer(minLength: 0)
+                    .frame(height: baseHeight)
                 }
                 
                 // Timeline connector (dashed line)
@@ -85,7 +92,8 @@ struct TaskCard: View {
           
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
-                Spacer(minLength: 0)
+                Spacer()
+                
                 // Time and status
                 HStack {
                     Text(formatTimeRange())
@@ -130,7 +138,7 @@ struct TaskCard: View {
                         .foregroundColor(progressInfo.color)
                 }
                 
-                Spacer(minLength: 0)
+                Spacer()
             }
             .padding(.leading, 16)
             .padding(.trailing, 16)
@@ -234,6 +242,7 @@ struct TaskCard: View {
             return "\(minutes) min"
         }
     }
+    
     private func getProgressText() -> String {
         guard let task = task else { return "" }
         
@@ -284,8 +293,6 @@ struct TaskCard: View {
             }
         }
     }
-    
-
 }
 
 // MARK: - Timeline View Container
@@ -298,7 +305,7 @@ struct _TimelineView: View {
             // Dark background
             Color.black.ignoresSafeArea()
             
-            VStack(spacing:   40) {
+            VStack(spacing: 40) {
                 // Date Header
                 DateHeader(selectedDate: $selectedDate)
             
@@ -332,7 +339,7 @@ let sampleTasks: [Task] = [
         title: "Rise and Shine",
         icon: "🌅",
         startTime: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) ?? Date(),
-        durationMinutes: 30,
+        durationMinutes: 145,
         color: .pink,
         isCompleted: true
     ),

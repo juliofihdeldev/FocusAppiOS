@@ -146,7 +146,7 @@ struct AppTitleView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
-                ForEach(Array("FocusZone".enumerated()), id: \.offset) { index, character in
+                ForEach(Array("Focus".enumerated()), id: \.offset) { index, character in
                     Text(String(character))
                         .font(.system(size: 32, weight: .bold)) // Using system font instead of AppFonts
                         .foregroundColor(.white)
