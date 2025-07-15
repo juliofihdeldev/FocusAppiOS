@@ -9,7 +9,7 @@ struct DateHeader: View {
         let weekday = calendar.component(.weekday, from: selectedDate)
         
         let startOfWeek = calendar.date(byAdding: .day, value: -((weekday - calendar.firstWeekday + 7) % 7), to: selectedDate) ?? selectedDate
-        return (0..<14).compactMap { calendar.date(byAdding: .day, value: $0, to: startOfWeek) }
+        return (0..<365).compactMap { calendar.date(byAdding: .day, value: $0, to: startOfWeek) }
     }
 
     var body: some View {
@@ -19,9 +19,7 @@ struct DateHeader: View {
                 .foregroundColor(AppColors.textPrimary)
                 .padding(.horizontal)
             
-            
-       
-
+    
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(currentWeek, id: \ .self) { date in

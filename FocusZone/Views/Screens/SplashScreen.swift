@@ -72,8 +72,8 @@ struct SplashScreen: View {
         .onAppear {
             startAnimations()
             
-            // Transition to main app after 4 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+            // Transition to main app after 3 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 withAnimation(.easeInOut(duration: 0.8)) {
                     showMainApp = true
                 }

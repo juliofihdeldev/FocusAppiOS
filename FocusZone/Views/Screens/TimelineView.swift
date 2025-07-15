@@ -118,6 +118,8 @@ struct TimelineView: View {
                 onDelete: { deleteTask(task) }
             )
         }
+
+
     }
     
     // MARK: - Setup Methods

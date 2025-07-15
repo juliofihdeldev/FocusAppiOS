@@ -157,9 +157,10 @@ struct TaskTimer: View {
                 .fill(AppColors.background)
                 .shadow(radius: 4)
         )
-//        .onAppear {
-//            timerService.setModelContext(modelContext)
-//        }
+        .onAppear {
+            timerService.setModelContext(modelContext)
+            timerService.startTask(task)
+        }
     }
     
     private func statusText(for status: TaskStatus) -> String {
