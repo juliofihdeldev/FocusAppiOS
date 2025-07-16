@@ -12,7 +12,7 @@ class TimelineViewModel: ObservableObject {
         self.modelContext = context
     }
     
-    func loadTodayTasks(for date: Date = Date()) {
+    func _loadTodayTasks(for date: Date = Date()) {
         guard let modelContext = modelContext else {
             print("TimelineViewModel: No modelContext available")
             return
@@ -40,7 +40,7 @@ class TimelineViewModel: ObservableObject {
             print("TimelineViewModel: Loaded \(tasks.count) tasks for \(date)")
             
             if tasks.isEmpty {
-    //            createSampleTasks()
+                //            createSampleTasks()
                 tasks = try modelContext.fetch(descriptor).filter { task in
                     let isToday = task.startTime >= startOfDay && task.startTime < endOfDay
                     let repeatsToday = shouldIncludeRepeatingTask(task: task, for: date)
@@ -48,6 +48,45 @@ class TimelineViewModel: ObservableObject {
                 }
             }
             
+        } catch {
+            print("TimelineViewModel: Error loading tasks: \(error)")
+            tasks = []
+        }
+    }
+    
+    func loadTodayTasks(for date: Date = Date()) {
+        guard let modelContext = modelContext else {
+            print("TimelineViewModel: No modelContext available")
+            return
+        }
+
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        let descriptor = FetchDescriptor<Task>(
+            sortBy: [SortDescriptor(\.startTime)]
+        )
+
+        do {
+            let allTasks = try modelContext.fetch(descriptor)
+
+            var todayTasks: [Task] = []
+
+            for task in allTasks {
+                let isToday = task.startTime >= startOfDay && task.startTime < endOfDay
+
+                if isToday {
+                    todayTasks.append(task)
+                } else if shouldIncludeRepeatingTask(task: task, for: date) {
+                    let virtual = virtualTask(for: task, on: date)
+                    todayTasks.append(virtual)
+                }
+            }
+
+            tasks = todayTasks.sorted { $0.startTime < $1.startTime }
+
+            print("TimelineViewModel: Loaded \(tasks.count) total tasks for \(date)")
         } catch {
             print("TimelineViewModel: Error loading tasks: \(error)")
             tasks = []
@@ -68,13 +107,13 @@ class TimelineViewModel: ObservableObject {
             let taskWeekday = calendar.component(.weekday, from: task.startTime)
             let dateWeekday = calendar.component(.weekday, from: date)
             return dateWeekday == taskWeekday &&
-                   startOfDay >= calendar.startOfDay(for: task.startTime)
+            startOfDay >= calendar.startOfDay(for: task.startTime)
             
         case .monthly:
             let taskDay = calendar.component(.day, from: task.startTime)
             let dateDay = calendar.component(.day, from: date)
             return dateDay == taskDay &&
-                   startOfDay >= calendar.startOfDay(for: task.startTime)
+            startOfDay >= calendar.startOfDay(for: task.startTime)
             
         default:
             return false
@@ -111,21 +150,21 @@ class TimelineViewModel: ObservableObject {
     
     func _deleteTask(_ task: Task) {
         guard let modelContext = modelContext else { return }
-
-          // First remove from local array for immediate UI update
-          if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-              tasks.remove(at: index)
-          }
-          
-          // Then delete from persistent storage
+        
+        // First remove from local array for immediate UI update
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks.remove(at: index)
+        }
+        
+        // Then delete from persistent storage
         modelContext.delete(task)
-
-          
-          // Force a refresh to ensure consistency
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-              self.refreshTasks()
-          }
-      }
+        
+        
+        // Force a refresh to ensure consistency
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.refreshTasks()
+        }
+    }
     
     func duplicateTask(_ task: Task) {
         guard let modelContext = modelContext else { return }
@@ -276,5 +315,29 @@ class TimelineViewModel: ObservableObject {
         }
         
         saveContext()
+    }
+    
+    private func virtualTask(for task: Task, on date: Date) -> Task {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute], from: task.startTime)
+
+        let newStartTime = calendar.date(
+            bySettingHour: components.hour ?? 0,
+            minute: components.minute ?? 0,
+            second: 0,
+            of: date
+        ) ?? date
+
+        return Task(
+            id: UUID(), // ensure new identity
+            title: task.title,
+            icon: task.icon,
+            startTime: newStartTime,
+            durationMinutes: task.durationMinutes,
+            color: task.color,
+            isCompleted: false, // default for virtual
+            taskType: task.taskType, status: .scheduled,
+            repeatRule: task.repeatRule
+        )
     }
 }
