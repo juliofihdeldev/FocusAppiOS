@@ -31,7 +31,9 @@ struct TaskCard: View {
                     // Progress fill (only for active tasks) - aligned to top
                     if progressInfo.shouldShow && !isCompleted {
                         VStack(spacing: 0) {
-                            RoundedRectangle(cornerRadius:2)
+                            RoundedRectangle(cornerRadius:
+                                overdueMinutesFun() > 0 ? 30 : 2
+                            )
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
@@ -99,6 +101,10 @@ struct TaskCard: View {
                 // Time and status
                 HStack {
                     Text(formatTimeRange())
+                        .font(AppFonts.body())
+                        .foregroundColor(.gray)
+                    
+                    Text("\(overdueMinutesFun())")
                         .font(AppFonts.body())
                         .foregroundColor(.gray)
                     
@@ -294,6 +300,19 @@ struct TaskCard: View {
                 return "\(overdueMinutes)m overdue"
             }
         }
+    }
+    
+    private func overdueMinutesFun() -> Int {
+        guard let task = task else { return 0 }
+        
+        let now = currentTime
+        let taskStartTime = task.startTime
+        let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+        
+        // Task is overdue
+        let overdue = now.timeIntervalSince(taskEndTime)
+        let overdueMinutes = Int(overdue / 60)
+        return overdueMinutes;
     }
 }
 
