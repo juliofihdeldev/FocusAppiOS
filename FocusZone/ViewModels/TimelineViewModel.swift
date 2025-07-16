@@ -35,7 +35,7 @@ class TimelineViewModel: ObservableObject {
                 let repeatsToday = shouldIncludeRepeatingTask(task: task, for: date)
                 
                 return isToday || repeatsToday
-            }
+            }.sorted { $0.startTime < $1.startTime } // 👈 Ensure chronological order
             
             print("TimelineViewModel: Loaded \(tasks.count) tasks for \(date)")
             
@@ -187,7 +187,7 @@ class TimelineViewModel: ObservableObject {
                 let repeatsToday = shouldIncludeRepeatingTask(task: task, for: today)
                 
                 return isToday || repeatsToday
-            }
+            }.sorted { $0.startTime < $1.startTime } // 👈 Ensure chronological order
         } catch {
             print("TimelineViewModel: Error refreshing tasks: \(error)")
         }
