@@ -23,25 +23,61 @@ class TimelineViewModel: ObservableObject {
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
         
         let descriptor = FetchDescriptor<Task>(
-            predicate: #Predicate { task in
-                task.startTime >= startOfDay && task.startTime < endOfDay
-            },
             sortBy: [SortDescriptor(\.startTime)]
         )
         
         do {
-            tasks = try modelContext.fetch(descriptor)
+            let allTasks = try modelContext.fetch(descriptor)
+            
+            tasks = allTasks.filter { task in
+                let isToday = task.startTime >= startOfDay && task.startTime < endOfDay
+                
+                let repeatsToday = shouldIncludeRepeatingTask(task: task, for: date)
+                
+                return isToday || repeatsToday
+            }
+            
             print("TimelineViewModel: Loaded \(tasks.count) tasks for \(date)")
             
-            // Create sample data if no tasks exist
             if tasks.isEmpty {
-//                createSampleTasks()
-                tasks = try modelContext.fetch(descriptor)
-                print("TimelineViewModel: After creating samples: \(tasks.count) tasks")
+    //            createSampleTasks()
+                tasks = try modelContext.fetch(descriptor).filter { task in
+                    let isToday = task.startTime >= startOfDay && task.startTime < endOfDay
+                    let repeatsToday = shouldIncludeRepeatingTask(task: task, for: date)
+                    return isToday || repeatsToday
+                }
             }
+            
         } catch {
             print("TimelineViewModel: Error loading tasks: \(error)")
             tasks = []
+        }
+    }
+    
+    private func shouldIncludeRepeatingTask(task: Task, for date: Date) -> Bool {
+        let rule = task.repeatRule
+        let calendar = Calendar.current
+        
+        let startOfDay = calendar.startOfDay(for: date)
+        
+        switch rule {
+        case .daily:
+            return startOfDay >= calendar.startOfDay(for: task.startTime)
+            
+        case .weekly:
+            let taskWeekday = calendar.component(.weekday, from: task.startTime)
+            let dateWeekday = calendar.component(.weekday, from: date)
+            return dateWeekday == taskWeekday &&
+                   startOfDay >= calendar.startOfDay(for: task.startTime)
+            
+        case .monthly:
+            let taskDay = calendar.component(.day, from: task.startTime)
+            let dateDay = calendar.component(.day, from: date)
+            return dateDay == taskDay &&
+                   startOfDay >= calendar.startOfDay(for: task.startTime)
+            
+        default:
+            return false
         }
     }
     
@@ -141,14 +177,16 @@ class TimelineViewModel: ObservableObject {
         
         do {
             let allTasks = try modelContext.fetch(descriptor)
-            // Filter to today's tasks
-            let calendar = Calendar.current
             let today = Date()
-            let startOfDay = calendar.startOfDay(for: today)
-            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
-            
             tasks = allTasks.filter { task in
-                task.startTime >= startOfDay && task.startTime < endOfDay
+                let calendar = Calendar.current
+                let startOfDay = calendar.startOfDay(for: today)
+                let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+                
+                let isToday = task.startTime >= startOfDay && task.startTime < endOfDay
+                let repeatsToday = shouldIncludeRepeatingTask(task: task, for: today)
+                
+                return isToday || repeatsToday
             }
         } catch {
             print("TimelineViewModel: Error refreshing tasks: \(error)")
