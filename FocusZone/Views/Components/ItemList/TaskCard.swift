@@ -29,10 +29,10 @@ struct TaskCard: View {
                         .frame(width: 60, height: baseHeight)
                     
                     // Progress fill (only for active tasks) - aligned to top
-                    if progressInfo.shouldShow && !isCompleted {
+                    if progressInfo.shouldShow &&  progressInfo.percentage < 12 && !isCompleted {
                         VStack(spacing: 0) {
                             RoundedRectangle(cornerRadius:
-                                overdueMinutesFun() < 10 ? 40 : 2
+                                overdueMinutesFun() > 0 ? 40 : 2
                             )
                                 .fill(
                                     LinearGradient(
