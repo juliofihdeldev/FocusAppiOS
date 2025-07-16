@@ -84,13 +84,44 @@ class TaskTimerService: ObservableObject {
     // Private timer methods
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            self.elapsedSeconds += 1
+            DispatchQueue.main.async {
+                self.elapsedSeconds += 1
+                
+                // Check if timer should auto-complete when remaining time reaches 0
+                if self.currentRemainingMinutes <= 0 && !self.isOvertime {
+                    self.handleTimerCompletion()
+                }
+            }
         }
     }
     
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
+    }
+    
+    // Handle automatic timer completion
+    @MainActor private func handleTimerCompletion() {
+        guard let task = currentTask else { return }
+        
+        stopTimer()
+        
+        // Mark task as completed automatically
+        let totalTimeSpent = task.timeSpentMinutes + (elapsedSeconds / 60)
+        task.isCompleted = true
+        task.status = .completed
+        task.timeSpentMinutes = task.durationMinutes // Set to exact duration
+        task.updatedAt = Date()
+        saveContext()
+        
+        // Show completion notification or update UI
+        print("Task '\(task.title)' completed automatically after \(task.durationMinutes) minutes")
+        
+        // Clear after a brief delay to show completion
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.currentTask = nil
+            self.elapsedSeconds = 0
+        }
     }
     
     // Computed properties
@@ -124,6 +155,15 @@ class TaskTimerService: ObservableObject {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    // Additional computed properties for better timer control
+    var isTimerRunning: Bool {
+        return timer != nil && currentTask?.isActive == true
+    }
+    
+    var shouldShowOvertime: Bool {
+        return isOvertime && currentTask?.isActive == true
     }
     
     // MARK: - Private Methods

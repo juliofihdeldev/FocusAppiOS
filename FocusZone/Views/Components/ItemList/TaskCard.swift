@@ -32,7 +32,7 @@ struct TaskCard: View {
                     if progressInfo.shouldShow && !isCompleted {
                         VStack(spacing: 0) {
                             RoundedRectangle(cornerRadius:
-                                overdueMinutesFun() > 0 ? 30 : 2
+                                overdueMinutesFun() < 10 ? 40 : 2
                             )
                                 .fill(
                                     LinearGradient(
@@ -66,10 +66,6 @@ struct TaskCard: View {
                         Spacer()
                         
                         ZStack {
-//                            Circle()
-//                                .fill(getIconBackgroundColor())
-//                                .frame(width: 50, height: 50)
-                            
                             Text(icon)
                                 .font(.title2)
                                 .foregroundColor(.white)
@@ -103,11 +99,7 @@ struct TaskCard: View {
                     Text(formatTimeRange())
                         .font(AppFonts.body())
                         .foregroundColor(.gray)
-                    
-                    Text("\(overdueMinutesFun())")
-                        .font(AppFonts.body())
-                        .foregroundColor(.gray)
-                    
+               
                     Spacer()
                     
                     // Status indicator
@@ -203,19 +195,7 @@ struct TaskCard: View {
         return (false, 0.0, color)
     }
     
-    // MARK: - Helper Methods
-    private func getIconBackgroundColor() -> Color {
-        if isCompleted {
-            return .green
-        } else if task != nil {
-            let progressInfo = calculateProgress()
-            if progressInfo.shouldShow {
-                return progressInfo.color
-            }
-        }
-        return color
-    }
-    
+
     private func shouldShowConnector() -> Bool {
         // Show connector for all tasks except maybe the last one
         return true
