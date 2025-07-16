@@ -1,9 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct TaskTimerView: View {
     let task: Task
     @StateObject private var timerService = TaskTimerService()
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         NavigationView {
@@ -59,7 +61,7 @@ struct TaskTimerView: View {
                             .font(AppFonts.subheadline())
                             .foregroundColor(.gray)
                         
-                        if timerService.currentTask?.status == .paused(timeSpent: 0, pausedAt: Date()) {
+                        if timerService.currentTask?.status == .paused {
                             Text("PAUSED")
                                 .font(AppFonts.caption())
                                 .foregroundColor(.orange)
@@ -91,7 +93,7 @@ struct TaskTimerView: View {
                                 .background(task.color)
                                 .cornerRadius(25)
                             }
-                        } else if timerService.currentTask?.isActive == true {
+                        } else if timerService.currentTask?.isActive ?? false {
                             // Pause and Complete buttons
                             Button(action: {
                                 timerService.pauseTask()
@@ -123,7 +125,7 @@ struct TaskTimerView: View {
                                 .background(Color.green)
                                 .cornerRadius(20)
                             }
-                        } else if timerService.currentTask?.isPaused == true {
+                        } else if timerService.currentTask?.isPaused ?? false {
                             // Resume and Stop buttons
                             Button(action: {
                                 timerService.resumeTask()
@@ -219,7 +221,8 @@ struct TaskTimerView: View {
             }
         }
         .onAppear {
-            // Auto-start the timer when view appears
+            // Set model context and auto-start the timer when view appears
+            timerService.setModelContext(modelContext)
             if timerService.currentTask == nil {
                 timerService.startTask(task)
             }

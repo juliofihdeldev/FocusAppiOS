@@ -11,14 +11,13 @@ import SwiftData
 
 @main
 struct FocusZoneApp: App {
-//    @StateObject private var themeManager = ThemeManager()
+    @StateObject private var themeManager = ThemeManager()
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-//            TimelineView()
-//                .environmentObject(themeManager)
+            SplashScreen()
+                .environmentObject(themeManager)
         }
+        .modelContainer(for: Task.self)
     }
-    
 }
