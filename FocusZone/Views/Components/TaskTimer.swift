@@ -299,6 +299,7 @@ struct TaskTimer: View {
             // Auto-start the timer when view appears
             if timerService.currentTask == nil {
                 timerService.startTask(task)
+                isLocked = true
             }
         }
         .onChange(of: timerService.currentTask?.isCompleted) { _, isCompleted in
