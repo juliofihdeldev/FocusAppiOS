@@ -51,9 +51,9 @@ struct TaskTimeSelector: View {
             let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
             
             if let newStartTime = calendar.date(bySettingHour: timeComponents.hour ?? 0,
-                                              minute: timeComponents.minute ?? 0,
-                                              second: 0,
-                                              of: selectedDate) {
+                  minute: timeComponents.minute ?? 0,
+                  second: 0,
+                  of: selectedDate) {
                 startTime = newStartTime
             }
         }
@@ -65,7 +65,10 @@ struct TaskTimeSelector: View {
                 Text("When?")
                     .font(AppFonts.headline())
                     .foregroundColor(.gray)
+                  
                 Spacer()
+                
+                
                 Button("More...") {
                     showingTimeSlots.toggle()
                 }
@@ -100,10 +103,14 @@ struct TaskTimeSelector: View {
                     .frame(maxHeight: 200)
                     
                     // Date
+                    
                     DatePicker("", selection: $selectedDate, displayedComponents: .date)
                         .datePickerStyle(CompactDatePickerStyle())
                         .labelsHidden()
                         .padding(.top, 10)
+                        .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, alignment: .leading) // 👈 Aligns to the left
+                    
                 }
             } else {
                 Text(selectedTimeString)
@@ -114,9 +121,11 @@ struct TaskTimeSelector: View {
                     .background(
                         RoundedRectangle(cornerRadius: 20)
                             .fill(Color.pink)
-                    )
+                    ).onTapGesture {
+                        showingTimeSlots.toggle()
+                    }
                 
-                HStack {
+                HStack() {
                     Image(systemName: "calendar")
                         .foregroundColor(.pink)
                     Text(selectedDateString)

@@ -49,42 +49,44 @@ struct TaskFormView: View {
                             duration: $duration
                         )
                         
-                        TaskTimeSelector(
-                            selectedDate: $selectedDate,
-                            startTime: $startTime
-                        )
-                        
-                        TaskDurationSelector(duration: $duration)
-                        
-                        TaskIconPicker(selectedIcon: $selectedIcon)
-                        
-                        TaskColorPicker(selectedColor: $selectedColor)
-                        
-                        TaskRepeatSelector(repeatRule: $repeatRule)
-                        
-                        // Create/Update Task Button
-                        Button(action: {
-                            saveTask()
-                        }) {
-                            Text(taskToEdit == nil ? "Create Task" : "Update Task")
-                                .font(AppFonts.headline())
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(selectedColor)
-                                )
+                        if taskTitle != "" {
+                            TaskTimeSelector(
+                                selectedDate: $selectedDate,
+                                startTime: $startTime
+                            )
+                            
+                            TaskDurationSelector(duration: $duration)
+                            
+                            TaskIconPicker(selectedIcon: $selectedIcon)
+                            
+                            TaskColorPicker(selectedColor: $selectedColor)
+                            
+                            TaskRepeatSelector(repeatRule: $repeatRule)
+                            
+                            // Create/Update Task Button
+                            Button(action: {
+                                saveTask()
+                            }) {
+                                Text(taskToEdit == nil ? "Create Task" : "Update Task")
+                                    .font(AppFonts.headline())
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 16)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(selectedColor)
+                                    )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .disabled(taskTitle.isEmpty)
+                            
+                            TaskAlertsSection(alerts: $alerts)
+                            
+                            TaskDetailsSection(
+                                showSubtasks: $showSubtasks,
+                                notes: $notes
+                            )
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .disabled(taskTitle.isEmpty)
-                        
-                        TaskAlertsSection(alerts: $alerts)
-                        
-                        TaskDetailsSection(
-                            showSubtasks: $showSubtasks,
-                            notes: $notes
-                        )
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 40)

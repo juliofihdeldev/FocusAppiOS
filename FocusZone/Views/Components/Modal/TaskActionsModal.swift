@@ -144,7 +144,7 @@ struct TaskActionsModal: View {
             onStart()
             dismiss()
         }) {
-            TaskTimerView(task: task)
+            TaskTimer(task: task)
         }
     }
 }

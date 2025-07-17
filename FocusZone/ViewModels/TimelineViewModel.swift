@@ -340,4 +340,26 @@ class TimelineViewModel: ObservableObject {
             repeatRule: task.repeatRule
         )
     }
+    
+    func clearAllTasks() {
+        guard let modelContext = modelContext else {
+            print("TimelineViewModel: No modelContext available")
+            return
+        }
+
+        let descriptor = FetchDescriptor<Task>() // fetch all tasks
+
+        do {
+            let allTasks = try modelContext.fetch(descriptor)
+            for task in allTasks {
+                modelContext.delete(task)
+            }
+
+            try modelContext.save()
+            tasks = []
+            print("TimelineViewModel: Cleared all tasks")
+        } catch {
+            print("TimelineViewModel: Error clearing tasks: \(error)")
+        }
+    }
 }
