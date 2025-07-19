@@ -325,14 +325,9 @@ class TaskTimerService: ObservableObject {
         if now >= taskStartTime && now <= taskEndTime {
             let remaining = taskEndTime.timeIntervalSince(now)
             let remainingMinutes = Int(remaining / 60)
-            
-            print(now)
-            print ("<OmmmmmoMOMOMOMOMOMOMom", remainingMinutes)
-            
+            task.timeSpentMinutes  = remainingMinutes
             return remainingMinutes
         }
-        
-        
         // Task is past its scheduled end time
         return 0
     }
