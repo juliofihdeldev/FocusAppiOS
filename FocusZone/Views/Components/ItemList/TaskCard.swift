@@ -29,7 +29,7 @@ struct TaskCard: View {
                         .frame(width: 60, height: baseHeight)
                     
                     // Progress fill (only for active tasks) - aligned to top
-                    if progressInfo.shouldShow &&  progressInfo.percentage < 0.10 && !isCompleted {
+                    if progressInfo.shouldShow &&  !isCompleted {
                         VStack(spacing: 0) {
                             RoundedRectangle(cornerRadius:
                                                 overdueMinutesFun() > 0  ? 30 :
@@ -48,7 +48,11 @@ struct TaskCard: View {
                                 )
                                 .cornerRadius(30, corners: [.topLeft, .topRight])
                                 .cornerRadius(4, corners: [.bottomLeft, .bottomRight])
-                                .frame(width: 60, height: progressHeight)
+                                .frame(width:
+                                        baseHeight < 80 && progressInfo.percentage < 0.80 ? 10:
+                                        progressInfo.percentage > 0.20 ?
+                                        60 : 10
+                                       , height: progressHeight)
                                 .animation(.easeInOut(duration: 0.5), value: progressHeight)
                             
                             Spacer(minLength: 0) // Push progress to top
@@ -129,10 +133,17 @@ struct TaskCard: View {
                 
                 // Task title
                 
-//                Text("\(progressInfo.percentage)")
-//                    .foregroundColor(.white)
-//                    .lineLimit(2)
-//                
+                Text("\(baseHeight)")
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                
+                
+                Text("\(progressInfo.percentage)")
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                
+                
+//
                 Text(title)
                     .font(AppFonts.headline())
                     .foregroundColor(.white)
@@ -304,12 +315,6 @@ struct TaskCard: View {
     }
 }
 
-// MARK: - Custom Corner Radius Extension
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
 
 struct RoundedCorner: Shape {
     var radius: CGFloat = .infinity
@@ -395,8 +400,8 @@ let sampleTasks: [Task] = [
         id: UUID(),
         title: "Wind Down",
         icon: "🌙",
-        startTime: Calendar.current.date(bySettingHour: 22, minute: 30, second: 0, of: Date()) ?? Date(),
-        durationMinutes: 60,
+        startTime: Calendar.current.date(bySettingHour: 15, minute: 00, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 25,
         color: .blue,
         isCompleted: false
     )
