@@ -49,7 +49,7 @@ struct TaskCard: View {
                                 .cornerRadius(30, corners: [.topLeft, .topRight])
                                 .cornerRadius(4, corners: [.bottomLeft, .bottomRight])
                                 .frame(width:
-                                        baseHeight < 80 && progressInfo.percentage < 0.80 ? 10:
+                                        baseHeight < 80 && progressInfo.percentage < 0.60 ? 10:
                                         progressInfo.percentage > 0.20 ?
                                         60 : 10
                                        , height: progressHeight)
@@ -401,7 +401,7 @@ let sampleTasks: [Task] = [
         title: "Wind Down",
         icon: "🌙",
         startTime: Calendar.current.date(bySettingHour: 15, minute: 00, second: 0, of: Date()) ?? Date(),
-        durationMinutes: 25,
+        durationMinutes: 45,
         color: .blue,
         isCompleted: false
     )
