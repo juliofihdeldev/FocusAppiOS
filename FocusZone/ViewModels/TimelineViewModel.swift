@@ -7,7 +7,8 @@ class TimelineViewModel: ObservableObject {
     @Published var tasks: [Task] = []
     
     private var modelContext: ModelContext?
-    
+    private let notificationService = NotificationService.shared
+
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
     }
@@ -154,7 +155,8 @@ class TimelineViewModel: ObservableObject {
     
     func deleteTask(_ task: Task) {
         guard let modelContext = modelContext else { return }
-        
+        notificationService.cancelNotifications(for: task.id.uuidString)
+
         // If it's a virtual task, just remove from local array
         if task.isGeneratedFromRepeat {
             if let index = tasks.firstIndex(where: { $0.id == task.id }) {
@@ -184,11 +186,15 @@ class TimelineViewModel: ObservableObject {
         )
         
         modelContext.insert(duplicatedTask)
+        notificationService.scheduleTaskReminders(for: duplicatedTask)
+
         saveContext()
         refreshTasks()
     }
     
     func completeTask(_ task: Task) {
+        notificationService.cancelNotifications(for: task.id.uuidString)
+
         // If it's a virtual task, convert it to a real completed task
         if task.isGeneratedFromRepeat {
             guard let modelContext = modelContext else { return }
@@ -209,12 +215,17 @@ class TimelineViewModel: ObservableObject {
             
             modelContext.insert(realTask)
             saveContext()
+            notificationService.sendTaskCompletionNotification(for: realTask, actualDuration: realTask.durationMinutes)
+
         } else {
             // For real tasks, just update the completion status
             task.isCompleted = true
             task.status = .completed
             task.updatedAt = Date()
             saveContext()
+            
+            // Send completion notification
+            notificationService.sendTaskCompletionNotification(for: task, actualDuration: task.durationMinutes)
         }
         
         refreshTasks()
@@ -225,12 +236,17 @@ class TimelineViewModel: ObservableObject {
         guard let modelContext = modelContext else { return }
         modelContext.insert(task)
         saveContext()
+        // Schedule notifications for the new task
+        notificationService.scheduleTaskReminders(for: task)
         refreshTasks()
     }
     
     func updateTask(_ task: Task) {
         task.updatedAt = Date()
         saveContext()
+        // Reschedule notifications for the updated task
+                notificationService.cancelNotifications(for: task.id.uuidString)
+                notificationService.scheduleTaskReminders(for: task)
         refreshTasks()
     }
     
@@ -285,6 +301,32 @@ class TimelineViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Notification Helpers
+        
+        private func scheduleDailyPlanningReminder() {
+            // Schedule daily planning reminder for 8:00 AM
+            let calendar = Calendar.current
+            guard let planningTime = calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) else { return }
+            
+            let taskCount = tasks.count
+            notificationService.scheduleDailyPlanningReminder(at: planningTime, taskCount: taskCount)
+        }
+    
+    
+    func requestNotificationPermission() async {
+           let granted = await notificationService.requestAuthorization()
+           if granted {
+               print("TimelineViewModel: Notification permission granted")
+               // Reschedule notifications for existing tasks
+               for task in tasks where !task.isGeneratedFromRepeat {
+                   notificationService.scheduleTaskReminders(for: task)
+               }
+           } else {
+               print("TimelineViewModel: Notification permission denied")
+           }
+       }
+       
+    
     private func saveContext() {
         guard let modelContext = modelContext else { return }
         
@@ -301,6 +343,7 @@ class TimelineViewModel: ObservableObject {
             print("TimelineViewModel: No modelContext available")
             return
         }
+        notificationService.cancelAllNotifications()
 
         let descriptor = FetchDescriptor<Task>()
 
@@ -325,6 +368,8 @@ class TimelineViewModel: ObservableObject {
         formatter.dateStyle = .medium
         return formatter.string(from: date)
     }
+    
+  
     
     // MARK: - Sample Data (for testing)
     

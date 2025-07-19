@@ -1,14 +1,19 @@
 import SwiftUI
 import SwiftData
 
+// Create an alias to avoid conflict with Swift's Task
+typealias FocusTask = Task
+
 struct TimelineView: View {
     @StateObject private var viewModel = TimelineViewModel()
     @StateObject private var timerService = TaskTimerService()
+    @EnvironmentObject var notificationService: NotificationService
     @Environment(\.modelContext) private var modelContext
     @State private var selectedDate: Date = Date()
     @State private var showAddTaskForm = false
-    @State private var editingTask: Task?
-    @State private var selectedTaskForActions: Task?
+    @State private var editingTask: FocusTask?
+    @State private var selectedTaskForActions: FocusTask?
+    @State private var showNotificationAlert = false
 
     var body: some View {
         NavigationView {
@@ -18,16 +23,25 @@ struct TimelineView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
+                    // Notification permission banner
+                    if !notificationService.isAuthorized {
+                        notificationPermissionBanner
+                    }
+                    
                     // Date Header - Fixed at top
                     DateHeader(
                         selectedDate: $selectedDate
                     )
                     .padding(.bottom, 16)
                     
-//                    Button("Clear All Tasks") {
-//                        viewModel.clearAllTasks()
-//                    }
-//                    .foregroundColor(.red)
+                    // Debug button (remove in production)
+                    #if DEBUG
+                    Button("Debug Notifications") {
+                        NotificationService.shared.getPendingNotifications()
+                    }
+                    .foregroundColor(.blue)
+                    .padding(.bottom, 8)
+                    #endif
                     
                     // Main Content Area
                     ScrollViewReader { proxy in
@@ -107,19 +121,82 @@ struct TimelineView: View {
         .sheet(isPresented: $showAddTaskForm) {
             TaskFormView()
         }
-        .sheet(item: $editingTask) { task in
-            TaskFormView(taskToEdit: task)
+        .sheet(isPresented: Binding<Bool>(
+            get: { editingTask != nil },
+            set: { if !$0 { editingTask = nil } }
+        )) {
+            if let task = editingTask {
+                TaskFormView(taskToEdit: task)
+            }
         }
-        .sheet(item: $selectedTaskForActions) { task in
-            TaskActionsModal(
-                task: task,
-                onStart: { startTask(task) },
-                onComplete: { completeTask(task) },
-                onEdit: { editTask(task) },
-                onDuplicate: { duplicateTask(task) },
-                onDelete: { deleteTask(task) }
-            )
+        .sheet(isPresented: Binding<Bool>(
+            get: { selectedTaskForActions != nil },
+            set: { if !$0 { selectedTaskForActions = nil } }
+        )) {
+            if let task = selectedTaskForActions {
+                TaskActionsModal(
+                    task: task,
+                    onStart: { startTask(task) },
+                    onComplete: { completeTask(task) },
+                    onEdit: { editTask(task) },
+                    onDuplicate: { duplicateTask(task) },
+                    onDelete: { deleteTask(task) }
+                )
+            }
         }
+        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
+            Button("Enable") {
+                _Concurrency.Task {
+                    await viewModel.requestNotificationPermission()
+                }
+            }
+            Button("Later", role: .cancel) { }
+        } message: {
+            Text("Enable notifications to get reminders for your tasks and stay focused!")
+        }
+    }
+    
+    // MARK: - Notification Permission Banner
+    
+    private var notificationPermissionBanner: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "bell.slash.fill")
+                .foregroundColor(.orange)
+                .font(.title2)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Notifications Disabled")
+                    .font(AppFonts.subheadline())
+                    .fontWeight(.semibold)
+                    .foregroundColor(AppColors.textPrimary)
+                
+                Text("Enable to get task reminders")
+                    .font(AppFonts.caption())
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            
+            Spacer()
+            
+            Button("Enable") {
+                showNotificationAlert = true
+            }
+            .font(AppFonts.caption())
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(AppColors.accent)
+            .cornerRadius(16)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color.orange.opacity(0.1))
+        .overlay(
+            Rectangle()
+                .frame(height: 1)
+                .foregroundColor(Color.orange.opacity(0.3)),
+            alignment: .bottom
+        )
     }
     
     // MARK: - Setup Methods
@@ -128,34 +205,41 @@ struct TimelineView: View {
         viewModel.setModelContext(modelContext)
         timerService.setModelContext(modelContext)
         viewModel.loadTodayTasks(for: selectedDate)
+        
+        // Show notification permission alert if not authorized
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            if !notificationService.isAuthorized {
+                showNotificationAlert = true
+            }
+        }
     }
     
     // MARK: - Task Actions
-    private func deleteTask(_ task: Task) {
+    private func deleteTask(_ task: FocusTask) {
         withAnimation(.easeInOut(duration: 0.3)) {
             viewModel.deleteTask(task)
         }
         selectedTaskForActions = nil
     }
     
-    private func duplicateTask(_ task: Task) {
+    private func duplicateTask(_ task: FocusTask) {
         viewModel.duplicateTask(task)
         selectedTaskForActions = nil
     }
     
-    private func completeTask(_ task: Task) {
+    private func completeTask(_ task: FocusTask) {
         withAnimation(.easeInOut(duration: 0.3)) {
             viewModel.completeTask(task)
         }
         selectedTaskForActions = nil
     }
     
-    private func editTask(_ task: Task) {
+    private func editTask(_ task: FocusTask) {
         selectedTaskForActions = nil
         editingTask = task
     }
     
-    private func startTask(_ task: Task) {
+    private func startTask(_ task: FocusTask) {
         timerService.startTask(task)
         selectedTaskForActions = nil
     }
@@ -193,7 +277,7 @@ struct FloatingActionButton: View {
                 .scaleEffect(isPressed ? 0.95 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: 50) { 
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: 50) {
         } onPressingChanged: { pressing in
             withAnimation(.easeInOut(duration: 0.1)) {
                 isPressed = pressing
@@ -202,62 +286,9 @@ struct FloatingActionButton: View {
     }
 }
 
-// MARK: - Updated DateHeader Component
-
-struct UpdatedDateHeader: View {
-    @Binding var selectedDate: Date
-    
-    private var currentWeek: [Date] {
-        let calendar = Calendar.current
-        let today = selectedDate
-        let weekday = calendar.component(.weekday, from: today)
-        
-        let startOfWeek = calendar.date(
-            byAdding: .day,
-            value: -((weekday - calendar.firstWeekday + 7) % 7),
-            to: today
-        ) ?? today
-        
-        return (0..<7).compactMap {
-            calendar.date(byAdding: .day, value: $0, to: startOfWeek)
-        }
-    }
-
-    var body: some View {
-        VStack(spacing: 16) {
-            // Month and Year
-            HStack {
-                Text(monthYearString(from: selectedDate))
-                    .font(AppFonts.title())
-                    .fontWeight(.bold)
-                    .foregroundColor(AppColors.textPrimary)
-                
-                Spacer()
-                
-                // Today button
-                Button("Today") {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        selectedDate = Date()
-                    }
-                }
-                .font(AppFonts.caption())
-                .foregroundColor(AppColors.accent)
-            }
-            .padding(.horizontal, 20)
-        }
-        .padding(.vertical, 8)
-        .background(AppColors.background)
-    }
-    
-    private func monthYearString(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: date)
-    }
-}
-
 #Preview {
     TimelineView()
         .environmentObject(ThemeManager())
-        .modelContainer(for: [Task.self])
+        .environmentObject(NotificationService.shared)
+        .modelContainer(for: [FocusTask.self])
 }

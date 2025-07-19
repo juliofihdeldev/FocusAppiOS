@@ -91,6 +91,11 @@ class TaskTimerService: ObservableObject {
         print("TaskTimerService: Completed task with \(totalTimeSpent)m total time")
         saveContext()
         
+        // Send completion notification
+        NotificationService.shared.sendTaskCompletionNotification(for: task, actualDuration: totalTimeSpent)
+        
+        // Schedule break reminder
+        NotificationService.shared.scheduleBreakReminder(after: task)
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.currentTask = nil
@@ -151,6 +156,12 @@ class TaskTimerService: ObservableObject {
         saveContext()
         
         print("TaskTimerService: Auto-completed task '\(task.title)' after \(task.durationMinutes) minutes")
+        
+        // Send completion notification
+        NotificationService.shared.sendTaskCompletionNotification(for: task, actualDuration: task.durationMinutes)
+
+        // Schedule break reminder
+        NotificationService.shared.scheduleBreakReminder(after: task)
         
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
