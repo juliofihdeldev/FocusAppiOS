@@ -6,11 +6,13 @@ struct TaskTimer: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     let task: Task
-    
+
     @State private var showCompletionAlert = false
     @State private var isAutoCompleted = false
+    @State private var isLocked = false
     
     var body: some View {
+
         NavigationView {
             VStack(spacing: 30) {
                 // Task Info Header
@@ -94,150 +96,169 @@ struct TaskTimer: View {
                     }
                 }
                 
-                // Control Buttons
-                VStack(spacing: 16) {
-                    if timerService.currentTask == nil || timerService.currentTask?.isCompleted == true {
-                        // Start/Restart button
-                        Button(action: {
-                            if timerService.currentTask?.isCompleted == true {
-                                // Reset and restart
-                                timerService.stopCurrentTask()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                // Lock Screen Toggle and Controls
+                Toggle("Lock Screen", isOn: $isLocked)
+                    .font(AppFonts.caption())
+                    .padding(.horizontal)
+                    .padding(.vertical, 6)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
+                    .onChange(of: isLocked) { _, _ in
+                        let generator = UIImpactFeedbackGenerator(style: .medium)
+                        generator.impactOccurred()
+                    }
+                if !isLocked {
+                    VStack(spacing: 16) {
+                        if timerService.currentTask == nil || timerService.currentTask?.isCompleted == true {
+                            // Start/Restart button
+                            Button(action: {
+                                if timerService.currentTask?.isCompleted == true {
+                                    // Reset and restart
+                                    timerService.stopCurrentTask()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        timerService.startTask(task)
+                                    }
+                                } else {
                                     timerService.startTask(task)
                                 }
-                            } else {
-                                timerService.startTask(task)
-                            }
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(systemName: timerService.currentTask?.isCompleted == true ? "arrow.clockwise" : "play.fill")
-                                    .font(.title2)
-                                Text(timerService.currentTask?.isCompleted == true ? "Restart" : "Start")
-                                    .font(AppFonts.headline())
-                            }
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(task.color)
-                            .cornerRadius(25)
-                        }
-                    } else if timerService.currentTask?.isActive ?? false {
-                        // Active task controls
-                        HStack(spacing: 16) {
-                            // Pause button
-                            Button(action: {
-                                timerService.pauseTask()
                             }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "pause.fill")
-                                    Text("Pause")
+                                HStack(spacing: 12) {
+                                    Image(systemName: timerService.currentTask?.isCompleted == true ? "arrow.clockwise" : "play.fill")
+                                        .font(.title2)
+                                    Text(timerService.currentTask?.isCompleted == true ? "Restart" : "Start")
+                                        .font(AppFonts.headline())
                                 }
-                                .font(AppFonts.subheadline())
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(Color.orange)
-                                .cornerRadius(20)
-                            }
-                            
-                            // Complete button
-                            Button(action: {
-                                timerService.completeTask()
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "checkmark.circle.fill")
-                                    Text("Complete")
-                                }
-                                .font(AppFonts.subheadline())
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(Color.green)
-                                .cornerRadius(20)
-                            }
-                        }
-                    } else if timerService.currentTask?.isPaused ?? false {
-                        // Paused task controls
-                        HStack(spacing: 16) {
-                            // Resume button
-                            Button(action: {
-                                timerService.resumeTask()
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "play.fill")
-                                    Text("Resume")
-                                }
-                                .font(AppFonts.subheadline())
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
+                                .padding(.vertical, 16)
                                 .background(task.color)
-                                .cornerRadius(20)
+                                .cornerRadius(25)
+                            }
+                        } else if timerService.currentTask?.isActive ?? false {
+                            // Active task controls
+                            HStack(spacing: 16) {
+                                // Pause button
+                                Button(action: {
+                                    timerService.pauseTask()
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "pause.fill")
+                                        Text("Pause")
+                                    }
+                                    .font(AppFonts.subheadline())
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(Color.orange)
+                                    .cornerRadius(20)
+                                }
+                                
+                                // Complete button
+                                Button(action: {
+                                    timerService.completeTask()
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                        Text("Complete")
+                                    }
+                                    .font(AppFonts.subheadline())
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(Color.green)
+                                    .cornerRadius(20)
+                                }
+                            }
+                        } else if timerService.currentTask?.isPaused ?? false {
+                            // Paused task controls
+                            HStack(spacing: 16) {
+                                // Resume button
+                                Button(action: {
+                                    timerService.resumeTask()
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "play.fill")
+                                        Text("Resume")
+                                    }
+                                    .font(AppFonts.subheadline())
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(task.color)
+                                    .cornerRadius(20)
+                                }
+                                
+                                // Stop button
+                                Button(action: {
+                                    timerService.stopCurrentTask()
+                                }) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "stop.fill")
+                                        Text("Stop")
+                                    }
+                                    .font(AppFonts.subheadline())
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(Color.red)
+                                    .cornerRadius(20)
+                                }
+                            }
+                        }
+                        
+                    }
+                } else {
+                    Text("Controls are locked until the timer ends.")
+                        .font(AppFonts.subheadline())
+                        .foregroundColor(.gray)
+                        .padding()
+                }
+                
+                
+                // Statistics Card
+                if let currentTask = timerService.currentTask {
+                    VStack(spacing: 12) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Time Spent")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(.gray)
+                                Text("\(timerService.currentElapsedMinutes)m")
+                                    .font(AppFonts.subheadline())
+                                    .foregroundColor(AppColors.textPrimary)
                             }
                             
-                            // Stop button
-                            Button(action: {
-                                timerService.stopCurrentTask()
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "stop.fill")
-                                    Text("Stop")
-                                }
-                                .font(AppFonts.subheadline())
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(Color.red)
-                                .cornerRadius(20)
+                            Spacer()
+                            
+                            VStack(alignment: .center, spacing: 4) {
+                                Text("Progress")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(.gray)
+                                Text("\(Int(timerService.currentProgressPercentage * 100))%")
+                                    .font(AppFonts.subheadline())
+                                    .foregroundColor(AppColors.textPrimary)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack(alignment: .trailing, spacing: 4) {
+                                Text("Status")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(.gray)
+                                Text(statusText(for: currentTask.status))
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(statusColor(for: currentTask.status))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 2)
+                                    .background(statusColor(for: currentTask.status).opacity(0.1))
+                                    .cornerRadius(6)
                             }
                         }
                     }
-                    
-                    // Statistics Card
-                    if let currentTask = timerService.currentTask {
-                        VStack(spacing: 12) {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Time Spent")
-                                        .font(AppFonts.caption())
-                                        .foregroundColor(.gray)
-                                    Text("\(timerService.currentElapsedMinutes)m")
-                                        .font(AppFonts.subheadline())
-                                        .foregroundColor(AppColors.textPrimary)
-                                }
-                                
-                                Spacer()
-                                
-                                VStack(alignment: .center, spacing: 4) {
-                                    Text("Progress")
-                                        .font(AppFonts.caption())
-                                        .foregroundColor(.gray)
-                                    Text("\(Int(timerService.currentProgressPercentage * 100))%")
-                                        .font(AppFonts.subheadline())
-                                        .foregroundColor(AppColors.textPrimary)
-                                }
-                                
-                                Spacer()
-                                
-                                VStack(alignment: .trailing, spacing: 4) {
-                                    Text("Status")
-                                        .font(AppFonts.caption())
-                                        .foregroundColor(.gray)
-                                    Text(statusText(for: currentTask.status))
-                                        .font(AppFonts.caption())
-                                        .foregroundColor(statusColor(for: currentTask.status))
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 2)
-                                        .background(statusColor(for: currentTask.status).opacity(0.1))
-                                        .cornerRadius(6)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
-                        .background(AppColors.card)
-                        .cornerRadius(12)
-                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(AppColors.card)
+                    .cornerRadius(12)
                 }
                 
                 Spacer()
@@ -248,25 +269,27 @@ struct TaskTimer: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        if timerService.isTimerRunning {
-                            timerService.pauseTask()
+                if !isLocked {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Close") {
+                            if timerService.isTimerRunning {
+                                timerService.pauseTask()
+                            }
+                            dismiss()
                         }
-                        dismiss()
+                        .foregroundColor(AppColors.accent)
                     }
-                    .foregroundColor(AppColors.accent)
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        if timerService.currentTask != nil {
-                            timerService.stopCurrentTask()
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            if timerService.currentTask != nil {
+                                timerService.stopCurrentTask()
+                            }
+                            dismiss()
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.gray)
                         }
-                        dismiss()
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
                     }
                 }
             }
@@ -276,6 +299,7 @@ struct TaskTimer: View {
             // Auto-start the timer when view appears
             if timerService.currentTask == nil {
                 timerService.startTask(task)
+                isLocked = true
             }
         }
         .onChange(of: timerService.currentTask?.isCompleted) { _, isCompleted in
@@ -283,6 +307,11 @@ struct TaskTimer: View {
                 // Task was auto-completed by timer
                 isAutoCompleted = true
                 showCompletionAlert = true
+            }
+        }
+        .onChange(of: timerService.currentRemainingMinutes) { _, remaining in
+            if remaining <= 0 {
+                isLocked = false
             }
         }
         .alert("Task Completed!", isPresented: $showCompletionAlert) {
@@ -344,3 +373,4 @@ struct TaskTimer: View {
         taskType: .work
     ))
 }
+

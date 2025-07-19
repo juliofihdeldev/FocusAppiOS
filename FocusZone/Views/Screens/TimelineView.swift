@@ -24,6 +24,11 @@ struct TimelineView: View {
                     )
                     .padding(.bottom, 16)
                     
+//                    Button("Clear All Tasks") {
+//                        viewModel.clearAllTasks()
+//                    }
+//                    .foregroundColor(.red)
+                    
                     // Main Content Area
                     ScrollViewReader { proxy in
                         ScrollView(.vertical, showsIndicators: false) {

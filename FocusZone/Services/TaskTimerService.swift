@@ -14,12 +14,29 @@ class TaskTimerService: ObservableObject {
         self.modelContext = context
     }
     
-    // Start a task
-    @MainActor func startTask(_ task: Task) {
+//    // Start a task
+//    @MainActor func startTask(_ task: Task) {
+//        stopCurrentTask()
+//        
+//        task.status = .inProgress
+//        task.actualStartTime = Date()
+//        saveContext()
+//        
+//        currentTask = task
+//        startTime = Date()
+//        elapsedSeconds = task.timeSpentMinutes * 60
+//        
+//        startTimer()
+//    }
+    
+    @MainActor func startTask(_ task: Task, reset: Bool = false) {
         stopCurrentTask()
         
         task.status = .inProgress
         task.actualStartTime = Date()
+        if reset {
+            task.timeSpentMinutes = 0
+        }
         saveContext()
         
         currentTask = task

@@ -26,7 +26,7 @@ struct TaskAlertsSection: View {
                             .foregroundColor(.pink)
                         Text(alert)
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.gray)
                         Spacer()
                         Button(action: {
                             withAnimation(.easeInOut) {
@@ -52,7 +52,7 @@ struct TaskAlertsSection: View {
                     Text("At end of task")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
-                        .strikethrough()
+                        
                     Spacer()
                     Text("PRO")
                         .font(.system(size: 12, weight: .bold))
@@ -77,7 +77,6 @@ struct TaskAlertsSection: View {
                     Text("5m before start")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
-                        .strikethrough()
                     Spacer()
                     Text("PRO")
                         .font(.system(size: 12, weight: .bold))
