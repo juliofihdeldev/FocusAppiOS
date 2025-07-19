@@ -18,8 +18,19 @@ class TaskTimerService: ObservableObject {
     @MainActor func startTask(_ task: Task, reset: Bool = false) {
         stopCurrentTask()
         
-        // Calculate starting elapsed time based on time already spent
-        let timeAlreadySpent = reset ? 0 : remainingMinutesFunc(task: task);
+        // Calculate starting elapsed time based on time already spent or scheduled time
+        let timeAlreadySpent: Int
+        if reset {
+            timeAlreadySpent = 0
+        } else if task.timeSpentMinutes > 0 {
+            // Use previously saved time spent
+            timeAlreadySpent = task.timeSpentMinutes
+        } else {
+            // Calculate based on schedule - elapsed = total duration - remaining
+            let remaining = remainingMinutesFunc(task: task)
+            timeAlreadySpent = max(0, task.durationMinutes - remaining)
+        }
+        
         let startingElapsedSeconds = timeAlreadySpent * 60
         
         // Update task status
@@ -32,9 +43,7 @@ class TaskTimerService: ObservableObject {
         
         // Set up timer service state
         currentTask = task
-        
         startTime = Date().addingTimeInterval(-TimeInterval(timeAlreadySpent * 60))
-        
         elapsedSeconds = startingElapsedSeconds
         
         print("TaskTimerService: Starting task '\(task.title)' with \(timeAlreadySpent)m already spent")
@@ -68,11 +77,21 @@ class TaskTimerService: ObservableObject {
         task.status = .inProgress
         task.updatedAt = Date()
         saveContext()
-         
-        let timeAlreadySpent = remainingMinutesFunc(task: task);
-        startTime = Date().addingTimeInterval(-TimeInterval(timeAlreadySpent * 60))
         
-        elapsedSeconds = task.timeSpentMinutes * 60
+        // Reset timer state to current spent time, considering schedule
+        let timeAlreadySpent: Int
+        if task.timeSpentMinutes > 0 {
+            // Use previously saved time spent
+            timeAlreadySpent = task.timeSpentMinutes
+        } else {
+            // Calculate based on schedule - elapsed = total duration - remaining
+            let remaining = remainingMinutesFunc(task: task)
+            timeAlreadySpent = max(0, task.durationMinutes - remaining)
+        }
+        
+        startTime = Date().addingTimeInterval(-TimeInterval(timeAlreadySpent * 60))
+        elapsedSeconds = timeAlreadySpent * 60
+        
         startTimer()
     }
     
@@ -96,6 +115,7 @@ class TaskTimerService: ObservableObject {
         
         // Schedule break reminder
         NotificationService.shared.scheduleBreakReminder(after: task)
+        
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.currentTask = nil
@@ -159,7 +179,7 @@ class TaskTimerService: ObservableObject {
         
         // Send completion notification
         NotificationService.shared.sendTaskCompletionNotification(for: task, actualDuration: task.durationMinutes)
-
+        
         // Schedule break reminder
         NotificationService.shared.scheduleBreakReminder(after: task)
         
@@ -319,8 +339,9 @@ class TaskTimerService: ObservableObject {
     }
     
     // Calculate remaining minutes based on task schedule vs current time
-    func remainingMinutesFunc(task: Task) -> Int {
-    
+    func remainingMinutesFunc(task: Task?) -> Int {
+        guard let task = task else { return 0 }
+        
         let now = Date()
         let taskStartTime = task.startTime
         let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
@@ -336,9 +357,9 @@ class TaskTimerService: ObservableObject {
         if now >= taskStartTime && now <= taskEndTime {
             let remaining = taskEndTime.timeIntervalSince(now)
             let remainingMinutes = Int(remaining / 60)
-            task.timeSpentMinutes  = remainingMinutes
             return remainingMinutes
         }
+        
         // Task is past its scheduled end time
         return 0
     }
