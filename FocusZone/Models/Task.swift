@@ -134,5 +134,6 @@ class Task {
     var estimatedEndTime: Date {
         startTime.addingTimeInterval(TimeInterval(durationMinutes * 60))
     }
+
 }
 
