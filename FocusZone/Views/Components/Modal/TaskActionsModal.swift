@@ -12,7 +12,6 @@ struct TaskActionsModal: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
             // Task Info Header
             VStack(spacing: 12) {
                 HStack {
