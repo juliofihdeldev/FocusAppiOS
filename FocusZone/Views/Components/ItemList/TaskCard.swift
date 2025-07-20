@@ -11,6 +11,7 @@ struct TaskCard: View {
     
     @State private var currentTime = Date()
     private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+    @StateObject private var timerService = TaskTimerService()
 
     var body: some View {
         // Calculate height based on duration (1 minute = 2 points, minimum 60pt)
@@ -49,8 +50,8 @@ struct TaskCard: View {
                                 .cornerRadius(30, corners: [.topLeft, .topRight])
                                 .cornerRadius(4, corners: [.bottomLeft, .bottomRight])
                                 .frame(width:
-                                        baseHeight < 80 && progressInfo.percentage < 0.60 ? 10:
-                                        progressInfo.percentage > 0.10 ?
+                                        baseHeight < 70 && progressInfo.percentage < 0.60 ? 10:
+                                        progressInfo.percentage > 0.20 ?
                                         60 : 10
                                        , height: progressHeight)
                                 .animation(.easeInOut(duration: 0.5), value: progressHeight)
@@ -143,6 +144,7 @@ struct TaskCard: View {
                     Text(getProgressText())
                         .font(AppFonts.caption())
                         .foregroundColor(progressInfo.color)
+                 
                 }
                 
                 Spacer()

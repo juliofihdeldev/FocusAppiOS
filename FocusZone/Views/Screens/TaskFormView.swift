@@ -29,11 +29,11 @@ struct TaskFormView: View {
     @State private var showingPreviewTasks: Bool = false
     
     @Environment(\.modelContext) private var modelContext
+    private let notificationService = NotificationService.shared
     
     init(taskToEdit: Task? = nil) {
         self.taskToEdit = taskToEdit
     }
-
 
     var body: some View {
         NavigationView {
@@ -80,6 +80,9 @@ struct TaskFormView: View {
                             .buttonStyle(PlainButtonStyle())
                             .disabled(taskTitle.isEmpty)
                             
+                            // Notification Info Section
+                            NotificationInfoSection()
+                            
                             TaskAlertsSection(alerts: $alerts)
                             
                             TaskDetailsSection(
@@ -99,6 +102,10 @@ struct TaskFormView: View {
             loadTaskData()
         }
     }
+    
+    // MARK: - Notification Info Section
+    
+    
     
     // MARK: - Methods
     
@@ -133,6 +140,10 @@ struct TaskFormView: View {
         
         if let taskToEdit = taskToEdit {
             // Update existing task
+            
+            // Cancel old notifications first
+            notificationService.cancelNotifications(for: taskToEdit.id.uuidString)
+            
             taskToEdit.title = taskTitle
             taskToEdit.icon = selectedIcon
             taskToEdit.startTime = finalStartTime
@@ -143,10 +154,14 @@ struct TaskFormView: View {
             taskToEdit.updatedAt = Date()
             taskToEdit.isCompleted = false
             
-            
             do {
                 try modelContext.save()
                 print("TaskFormView: Task updated successfully")
+                
+                // Schedule new notifications for updated task
+                notificationService.scheduleTaskReminders(for: taskToEdit)
+                print("TaskFormView: Rescheduled notifications for updated task")
+                
             } catch {
                 print("TaskFormView: Error updating task: \(error)")
             }
@@ -167,6 +182,25 @@ struct TaskFormView: View {
             do {
                 try modelContext.save()
                 print("TaskFormView: Task created successfully")
+                
+                // Schedule notifications for new task
+                notificationService.scheduleTaskReminders(for: newTask)
+                print("TaskFormView: Scheduled notifications for new task")
+                
+                // Show confirmation if notifications are enabled
+                if notificationService.isAuthorized {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "h:mm a 'on' MMM d"
+                    let timeString = formatter.string(from: finalStartTime)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        notificationService.sendImmediateNotification(
+                            title: "✅ Task Created",
+                            body: "'\(taskTitle)' scheduled for \(timeString)"
+                        )
+                    }
+                }
+                
             } catch {
                 print("TaskFormView: Error creating task: \(error)")
             }
@@ -178,4 +212,5 @@ struct TaskFormView: View {
 
 #Preview {
     TaskFormView()
+        .environmentObject(NotificationService.shared)
 }

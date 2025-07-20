@@ -186,14 +186,14 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .foregroundColor(AppColors.accent)
+//                Image(systemName: icon)
+//                    .font(.system(size: 18))
+//                    .foregroundColor(AppColors.accent)
                 
-                Text(title)
-                    .font(AppFonts.headline())
-                    .foregroundColor(AppColors.textPrimary)
-                    .fontWeight(.semibold)
+//                Text(title)
+//                    .font(AppFonts.headline())
+//                    .foregroundColor(AppColors.textPrimary)
+//                    .fontWeight(.semibold)
             }
             .padding(.horizontal, 4)
             
