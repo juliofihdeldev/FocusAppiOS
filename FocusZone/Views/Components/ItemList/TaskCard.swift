@@ -144,10 +144,7 @@ struct TaskCard: View {
                     Text(getProgressText())
                         .font(AppFonts.caption())
                         .foregroundColor(progressInfo.color)
-                    
-                    Text("\(timerService._minutesRemain(for: task!))")
-                        .font(AppFonts.caption())
-                        .foregroundColor(progressInfo.color)
+                 
                 }
                 
                 Spacer()
@@ -293,37 +290,6 @@ struct TaskCard: View {
             }
         }
     }
-    
-    
-//    private func _minutesRemain() -> Int {
-//        guard let task = task else { return 0 }
-//        
-//        let now = currentTime
-//        let taskStartTime = task.startTime
-//        let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
-//        
-//        
-//        // If task is currently active
-//        if now >= taskStartTime && now <= taskEndTime {
-//            let remaining = taskEndTime.timeIntervalSince(now)
-//            let remainingMinutes = Int(remaining / 60)
-//            
-//            if remainingMinutes > 60 {
-//                let hours = remainingMinutes / 60
-//                let mins = remainingMinutes % 60
-//                return remainingMinutes
-//            } else if remainingMinutes > 0 {
-//                return remainingMinutes
-//            } else {
-//                // Less than a minute remaining
-//                let remainingSeconds = Int(remaining)
-//                return remainingSeconds
-//            }
-//        
-//        }
-//        return 0
-//    }
-//        
     
     private func overdueMinutesFun() -> Int {
         guard let task = task else { return 0 }
