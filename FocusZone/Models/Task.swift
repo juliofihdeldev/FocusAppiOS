@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-enum TaskStatus: String, Codable, CaseIterable {
+enum TaskStatus: String, Codable, CaseIterable  {
     case scheduled = "scheduled"
     case inProgress = "inProgress"
     case paused = "paused"
