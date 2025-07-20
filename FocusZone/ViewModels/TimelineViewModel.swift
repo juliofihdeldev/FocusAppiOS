@@ -202,8 +202,6 @@ class TimelineViewModel: ObservableObject {
     // MARK: - Task Management Actions
     
     func deleteTask(_ task: Task) {
-        guard let modelContext = modelContext else { return }
-        
         // Cancel notifications for this task
         notificationService.cancelNotifications(for: task.id.uuidString)
         
@@ -429,49 +427,7 @@ class TimelineViewModel: ObservableObject {
         loadTodayTasks(for: date)
     }
     
-    func getTaskDateCounts() -> [Date: Int] {
-        guard let modelContext = modelContext else { return [:] }
-        
-        let descriptor = FetchDescriptor<Task>(
-            sortBy: [SortDescriptor(\.startTime)]
-        )
-        
-        do {
-            let allTasks = try modelContext.fetch(descriptor)
-            let calendar = Calendar.current
-            var taskCounts: [Date: Int] = [:]
-            
-            // Count actual tasks
-            for task in allTasks.filter({ !$0.isGeneratedFromRepeat }) {
-                let startOfDay = calendar.startOfDay(for: task.startTime)
-                taskCounts[startOfDay, default: 0] += 1
-            }
-            
-            // Add counts for repeating tasks (for next 30 days as example)
-            let today = Date()
-            let endDate = calendar.date(byAdding: .day, value: 30, to: today) ?? today
-            let repeatingTasks = allTasks.filter { $0.repeatRuleRawValue != "none" && !$0.isGeneratedFromRepeat }
-            
-            var currentDate = today
-            while currentDate <= endDate {
-                for task in repeatingTasks {
-                    if shouldIncludeRepeatingTask(task: task, for: currentDate) {
-                        let startOfDay = calendar.startOfDay(for: currentDate)
-                        taskCounts[startOfDay, default: 0] += 1
-                    }
-                }
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
-            }
-            
-            return taskCounts
-        } catch {
-            print("TimelineViewModel: Error getting task counts: \(error)")
-            return [:]
-        }
-    }
-    
     // MARK: - Notification Helpers
-        
     private func scheduleDailyPlanningReminder() {
         // Schedule daily planning reminder for 8:00 AM
         let calendar = Calendar.current
@@ -536,60 +492,4 @@ class TimelineViewModel: ObservableObject {
         return formatter.string(from: date)
     }
     
-    // MARK: - Sample Data (for testing)
-    
-    private func createSampleTasks() {
-        guard let modelContext = modelContext else { return }
-        
-        let now = Date()
-        let calendar = Calendar.current
-        
-        let sampleTasks = [
-            Task(
-                title: "Morning Focus Session",
-                icon: "💻",
-                startTime: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 60,
-                color: .blue,
-                isCompleted: false,
-                taskType: .work,
-                repeatRule: .daily
-            ),
-            Task(
-                title: "Team Meeting",
-                icon: "👥",
-                startTime: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 45,
-                color: .green,
-                taskType: .work,
-                repeatRule: .weekly
-            ),
-            Task(
-                title: "Gym Workout",
-                icon: "🏋️",
-                startTime: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 90,
-                color: .red,
-                taskType: .exercise,
-                repeatRule: .daily
-            ),
-            Task(
-                title: "Weekly Review",
-                icon: "📊",
-                startTime: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 30,
-                color: .purple,
-                taskType: .work,
-                repeatRule: .weekly
-            )
-        ]
-        
-        print("TimelineViewModel: Creating \(sampleTasks.count) sample tasks")
-        for task in sampleTasks {
-            print("  - \(task.title) at \(task.startTime) (repeats: \(task.repeatRule))")
-            modelContext.insert(task)
-        }
-        
-        saveContext()
-    }
 }
