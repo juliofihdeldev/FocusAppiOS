@@ -431,7 +431,7 @@ struct FocusZoneWidgetMedium: View {
             headerSection
             
             // Progress bar with percentage
-            progressSection
+//            progressSection
             
             // Current task section
             if let currentTask = entry.currentTask {
@@ -445,7 +445,7 @@ struct FocusZoneWidgetMedium: View {
             
             Spacer()
         }
-        .padding(12)
+        .padding(4)
         .widgetBackground(backgroundGradient)
     }
     
