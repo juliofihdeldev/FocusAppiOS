@@ -63,7 +63,7 @@ struct TimelineView: View {
                                             .foregroundColor(AppColors.textSecondary)
                                             .multilineTextAlignment(.center)
                                     }
-                                    .padding(.top, 100)
+                                    .padding(.top, 10)
                                 } else {
                                     // Task Cards
                                     ForEach(viewModel.tasks) { task in
@@ -140,7 +140,9 @@ struct TimelineView: View {
                     onComplete: { completeTask(task) },
                     onEdit: { editTask(task) },
                     onDuplicate: { duplicateTask(task) },
-                    onDelete: { deleteTask(task) }
+                    onDelete: { deletionType in
+                                   handleTaskDeletion(task, type: deletionType)
+                               }
                 )
             }
         }
@@ -197,6 +199,21 @@ struct TimelineView: View {
                 .foregroundColor(Color.orange.opacity(0.3)),
             alignment: .bottom
         )
+    }
+    
+    
+    private func handleTaskDeletion(_ task: FocusTask, type: TaskActionsModal.DeletionType) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            switch type {
+            case .instance:
+                viewModel.deleteTaskInstance(task)
+            case .allInstances:
+                viewModel.deleteAllTaskInstances(task)
+            case .futureInstances:
+                viewModel.deleteFutureTaskInstances(task)
+            }
+        }
+        selectedTaskForActions = nil
     }
     
     // MARK: - Setup Methods

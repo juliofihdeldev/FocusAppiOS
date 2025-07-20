@@ -24,6 +24,10 @@ class TimelineViewModel: ObservableObject {
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
 
         let descriptor = FetchDescriptor<Task>(
+            predicate: #Predicate<Task> { task in
+                // Exclude cancelled tasks (deleted instances)
+                task.statusRawValue != "cancelled"
+            },
             sortBy: [SortDescriptor(\.startTime)]
         )
 
@@ -33,13 +37,17 @@ class TimelineViewModel: ObservableObject {
 
             // First, get all actual tasks for this specific date
             let actualTasks = allTasks.filter { task in
-                task.startTime >= startOfDay && task.startTime < endOfDay
+                task.startTime >= startOfDay &&
+                task.startTime < endOfDay &&
+                !task.isGeneratedFromRepeat
             }
             todayTasks.append(contentsOf: actualTasks)
 
             // Then, generate virtual tasks from repeating tasks
             let repeatingTasks = allTasks.filter { task in
-                task.repeatRule != .none && !task.isGeneratedFromRepeat
+                task.repeatRuleRawValue != "none" &&
+                task.repeatRuleRawValue != "once" &&
+                !task.isGeneratedFromRepeat
             }
 
             for repeatingTask in repeatingTasks {
@@ -53,8 +61,9 @@ class TimelineViewModel: ObservableObject {
                     }
 
                     if !taskExists {
-                        let virtualTask = createVirtualTask(from: repeatingTask, for: date)
-                        todayTasks.append(virtualTask)
+                        if let virtualTask = createVirtualTask(from: repeatingTask, for: date) {
+                            todayTasks.append(virtualTask)
+                        }
                     }
                 }
             }
@@ -83,28 +92,32 @@ class TimelineViewModel: ObservableObject {
         // Don't include the original date (that's handled by actual task)
         guard !calendar.isDate(targetDate, inSameDayAs: taskStartDate) else { return false }
         
-        switch task.repeatRule {
-        case .none:
+        switch task.repeatRuleRawValue {
+        case "none":
             return false
             
-        case .daily:
+        case "daily":
             return true // Every day after the start date
             
-        case .weekly:
+        case "weekly":
             let taskWeekday = calendar.component(.weekday, from: task.startTime)
             let dateWeekday = calendar.component(.weekday, from: date)
             return dateWeekday == taskWeekday
             
-        case .monthly:
+        case "monthly":
             let taskDay = calendar.component(.day, from: task.startTime)
             let dateDay = calendar.component(.day, from: date)
             return dateDay == taskDay
-        case .once:
+            
+        case "once":
+            return false
+            
+        default:
             return false
         }
     }
     
-    private func createVirtualTask(from originalTask: Task, for date: Date) -> Task {
+    private func createVirtualTask(from originalTask: Task, for date: Date) -> Task? {
         let calendar = Calendar.current
         let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: originalTask.startTime)
         
@@ -115,7 +128,13 @@ class TimelineViewModel: ObservableObject {
             of: date
         ) ?? date
         
-        return Task(
+        // Check if there's already a deleted instance for this date/time
+        if hasDeletedInstance(for: originalTask, on: date) {
+            // Don't create virtual task if user previously deleted it
+            return nil
+        }
+        
+        let virtualTask = Task(
             id: UUID(), // New unique ID for virtual task
             title: originalTask.title,
             icon: originalTask.icon,
@@ -127,8 +146,37 @@ class TimelineViewModel: ObservableObject {
             status: .scheduled,
             repeatRule: .none, // Virtual tasks don't repeat themselves
             isGeneratedFromRepeat: true,
-            parentTaskId: originalTask.id // Optional: track the original task
+            parentTaskId: originalTask.id, // Reference to parent
+            parentTask: originalTask // SwiftData relationship
         )
+        
+        return virtualTask
+    }
+    
+    private func hasDeletedInstance(for originalTask: Task, on date: Date) -> Bool {
+        guard let modelContext = modelContext else { return false }
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        let parentId = originalTask.id
+        
+        let descriptor = FetchDescriptor<Task>(
+            predicate: #Predicate<Task> { task in
+                task.parentTaskId == parentId &&
+                task.statusRawValue == "cancelled" &&
+                task.startTime >= startOfDay &&
+                task.startTime < endOfDay
+            }
+        )
+        
+        do {
+            let deletedInstances = try modelContext.fetch(descriptor)
+            return !deletedInstances.isEmpty
+        } catch {
+            print("Error checking for deleted instances: \(error)")
+            return false
+        }
     }
     
     func timeRange(for task: Task) -> String {
@@ -154,34 +202,145 @@ class TimelineViewModel: ObservableObject {
     // MARK: - Task Management Actions
     
     func deleteTask(_ task: Task) {
-        guard let modelContext = modelContext else { return }
+        // Cancel notifications for this task
         notificationService.cancelNotifications(for: task.id.uuidString)
-
-        // If it's a virtual task, just remove from local array
+        
+        // Handle different deletion scenarios
         if task.isGeneratedFromRepeat {
-            if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-                tasks.remove(at: index)
-            }
-            return
+            // Virtual task - just remove from local array and create a "deleted instance" record
+            handleVirtualTaskDeletion(task)
+        } else if task.isParentTask {
+            // Parent task with children - ask user what to do
+            handleParentTaskDeletion(task)
+        } else if task.isChildTask {
+            // Child task - delete only this instance
+            handleChildTaskDeletion(task)
+        } else {
+            // Regular task - simple deletion
+            handleRegularTaskDeletion(task)
         }
         
-        // For real tasks, delete from persistent storage
-        modelContext.delete(task)
         saveContext()
         refreshTasks()
+    }
+
+    private func handleVirtualTaskDeletion(_ task: Task) {
+        guard let modelContext = modelContext else { return }
+        
+        // Remove from local array
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks.remove(at: index)
+        }
+        
+        // Create a "deleted instance" record to prevent this virtual task from appearing again
+        // This approach is better than modifying the parent task
+        let deletedInstance = Task(
+            id: task.id,
+            title: task.title,
+            icon: task.icon,
+            startTime: task.startTime,
+            durationMinutes: task.durationMinutes,
+            color: task.color,
+            isCompleted: false,
+            taskType: task.taskType,
+            status: .cancelled, // Mark as cancelled to indicate deletion
+            repeatRule: .none,
+            isGeneratedFromRepeat: true,
+            parentTaskId: task.parentTaskId
+        )
+        
+        modelContext.insert(deletedInstance)
+        print("TimelineViewModel: Created deleted instance record for virtual task")
+    }
+
+    private func handleParentTaskDeletion(_ task: Task) {
+        guard let modelContext = modelContext else { return }
+        
+        // For now, we'll delete the parent and all children
+        // In a more advanced implementation, you might want to show an alert asking the user
+        
+        // Delete all children first
+        for child in task.children {
+            notificationService.cancelNotifications(for: child.id.uuidString)
+            modelContext.delete(child)
+        }
+        
+        // Delete the parent task
+        modelContext.delete(task)
+        print("TimelineViewModel: Deleted parent task and \(task.children.count) children")
+    }
+
+    private func handleChildTaskDeletion(_ task: Task) {
+        guard let modelContext = modelContext else { return }
+        
+        // Remove from parent's children array (SwiftData handles this automatically with relationships)
+        modelContext.delete(task)
+        print("TimelineViewModel: Deleted child task instance")
+    }
+
+    private func handleRegularTaskDeletion(_ task: Task) {
+        guard let modelContext = modelContext else { return }
+        
+        // Simple deletion for regular tasks
+        modelContext.delete(task)
+        print("TimelineViewModel: Deleted regular task")
+    }
+
+    // MARK: - Advanced Deletion Options
+
+    func deleteTaskInstance(_ task: Task) {
+        // Delete only this specific instance (for repeating tasks)
+        if task.isGeneratedFromRepeat {
+            handleVirtualTaskDeletion(task)
+        } else {
+            handleChildTaskDeletion(task)
+        }
+        saveContext()
+        refreshTasks()
+    }
+
+    func deleteAllTaskInstances(_ task: Task) {
+        // Delete all instances of a repeating task
+        let rootTask = task.rootParent
+        handleParentTaskDeletion(rootTask)
+        saveContext()
+        refreshTasks()
+    }
+
+    func deleteFutureTaskInstances(_ task: Task, fromDate: Date = Date()) {
+        guard let modelContext = modelContext else { return }
+        
+        let rootTask = task.rootParent
+        
+        // Delete all children that start after the specified date
+        let futureChildren = rootTask.children.filter { $0.startTime >= fromDate }
+        for child in futureChildren {
+            notificationService.cancelNotifications(for: child.id.uuidString)
+            modelContext.delete(child)
+        }
+        
+        // Also prevent future virtual tasks by modifying the repeat rule
+        // (You might want to add an "endDate" property to Task for this)
+        
+        saveContext()
+        refreshTasks()
+        print("TimelineViewModel: Deleted \(futureChildren.count) future instances")
     }
     
     func duplicateTask(_ task: Task) {
         guard let modelContext = modelContext else { return }
         
+        // Get the root task to duplicate (in case we're duplicating a child)
+        let taskToDuplicate = task.isChildTask ? task.rootParent : task
+        
         let duplicatedTask = Task(
-            title: "\(task.title) (Copy)",
-            icon: task.icon,
-            startTime: task.startTime.addingTimeInterval(3600), // +1 hour
-            durationMinutes: task.durationMinutes,
-            color: task.color,
-            taskType: task.taskType,
-            repeatRule: task.repeatRule,
+            title: "\(taskToDuplicate.title) (Copy)",
+            icon: taskToDuplicate.icon,
+            startTime: taskToDuplicate.startTime.addingTimeInterval(3600), // +1 hour
+            durationMinutes: taskToDuplicate.durationMinutes,
+            color: taskToDuplicate.color,
+            taskType: taskToDuplicate.taskType,
+            repeatRule: taskToDuplicate.repeatRule,
             isGeneratedFromRepeat: false // Duplicated tasks are real tasks
         )
         
@@ -210,10 +369,18 @@ class TimelineViewModel: ObservableObject {
                 taskType: task.taskType,
                 status: .completed,
                 repeatRule: .none, // Completed instances don't repeat
-                isGeneratedFromRepeat: false // Now it's a real task
+                isGeneratedFromRepeat: false, // Now it's a real task
+                parentTaskId: task.parentTaskId,
+                parentTask: task.parentTask
             )
             
             modelContext.insert(realTask)
+            
+            // Add to parent's children if parent exists
+            if let parentTask = task.parentTask {
+                parentTask.children.append(realTask)
+            }
+            
             saveContext()
             notificationService.sendTaskCompletionNotification(for: realTask, actualDuration: realTask.durationMinutes)
 
@@ -245,8 +412,8 @@ class TimelineViewModel: ObservableObject {
         task.updatedAt = Date()
         saveContext()
         // Reschedule notifications for the updated task
-                notificationService.cancelNotifications(for: task.id.uuidString)
-                notificationService.scheduleTaskReminders(for: task)
+        notificationService.cancelNotifications(for: task.id.uuidString)
+        notificationService.scheduleTaskReminders(for: task)
         refreshTasks()
     }
     
@@ -260,73 +427,29 @@ class TimelineViewModel: ObservableObject {
         loadTodayTasks(for: date)
     }
     
-    func getTaskDateCounts() -> [Date: Int] {
-        guard let modelContext = modelContext else { return [:] }
+    // MARK: - Notification Helpers
+    private func scheduleDailyPlanningReminder() {
+        // Schedule daily planning reminder for 8:00 AM
+        let calendar = Calendar.current
+        guard let planningTime = calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) else { return }
         
-        let descriptor = FetchDescriptor<Task>(
-            sortBy: [SortDescriptor(\.startTime)]
-        )
-        
-        do {
-            let allTasks = try modelContext.fetch(descriptor)
-            let calendar = Calendar.current
-            var taskCounts: [Date: Int] = [:]
-            
-            // Count actual tasks
-            for task in allTasks.filter({ !$0.isGeneratedFromRepeat }) {
-                let startOfDay = calendar.startOfDay(for: task.startTime)
-                taskCounts[startOfDay, default: 0] += 1
-            }
-            
-            // Add counts for repeating tasks (for next 30 days as example)
-            let today = Date()
-            let endDate = calendar.date(byAdding: .day, value: 30, to: today) ?? today
-            let repeatingTasks = allTasks.filter { $0.repeatRule != .none && !$0.isGeneratedFromRepeat }
-            
-            var currentDate = today
-            while currentDate <= endDate {
-                for task in repeatingTasks {
-                    if shouldIncludeRepeatingTask(task: task, for: currentDate) {
-                        let startOfDay = calendar.startOfDay(for: currentDate)
-                        taskCounts[startOfDay, default: 0] += 1
-                    }
-                }
-                currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
-            }
-            
-            return taskCounts
-        } catch {
-            print("TimelineViewModel: Error getting task counts: \(error)")
-            return [:]
-        }
+        let taskCount = tasks.count
+        notificationService.scheduleDailyPlanningReminder(at: planningTime, taskCount: taskCount)
     }
     
-    // MARK: - Notification Helpers
-        
-        private func scheduleDailyPlanningReminder() {
-            // Schedule daily planning reminder for 8:00 AM
-            let calendar = Calendar.current
-            guard let planningTime = calendar.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) else { return }
-            
-            let taskCount = tasks.count
-            notificationService.scheduleDailyPlanningReminder(at: planningTime, taskCount: taskCount)
-        }
-    
-    
     func requestNotificationPermission() async {
-           let granted = await notificationService.requestAuthorization()
-           if granted {
-               print("TimelineViewModel: Notification permission granted")
-               // Reschedule notifications for existing tasks
-               for task in tasks where !task.isGeneratedFromRepeat {
-                   notificationService.scheduleTaskReminders(for: task)
-               }
-           } else {
-               print("TimelineViewModel: Notification permission denied")
-           }
-       }
+        let granted = await notificationService.requestAuthorization()
+        if granted {
+            print("TimelineViewModel: Notification permission granted")
+            // Reschedule notifications for existing tasks
+            for task in tasks where !task.isGeneratedFromRepeat {
+                notificationService.scheduleTaskReminders(for: task)
+            }
+        } else {
+            print("TimelineViewModel: Notification permission denied")
+        }
+    }
        
-    
     private func saveContext() {
         guard let modelContext = modelContext else { return }
         
@@ -369,62 +492,4 @@ class TimelineViewModel: ObservableObject {
         return formatter.string(from: date)
     }
     
-  
-    
-    // MARK: - Sample Data (for testing)
-    
-    private func createSampleTasks() {
-        guard let modelContext = modelContext else { return }
-        
-        let now = Date()
-        let calendar = Calendar.current
-        
-        let sampleTasks = [
-            Task(
-                title: "Morning Focus Session",
-                icon: "💻",
-                startTime: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 60,
-                color: .blue,
-                isCompleted: false,
-                taskType: .work,
-                repeatRule: .daily
-            ),
-            Task(
-                title: "Team Meeting",
-                icon: "👥",
-                startTime: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 45,
-                color: .green,
-                taskType: .work,
-                repeatRule: .weekly
-            ),
-            Task(
-                title: "Gym Workout",
-                icon: "🏋️",
-                startTime: calendar.date(bySettingHour: 18, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 90,
-                color: .red,
-                taskType: .exercise,
-                repeatRule: .daily
-            ),
-            Task(
-                title: "Weekly Review",
-                icon: "📊",
-                startTime: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: now) ?? now,
-                durationMinutes: 30,
-                color: .purple,
-                taskType: .work,
-                repeatRule: .weekly
-            )
-        ]
-        
-        print("TimelineViewModel: Creating \(sampleTasks.count) sample tasks")
-        for task in sampleTasks {
-            print("  - \(task.title) at \(task.startTime) (repeats: \(task.repeatRule))")
-            modelContext.insert(task)
-        }
-        
-        saveContext()
-    }
 }
