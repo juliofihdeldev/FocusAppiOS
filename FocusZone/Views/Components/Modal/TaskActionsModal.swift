@@ -6,11 +6,17 @@ struct TaskActionsModal: View {
     let onComplete: () -> Void
     let onEdit: () -> Void
     let onDuplicate: () -> Void
-    let onDelete: () -> Void
+    let onDelete: (DeletionType) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var showingTimer = false
+    @State private var showingDeletionOptions = false
     @StateObject private var timerService = TaskTimerService()
     
+    enum DeletionType {
+        case instance
+        case allInstances
+        case futureInstances
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -29,6 +35,17 @@ struct TaskActionsModal: View {
                             Text(taskType.displayName)
                                 .font(AppFonts.caption())
                                 .foregroundColor(.gray)
+                        }
+                        
+                        // Show task type indicator
+                        if task.isGeneratedFromRepeat {
+                            Text("Repeating task instance")
+                                .font(AppFonts.caption())
+                                .foregroundColor(.orange)
+                        } else if task.isParentTask {
+                            Text("Repeating task series")
+                                .font(AppFonts.caption())
+                                .foregroundColor(.blue)
                         }
                     }
                     
@@ -59,7 +76,7 @@ struct TaskActionsModal: View {
                         ProgressView(
                             value: Double(timerService.calculateSmartElapsedTime(for: task)) / Double(task.durationMinutes),
                             label: {
-                                Text("Progress")
+                                Text("")
                             }
                         )
                         .progressViewStyle(LinearProgressViewStyle(tint: task.color))
@@ -124,8 +141,13 @@ struct TaskActionsModal: View {
                     color: .red,
                     isDestructive: true,
                     action: {
-                        onDelete()
-                        dismiss()
+                        if task.isGeneratedFromRepeat || task.isChildTask || task.isParentTask {
+                            showingDeletionOptions = true
+                        } else {
+                            // Simple task deletion
+                            onDelete(.instance)
+                            dismiss()
+                        }
                     }
                 )
             }
@@ -151,6 +173,23 @@ struct TaskActionsModal: View {
             dismiss()
         }) {
             TaskTimer(task: task)
+        }
+        .sheet(isPresented: $showingDeletionOptions) {
+            TaskDeletionModal(
+                task: task,
+                onDeleteInstance: {
+                    onDelete(.instance)
+                },
+                onDeleteAllInstances: {
+                    onDelete(.allInstances)
+                },
+                onDeleteFutureInstances: {
+                    onDelete(.futureInstances)
+                },
+                onCancel: {
+                    showingDeletionOptions = false
+                }
+            )
         }
     }
 }
@@ -189,6 +228,55 @@ struct TaskActionButton: View {
     }
 }
 
+// MARK: - TaskDeletionModal
+
+struct DeletionOptionButton: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(color)
+                    .frame(width: 32, height: 32)
+                    .background(
+                        Circle()
+                            .fill(color.opacity(0.1))
+                    )
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(AppFonts.body())
+                        .foregroundColor(AppColors.textPrimary)
+                        .fontWeight(.medium)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(subtitle)
+                        .font(AppFonts.caption())
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
+            .background(AppColors.card)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 #Preview {
     TaskActionsModal(
         task: Task(
@@ -204,7 +292,7 @@ struct TaskActionButton: View {
         onStart: {},
         onComplete: {},
         onEdit: {},
-        onDuplicate: {},
-        onDelete: {}
+        onDuplicate: {  },
+        onDelete: { _ in }
     )
 }

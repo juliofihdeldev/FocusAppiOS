@@ -24,8 +24,17 @@ class Task {
     var repeatRuleRawValue: String
     var createdAt: Date
     var updatedAt: Date
+    
+    // Parent-Child Relationship
     var parentTaskId: UUID? // Track the original task for virtual tasks
-    var isGeneratedFromRepeat :   Bool = false
+    var isGeneratedFromRepeat: Bool = false
+    
+    // SwiftData relationships (one-to-many)
+    @Relationship(deleteRule: .cascade, inverse: \Task.parentTask)
+    var children: [Task] = []
+    
+    @Relationship
+    var parentTask: Task?
     
     // Simple color storage as string
     var colorHex: String
@@ -43,14 +52,15 @@ class Task {
         actualStartTime: Date? = nil,
         repeatRule: RepeatRule = .once,
         isGeneratedFromRepeat: Bool = false,
-        parentTaskId : UUID?  = nil
+        parentTaskId: UUID? = nil,
+        parentTask: Task? = nil
     ) {
         self.id = id
         self.title = title
         self.icon = icon
         self.startTime = startTime
         self.durationMinutes = durationMinutes
-        self.isCompleted =  isCompleted
+        self.isCompleted = isCompleted
         self.taskTypeRawValue = taskType?.rawValue
         self.statusRawValue = status.rawValue
         self.actualStartTime = actualStartTime
@@ -58,6 +68,9 @@ class Task {
         self.createdAt = Date()
         self.updatedAt = Date()
         self.colorHex = color.toHex()
+        self.parentTaskId = parentTaskId
+        self.isGeneratedFromRepeat = isGeneratedFromRepeat
+        self.parentTask = parentTask
     }
     
     // Computed properties
@@ -119,10 +132,20 @@ class Task {
         status == .completed || isCompleted
     }
     
-
     var estimatedEndTime: Date {
         startTime.addingTimeInterval(TimeInterval(durationMinutes * 60))
     }
     
+    // Helper methods for parent-child relationships
+    var isParentTask: Bool {
+        return !children.isEmpty || (repeatRule != .none && repeatRule != .once && !isGeneratedFromRepeat)
+    }
+    
+    var isChildTask: Bool {
+        return parentTask != nil || isGeneratedFromRepeat
+    }
+    
+    var rootParent: Task {
+        return parentTask?.rootParent ?? self
+    }
 }
-

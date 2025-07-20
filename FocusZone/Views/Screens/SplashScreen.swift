@@ -72,8 +72,8 @@ struct SplashScreen: View {
         .onAppear {
             startAnimations()
             
-            // Transition to main app after 3 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            // Transition to main app after 4 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 withAnimation(.easeInOut(duration: 0.8)) {
                     showMainApp = true
                 }
@@ -148,7 +148,7 @@ struct AppTitleView: View {
             HStack(spacing: 0) {
                 ForEach(Array("Focus".enumerated()), id: \.offset) { index, character in
                     Text(String(character))
-                        .font(.system(size: 32, weight: .bold)) // Using system font instead of AppFonts
+                        .font(AppFonts.largetitle()) // Using system font instead of AppFonts
                         .foregroundColor(.white)
                         .opacity(opacity)
                         .offset(y: isAnimating ? 0 : 20)
@@ -161,7 +161,7 @@ struct AppTitleView: View {
             }
             
             Text("Stay focused, achieve more")
-                .font(.system(size: 16)) // Using system font instead of AppFonts
+                .font(AppFonts.subheadline()) // Using system font instead of AppFonts
                 .foregroundColor(.white.opacity(0.8))
                 .opacity(opacity)
                 .offset(y: isAnimating ? 0 : 10)

@@ -2,6 +2,11 @@
 import SwiftUI
 
 struct AppFonts {
+
+    static func largetitle() -> Font {
+        .custom("Montserrat-Regular", size: 32)
+    }
+    
     static func title() -> Font {
         .custom("Montserrat-Regular", size: 21)
     }
