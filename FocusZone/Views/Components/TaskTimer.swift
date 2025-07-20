@@ -137,21 +137,6 @@ struct TaskTimer: View {
                         } else if timerService.currentTask?.isActive ?? false {
                             // Active task controls
                             HStack(spacing: 16) {
-                                // Pause button
-                                Button(action: {
-                                    timerService.pauseTask()
-                                }) {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "pause.fill")
-                                        Text("Pause")
-                                    }
-                                    .font(AppFonts.subheadline())
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background(Color.orange)
-                                    .cornerRadius(20)
-                                }
                                 
                                 // Complete button
                                 Button(action: {
@@ -169,43 +154,8 @@ struct TaskTimer: View {
                                     .cornerRadius(20)
                                 }
                             }
-                        } else if timerService.currentTask?.isPaused ?? false {
-                            // Paused task controls
-                            HStack(spacing: 16) {
-                                // Resume button
-                                Button(action: {
-                                    timerService.resumeTask()
-                                }) {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "play.fill")
-                                        Text("Resume")
-                                    }
-                                    .font(AppFonts.subheadline())
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background(task.color)
-                                    .cornerRadius(20)
-                                }
-                                
-                                // Stop button
-                                Button(action: {
-                                    timerService.stopCurrentTask()
-                                }) {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "stop.fill")
-                                        Text("Stop")
-                                    }
-                                    .font(AppFonts.subheadline())
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background(Color.red)
-                                    .cornerRadius(20)
-                                }
-                            }
                         }
-                        
+
                     }
                 } else {
                     Text("Controls are locked until the timer ends.")

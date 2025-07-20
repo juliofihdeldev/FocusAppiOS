@@ -10,7 +10,7 @@ struct TaskActionsModal: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingTimer = false
     @StateObject private var timerService = TaskTimerService()
-
+    
     
     var body: some View {
         VStack(spacing: 0) {
@@ -56,8 +56,13 @@ struct TaskActionsModal: View {
                                 .foregroundColor(.gray)
                         }
                         
-                        ProgressView(value: timerService.currentProgressPercentage )
-                            .progressViewStyle(LinearProgressViewStyle(tint: task.color))
+                        ProgressView(
+                            value: Double(timerService.calculateSmartElapsedTime(for: task)) / Double(task.durationMinutes),
+                            label: {
+                                Text("Progress")
+                            }
+                        )
+                        .progressViewStyle(LinearProgressViewStyle(tint: task.color))
                     }
                 }
             }
