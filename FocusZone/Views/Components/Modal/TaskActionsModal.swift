@@ -9,6 +9,8 @@ struct TaskActionsModal: View {
     let onDelete: () -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var showingTimer = false
+    @StateObject private var timerService = TaskTimerService()
+
     
     var body: some View {
         VStack(spacing: 0) {
@@ -42,19 +44,19 @@ struct TaskActionsModal: View {
                 }
                 
                 // Progress if any
-                if task.timeSpentMinutes > 0 {
+                if timerService._minutesRemain(for: task) > 0 {
                     VStack(spacing: 4) {
                         HStack {
                             Text("Progress")
                                 .font(AppFonts.caption())
                                 .foregroundColor(.gray)
                             Spacer()
-                            Text("\(task.timeSpentMinutes)/\(task.durationMinutes)m")
+                            Text("\(timerService.calculateSmartElapsedTime(for: task) )/\(task.durationMinutes)m")
                                 .font(AppFonts.caption())
                                 .foregroundColor(.gray)
                         }
                         
-                        ProgressView(value: task.progressPercentage)
+                        ProgressView(value: timerService.currentProgressPercentage )
                             .progressViewStyle(LinearProgressViewStyle(tint: task.color))
                     }
                 }

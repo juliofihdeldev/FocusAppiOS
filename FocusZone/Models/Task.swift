@@ -20,7 +20,6 @@ class Task {
     var isCompleted: Bool
     var taskTypeRawValue: String?
     var statusRawValue: String
-    var timeSpentMinutes: Int
     var actualStartTime: Date?
     var repeatRuleRawValue: String
     var createdAt: Date
@@ -41,7 +40,6 @@ class Task {
         isCompleted: Bool = false,
         taskType: TaskType? = nil,
         status: TaskStatus = .scheduled,
-        timeSpentMinutes: Int = 0,
         actualStartTime: Date? = nil,
         repeatRule: RepeatRule = .once,
         isGeneratedFromRepeat: Bool = false,
@@ -52,10 +50,9 @@ class Task {
         self.icon = icon
         self.startTime = startTime
         self.durationMinutes = durationMinutes
-        self.isCompleted =  max(0, durationMinutes - timeSpentMinutes) > 0 ? false : true
+        self.isCompleted =  isCompleted
         self.taskTypeRawValue = taskType?.rawValue
         self.statusRawValue = status.rawValue
-        self.timeSpentMinutes = timeSpentMinutes
         self.actualStartTime = actualStartTime
         self.repeatRuleRawValue = repeatRule.rawValue
         self.createdAt = Date()
@@ -122,18 +119,10 @@ class Task {
         status == .completed || isCompleted
     }
     
-    var remainingMinutes: Int {
-        max(0, durationMinutes - timeSpentMinutes)
-    }
-    
-    var progressPercentage: Double {
-        guard durationMinutes > 0 else { return 0 }
-        return min(1.0, Double(timeSpentMinutes) / Double(durationMinutes))
-    }
-    
+
     var estimatedEndTime: Date {
         startTime.addingTimeInterval(TimeInterval(durationMinutes * 60))
     }
-
+    
 }
 

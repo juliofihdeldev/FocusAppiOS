@@ -14,43 +14,67 @@ class TaskTimerService: ObservableObject {
         self.modelContext = context
     }
     
-    // Start a task with remaining time consideration
+    // Start a task with smart time calculation
     @MainActor func startTask(_ task: Task, reset: Bool = false) {
         stopCurrentTask()
         
-        // Calculate starting elapsed time based on time already spent or scheduled time
-        let timeAlreadySpent: Int
-        if reset {
-            timeAlreadySpent = 0
-        } else if task.timeSpentMinutes > 0 {
-            // Use previously saved time spent
-            timeAlreadySpent = task.timeSpentMinutes
-        } else {
-            // Calculate based on schedule - elapsed = total duration - remaining
-            let remaining = remainingMinutesFunc(task: task)
-            timeAlreadySpent = max(0, task.durationMinutes - remaining)
-        }
-        
+        // Smart time calculation: choose between previously spent time or schedule-based elapsed time
+        let timeAlreadySpent = reset ? 0 : calculateSmartElapsedTime(for: task)
         let startingElapsedSeconds = timeAlreadySpent * 60
         
         // Update task status
         task.status = .inProgress
         task.actualStartTime = Date()
         if reset {
-            task.timeSpentMinutes = 0
         }
         saveContext()
         
         // Set up timer service state
         currentTask = task
-        startTime = Date().addingTimeInterval(-TimeInterval(timeAlreadySpent * 60))
+        
+        // Set startTime to account for already spent time
+        startTime = Date().addingTimeInterval(-TimeInterval(startingElapsedSeconds))
+        
         elapsedSeconds = startingElapsedSeconds
         
-        print("TaskTimerService: Starting task '\(task.title)' with \(timeAlreadySpent)m already spent")
+        print("TaskTimerService: Starting task '\(task.title)' with \(timeAlreadySpent)m already elapsed")
         print("TaskTimerService: Starting timer at \(startingElapsedSeconds) seconds")
         
         startTimer()
     }
+    
+    // Calculate smart elapsed time: previously spent time OR schedule-based time
+    public func calculateSmartElapsedTime(for task: Task) -> Int {
+        return  task.durationMinutes - _minutesRemain (for: task)
+    }
+    
+    
+    public func _minutesRemain(for task: Task) -> Int {
+        let now = Date()
+        let taskStartTime = task.startTime
+        let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+        
+        
+        // If task is currently active
+        if now >= taskStartTime && now <= taskEndTime {
+            let remaining = taskEndTime.timeIntervalSince(now)
+            let remainingMinutes = Int(remaining / 60)
+            
+            if remainingMinutes > 60 {
+                return remainingMinutes
+            } else if remainingMinutes > 0 {
+                return remainingMinutes
+            } else {
+                // Less than a minute remaining
+                let remainingSeconds = Int(remaining)
+                return remainingSeconds / 60
+            }
+        
+        }
+        return 0
+    }
+        
+    
     
     // Pause the current task
     @MainActor func pauseTask() {
@@ -61,10 +85,7 @@ class TaskTimerService: ObservableObject {
         // Calculate total time spent including current session
         let currentSessionMinutes = elapsedSeconds / 60
         task.status = .paused
-        task.timeSpentMinutes = currentSessionMinutes
         task.updatedAt = Date()
-        
-        print("TaskTimerService: Paused task with \(task.timeSpentMinutes)m total time spent")
         saveContext()
     }
     
@@ -72,26 +93,15 @@ class TaskTimerService: ObservableObject {
     @MainActor func resumeTask() {
         guard let task = currentTask, task.isPaused else { return }
         
-        print("TaskTimerService: Resuming task with \(task.timeSpentMinutes)m already spent")
-        
         task.status = .inProgress
         task.updatedAt = Date()
         saveContext()
         
-        // Reset timer state to current spent time, considering schedule
-        let timeAlreadySpent: Int
-        if task.timeSpentMinutes > 0 {
-            // Use previously saved time spent
-            timeAlreadySpent = task.timeSpentMinutes
-        } else {
-            // Calculate based on schedule - elapsed = total duration - remaining
-            let remaining = remainingMinutesFunc(task: task)
-            timeAlreadySpent = max(0, task.durationMinutes - remaining)
-        }
-        
+        // Use the actual time spent stored in the task (this takes priority)
+        let timeAlreadySpent = _minutesRemain(for: task)
         startTime = Date().addingTimeInterval(-TimeInterval(timeAlreadySpent * 60))
-        elapsedSeconds = timeAlreadySpent * 60
         
+        elapsedSeconds = timeAlreadySpent * 60
         startTimer()
     }
     
@@ -104,17 +114,10 @@ class TaskTimerService: ObservableObject {
         let totalTimeSpent = elapsedSeconds / 60
         task.isCompleted = true
         task.status = .completed
-        task.timeSpentMinutes = totalTimeSpent
         task.updatedAt = Date()
         
         print("TaskTimerService: Completed task with \(totalTimeSpent)m total time")
         saveContext()
-        
-        // Send completion notification
-        NotificationService.shared.sendTaskCompletionNotification(for: task, actualDuration: totalTimeSpent)
-        
-        // Schedule break reminder
-        NotificationService.shared.scheduleBreakReminder(after: task)
         
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -130,7 +133,6 @@ class TaskTimerService: ObservableObject {
         // Save current progress before stopping
         if let task = currentTask {
             let totalTimeSpent = elapsedSeconds / 60
-            task.timeSpentMinutes = totalTimeSpent
             task.status = .scheduled
             task.updatedAt = Date()
             saveContext()
@@ -171,17 +173,10 @@ class TaskTimerService: ObservableObject {
         // Mark task as completed automatically
         task.isCompleted = true
         task.status = .completed
-        task.timeSpentMinutes = task.durationMinutes // Set to exact planned duration
         task.updatedAt = Date()
         saveContext()
         
         print("TaskTimerService: Auto-completed task '\(task.title)' after \(task.durationMinutes) minutes")
-        
-        // Send completion notification
-        NotificationService.shared.sendTaskCompletionNotification(for: task, actualDuration: task.durationMinutes)
-        
-        // Schedule break reminder
-        NotificationService.shared.scheduleBreakReminder(after: task)
         
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -310,12 +305,12 @@ class TaskTimerService: ObservableObject {
     
     // Check if a task can be resumed
     func canResumeTask(_ task: Task) -> Bool {
-        return task.timeSpentMinutes > 0 && task.timeSpentMinutes < task.durationMinutes && !task.isCompleted
+        return _minutesRemain(for: task) > 0 && _minutesRemain(for: task)  < task.durationMinutes && !task.isCompleted
     }
     
     // Get time spent vs planned for a task
     func getTaskTimeInfo(_ task: Task) -> (spent: Int, planned: Int, remaining: Int, percentage: Double) {
-        let spent = task.timeSpentMinutes
+        let spent = _minutesRemain(for: task)
         let planned = task.durationMinutes
         let remaining = max(0, planned - spent)
         let percentage = planned > 0 ? Double(spent) / Double(planned) : 0.0
@@ -338,29 +333,30 @@ class TaskTimerService: ObservableObject {
         }
     }
     
-    // Calculate remaining minutes based on task schedule vs current time
-    func remainingMinutesFunc(task: Task?) -> Int {
-        guard let task = task else { return 0 }
-        
+    // Calculate how late a task start would be (for UI display)
+    func getLateStartInfo(for task: Task) -> (isLate: Bool, minutesLate: Int) {
         let now = Date()
         let taskStartTime = task.startTime
+        
+        if now > taskStartTime {
+            let lateSeconds = now.timeIntervalSince(taskStartTime)
+            let minutesLate = Int(lateSeconds / 60)
+            return (true, minutesLate)
+        }
+        
+        return (false, 0)
+    }
+    
+    // Get the effective remaining time considering schedule
+    func getEffectiveRemainingTime(for task: Task) -> Int {
+        let now = Date()
         let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
         
-        // If task hasn't started yet
-        if now < taskStartTime {
-            let timeUntilStart = taskStartTime.timeIntervalSince(now)
-            let minutesUntilStart = Int(timeUntilStart / 60)
-            return minutesUntilStart
+        if now >= taskEndTime {
+            return 0 // Task time window has passed
         }
         
-        // If task is currently active (within scheduled time window)
-        if now >= taskStartTime && now <= taskEndTime {
-            let remaining = taskEndTime.timeIntervalSince(now)
-            let remainingMinutes = Int(remaining / 60)
-            return remainingMinutes
-        }
-        
-        // Task is past its scheduled end time
-        return 0
+        let remainingScheduledTime = taskEndTime.timeIntervalSince(now)
+        return Int(remainingScheduledTime / 60)
     }
 }
