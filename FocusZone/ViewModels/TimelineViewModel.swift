@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import SwiftData
+import WidgetKit  // Add this import
 
 @MainActor
 class TimelineViewModel: ObservableObject {
@@ -79,6 +80,8 @@ class TimelineViewModel: ObservableObject {
             print("TimelineViewModel: Error loading tasks: \(error)")
             tasks = []
         }
+        updateWidgetData()
+
     }
     
     private func shouldIncludeRepeatingTask(task: Task, for date: Date) -> Bool {
@@ -222,6 +225,8 @@ class TimelineViewModel: ObservableObject {
         
         saveContext()
         refreshTasks()
+        updateWidgetData() // Add this line
+
     }
 
     private func handleVirtualTaskDeletion(_ task: Task) {
@@ -396,6 +401,8 @@ class TimelineViewModel: ObservableObject {
         }
         
         refreshTasks()
+        updateWidgetData() // Add this line
+
     }
     
     func addTask(_ task: Task) {
@@ -406,6 +413,8 @@ class TimelineViewModel: ObservableObject {
         // Schedule notifications for the new task
         notificationService.scheduleTaskReminders(for: task)
         refreshTasks()
+        updateWidgetData() // Add this line
+
     }
     
     func updateTask(_ task: Task) {
@@ -415,6 +424,8 @@ class TimelineViewModel: ObservableObject {
         notificationService.cancelNotifications(for: task.id.uuidString)
         notificationService.scheduleTaskReminders(for: task)
         refreshTasks()
+        updateWidgetData() // Add this line
+
     }
     
     func refreshTasks() {
@@ -455,6 +466,8 @@ class TimelineViewModel: ObservableObject {
         
         do {
             try modelContext.save()
+            updateWidgetData() // Add this line
+
             print("TimelineViewModel: Context saved successfully")
         } catch {
             print("TimelineViewModel: Error saving context: \(error)")
@@ -490,6 +503,11 @@ class TimelineViewModel: ObservableObject {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter.string(from: date)
+    }
+    
+    private func updateWidgetData() {
+        WidgetDataManager.shared.updateWidgetData(tasks: tasks)
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
 }
