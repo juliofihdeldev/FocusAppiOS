@@ -511,3 +511,21 @@ class TimelineViewModel: ObservableObject {
     }
     
 }
+
+
+extension TimelineViewModel {
+   
+    
+    // Add this method for manual debugging
+    func debugWidget() {
+        print("\n🔍 TIMELINE DEBUG:")
+        print("Tasks in timeline: \(tasks.count)")
+        
+        for task in tasks {
+            print("- \(task.title): \(task.startTime) (\(task.durationMinutes)m) - Completed: \(task.isCompleted)")
+        }
+        
+        updateWidgetData()
+        WidgetDataManager.shared.debugWidgetData()
+    }
+}

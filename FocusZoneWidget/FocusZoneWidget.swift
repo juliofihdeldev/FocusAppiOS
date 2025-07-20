@@ -34,7 +34,7 @@ struct FocusZoneEntry: TimelineEntry {
 struct FocusZoneProvider: TimelineProvider {
     
     // IMPORTANT: Replace with your actual App Group ID
-    private let appGroupID = "group.focus.jf.com.FocusZone"
+    private let appGroupID = "group.com.jf.FocusZone"
     
     func placeholder(in context: Context) -> FocusZoneEntry {
         FocusZoneEntry(
