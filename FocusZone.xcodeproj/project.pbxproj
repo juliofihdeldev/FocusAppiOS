@@ -57,11 +57,14 @@
 			membershipExceptions = (
 				App/WidgetDataManager.swift,
 				"Helpers/Extensions/Color+Ext.swift",
+				Models/BreakSuggestion.swift,
 				Models/RepeatRule.swift,
 				Models/Task.swift,
 				Models/TaskType.swift,
 				Resources/AppColors.swift,
 				Resources/AppFonts.swift,
+				ViewModels/SmartBreakAnalyzer.swift,
+				Views/Components/ItemList/BreakSuggestionCard.swift,
 			);
 			target = 437BF8D32E2D4F0200544334 /* FocusZoneWidgetExtension */;
 		};

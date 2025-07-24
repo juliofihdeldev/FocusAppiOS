@@ -6,6 +6,8 @@ import WidgetKit  // Add this import
 @MainActor
 class TimelineViewModel: ObservableObject {
     @Published var tasks: [Task] = []
+    @Published var breakSuggestions: [BreakSuggestion] = []
+    private let breakAnalyzer = SmartBreakAnalyzer()
     
     private var modelContext: ModelContext?
     private let notificationService = NotificationService.shared
@@ -15,6 +17,9 @@ class TimelineViewModel: ObservableObject {
     }
     
     func loadTodayTasks(for date: Date = Date()) {
+        
+        print("Rendering \(breakSuggestions.count) breakSuggestions")
+
         guard let modelContext = modelContext else {
             print("TimelineViewModel: No modelContext available")
             return
@@ -81,7 +86,7 @@ class TimelineViewModel: ObservableObject {
             tasks = []
         }
         updateWidgetData()
-
+        updateBreakSuggestions()
     }
     
     private func shouldIncludeRepeatingTask(task: Task, for date: Date) -> Bool {
@@ -510,6 +515,50 @@ class TimelineViewModel: ObservableObject {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
+    func updateBreakSuggestions() {
+         let breakAnalyzer = SmartBreakAnalyzer()
+         let suggestions = breakAnalyzer.analyzeTasks(tasks)
+         DispatchQueue.main.async {
+             self.breakSuggestions = suggestions
+         }
+     }
+    
+    func acceptBreakSuggestion(_ suggestion: BreakSuggestion) {
+            guard let modelContext = modelContext else { return }
+            
+            let breakTask = Task(
+                title: suggestion.type.displayName,
+                icon: suggestion.icon,
+                startTime: suggestion.suggestedStartTime,
+                durationMinutes: suggestion.suggestedDuration,
+                color: suggestion.type.color,
+                taskType: suggestion.type == .snack ? .meal : .relax
+            )
+            
+            modelContext.insert(breakTask)
+            
+            // Schedule notifications
+            notificationService.scheduleTaskReminders(for: breakTask)
+            
+            // Remove this suggestion
+            dismissBreakSuggestion(suggestion)
+            
+            saveContext()
+            refreshTasks()
+            updateBreakSuggestions() // Refresh suggestions after adding new task
+    }
+    
+    
+     func dismissBreakSuggestion(_ suggestion: BreakSuggestion) {
+         breakSuggestions.removeAll { $0.id == suggestion.id }
+     }
+     
+     // Call this method whenever tasks are loaded or updated
+     func refreshTasksWithBreakSuggestions(for date: Date = Date()) {
+         loadTodayTasks(for: date)
+         updateBreakSuggestions()
+     }
+
 }
 
 
