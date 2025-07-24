@@ -34,7 +34,7 @@ struct FocusZoneEntry: TimelineEntry {
 struct FocusZoneProvider: TimelineProvider {
     
     // IMPORTANT: Replace with your actual App Group ID
-    private let appGroupID = "group.focus.jf.com.FocusZone"
+    private let appGroupID = "group.com.jf.FocusZone"
     
     func placeholder(in context: Context) -> FocusZoneEntry {
         FocusZoneEntry(
@@ -431,7 +431,7 @@ struct FocusZoneWidgetMedium: View {
             headerSection
             
             // Progress bar with percentage
-            progressSection
+//            progressSection
             
             // Current task section
             if let currentTask = entry.currentTask {
@@ -445,7 +445,7 @@ struct FocusZoneWidgetMedium: View {
             
             Spacer()
         }
-        .padding(12)
+        .padding(4)
         .widgetBackground(backgroundGradient)
     }
     
@@ -568,7 +568,7 @@ struct FocusZoneWidgetMedium: View {
                 .fontWeight(.bold)
                 .foregroundColor(.orange)
             
-            ForEach(Array(entry.upcomingTasks.prefix(2).enumerated()), id: \.offset) { index, task in
+            ForEach(Array(entry.upcomingTasks.prefix(1).enumerated()), id: \.offset) { index, task in
                 HStack(spacing: 8) {
                     Text(task.icon)
                         .font(.caption)
@@ -730,7 +730,8 @@ struct FocusZoneWidget_Previews: PreviewProvider {
                         colorHex: "#00CC66",
                         taskTypeRawValue: "work",
                         statusRawValue: "scheduled"
-                    )
+                    ),
+                 
                 ],
                 todayTaskCount: 5,
                 completedCount: 2,
@@ -753,6 +754,17 @@ struct FocusZoneWidget_Previews: PreviewProvider {
                         isCompleted: false,
                         colorHex: "#FF6600",
                         taskTypeRawValue: "exercise",
+                        statusRawValue: "scheduled"
+                    ),
+                    WidgetTask(
+                        id: UUID().uuidString,
+                        title: "Code Review ",
+                        icon: "👥",
+                        startTime: Date().addingTimeInterval(3600),
+                        durationMinutes: 30,
+                        isCompleted: false,
+                        colorHex: "#00CC66",
+                        taskTypeRawValue: "work",
                         statusRawValue: "scheduled"
                     )
                 ],

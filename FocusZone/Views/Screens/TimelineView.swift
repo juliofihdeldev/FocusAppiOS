@@ -66,7 +66,8 @@ struct TimelineView: View {
                                     .padding(.top, 10)
                                 } else {
                                     // Task Cards
-                                    ForEach(viewModel.tasks) { task in
+                                    // Replace the existing ForEach(viewModel.tasks) with this:
+                                    ForEach(Array(viewModel.tasks.enumerated()), id: \.element.id) { index, task in
                                         TaskCard(
                                             title: task.title,
                                             time: viewModel.timeRange(for: task),
@@ -81,7 +82,44 @@ struct TimelineView: View {
                                         .onTapGesture {
                                             selectedTaskForActions = task
                                         }
+                                        
+                                        // Show break suggestions after this task
+                                        ForEach(viewModel.breakSuggestions.filter { $0.insertAfterTaskId == task.id }) { suggestion in
+                                            BreakSuggestionCard(
+                                                suggestion: suggestion,
+                                                onAccept: {
+                                                    viewModel.acceptBreakSuggestion(suggestion)
+                                                },
+                                                onDismiss: {
+                                                    viewModel.dismissBreakSuggestion(suggestion)
+                                                }
+                                            )
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 4)
+                                        }
                                     }
+
+                                    // Add standalone suggestions after all tasks
+                                    ForEach(viewModel.breakSuggestions.filter { $0.insertAfterTaskId == nil }) { suggestion in
+                                        BreakSuggestionCard(
+                                            suggestion: suggestion,
+                                            onAccept: {
+                                                viewModel.acceptBreakSuggestion(suggestion)
+                                            },
+                                            onDismiss: {
+                                                viewModel.dismissBreakSuggestion(suggestion)
+                                            }
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 4)
+                                    }
+
+                                    // And add this to the onChange modifier for selectedDate:
+                                    .onChange(of: selectedDate) { _, newDate in
+                                        viewModel.loadTodayTasks(for: newDate)
+                                        viewModel.updateBreakSuggestions() // Add this line
+                                    }
+                                    
                                 }
                                 
                                 // Bottom padding to prevent content from hiding behind FAB
@@ -117,6 +155,8 @@ struct TimelineView: View {
         }
         .onChange(of: selectedDate) { _, newDate in
             viewModel.loadTodayTasks(for: newDate)
+            viewModel.refreshTasksWithBreakSuggestions(for: newDate)
+
         }
         .sheet(isPresented: $showAddTaskForm) {
             TaskFormView()
@@ -222,7 +262,8 @@ struct TimelineView: View {
         viewModel.setModelContext(modelContext)
         timerService.setModelContext(modelContext)
         viewModel.loadTodayTasks(for: selectedDate)
-        
+        viewModel.refreshTasksWithBreakSuggestions(for: selectedDate) // Changed this line
+
         // Show notification permission alert if not authorized
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             if !notificationService.isAuthorized {

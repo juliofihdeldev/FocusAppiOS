@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.focus.jf.com.FocusZone</string>
+		<string>group.com.jf.FocusZone</string>
 	</array>
 </dict>
 </plist>

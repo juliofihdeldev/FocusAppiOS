@@ -93,11 +93,13 @@ struct WidgetTask: Codable, Identifiable {
 
 // MARK: - WidgetDataManager
 
+// MARK: - Updated WidgetDataManager with better Task support
+
 class WidgetDataManager {
     static let shared = WidgetDataManager()
     
-    // IMPORTANT: Replace with your actual App Group ID
-    private let appGroupID = "group.focus.jf.com.FocusZone"
+    // ⚠️ IMPORTANT: Make sure this matches your actual App Group ID
+    private let appGroupID = "group.com.jf.FocusZone"
     private let userDefaults: UserDefaults?
     
     // Keys for UserDefaults
@@ -112,141 +114,108 @@ class WidgetDataManager {
     
     private init() {
         self.userDefaults = UserDefaults(suiteName: appGroupID)
+        
+        // Debug: Check if UserDefaults is working
+        if userDefaults == nil {
+            print("❌ CRITICAL: UserDefaults with app group '\(appGroupID)' failed to initialize")
+            print("❌ Check if App Group is properly configured in target settings")
+        } else {
+            print("✅ WidgetDataManager initialized with app group: \(appGroupID)")
+        }
+        
         cleanupStaleData()
     }
     
-    // MARK: - Update Widget Data (Generic approach)
+    // MARK: - Simplified Task-specific update method
     
-    func updateWidgetData<T>(tasks: [T]) where T: AnyObject {
+    func updateWidgetData(tasks: [Task]) {
         guard let userDefaults = userDefaults else {
-            print("WidgetDataManager: Failed to initialize UserDefaults with app group")
+            print("❌ WidgetDataManager: UserDefaults not available")
             return
         }
+        
+        print("🔄 Updating widget data with \(tasks.count) tasks")
         
         let now = Date()
         let calendar = Calendar.current
         
-        // Filter today's tasks using reflection to access properties
+        // Filter today's tasks
         let todayTasks = tasks.filter { task in
-            if let startTime = getValue(from: task, key: "startTime") as? Date {
-                return calendar.isDateInToday(startTime)
-            }
-            return false
+            let isToday = calendar.isDateInToday(task.startTime)
+            print("📅 Task '\(task.title)' - Start: \(task.startTime), IsToday: \(isToday)")
+            return isToday
         }
         
-        // Find current task
+        print("📋 Today's tasks: \(todayTasks.count)")
+        
+        // Find current task (active now)
         let currentTask = todayTasks.first { task in
-            guard let startTime = getValue(from: task, key: "startTime") as? Date,
-                  let durationMinutes = getValue(from: task, key: "durationMinutes") as? Int,
-                  let isCompleted = getValue(from: task, key: "isCompleted") as? Bool else {
-                return false
-            }
-            
-            let endTime = startTime.addingTimeInterval(TimeInterval(durationMinutes * 60))
-            return now >= startTime && now <= endTime && !isCompleted
+            let endTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+            let isCurrent = now >= task.startTime && now <= endTime && !task.isCompleted
+            print("⏰ Task '\(task.title)' - Current: \(isCurrent), Start: \(task.startTime), End: \(endTime)")
+            return isCurrent
         }
         
         // Find upcoming tasks
         let upcomingTasks = todayTasks.filter { task in
-            guard let startTime = getValue(from: task, key: "startTime") as? Date,
-                  let isCompleted = getValue(from: task, key: "isCompleted") as? Bool else {
-                return false
-            }
-            return startTime > now && !isCompleted
-        }.sorted { task1, task2 in
-            guard let startTime1 = getValue(from: task1, key: "startTime") as? Date,
-                  let startTime2 = getValue(from: task2, key: "startTime") as? Date else {
-                return false
-            }
-            return startTime1 < startTime2
-        }.prefix(3)
+            let isUpcoming = task.startTime > now && !task.isCompleted
+            print("⏭️ Task '\(task.title)' - Upcoming: \(isUpcoming)")
+            return isUpcoming
+        }.sorted { $0.startTime < $1.startTime }.prefix(3)
         
-        let completedCount = todayTasks.filter { task in
-            if let isCompleted = getValue(from: task, key: "isCompleted") as? Bool {
-                return isCompleted
-            }
-            return false
-        }.count
+        let completedCount = todayTasks.filter { $0.isCompleted }.count
         
-        // Store data with error handling
+        print("📊 Widget summary: Current: \(currentTask?.title ?? "None"), Upcoming: \(upcomingTasks.count), Completed: \(completedCount)")
+        
+        // Store data
         do {
             // Store current task
             if let currentTask = currentTask {
                 let widgetTask = createWidgetTask(from: currentTask)
-                let currentTaskData = try JSONEncoder().encode(widgetTask)
-                userDefaults.set(currentTaskData, forKey: Keys.currentTask)
+                let data = try JSONEncoder().encode(widgetTask)
+                userDefaults.set(data, forKey: Keys.currentTask)
+                print("✅ Stored current task: \(widgetTask.title)")
             } else {
                 userDefaults.removeObject(forKey: Keys.currentTask)
+                print("🚫 No current task")
             }
             
             // Store upcoming tasks
             let widgetUpcomingTasks = Array(upcomingTasks).map { createWidgetTask(from: $0) }
-            let upcomingTasksData = try JSONEncoder().encode(widgetUpcomingTasks)
-            userDefaults.set(upcomingTasksData, forKey: Keys.upcomingTasks)
+            let upcomingData = try JSONEncoder().encode(widgetUpcomingTasks)
+            userDefaults.set(upcomingData, forKey: Keys.upcomingTasks)
+            print("✅ Stored \(widgetUpcomingTasks.count) upcoming tasks")
             
-            // Store counts and metadata
+            // Store metadata
             userDefaults.set(todayTasks.count, forKey: Keys.todayTaskCount)
             userDefaults.set(completedCount, forKey: Keys.completedCount)
             userDefaults.set(now.timeIntervalSince1970, forKey: Keys.lastUpdate)
             userDefaults.set(calendar.startOfDay(for: now).timeIntervalSince1970, forKey: Keys.lastUpdateDate)
             
-            print("WidgetDataManager: Updated data - Upcoming: \(upcomingTasks.count), Completed: \(completedCount)/\(todayTasks.count)")
+            print("✅ Widget data updated successfully")
+            
+            // Force widget refresh
+            WidgetCenter.shared.reloadAllTimelines()
             
         } catch {
-            print("WidgetDataManager: Error encoding data: \(error)")
+            print("❌ Error storing widget data: \(error)")
         }
     }
     
-    // MARK: - Private Helper Methods
+    // MARK: - Create WidgetTask from Task
     
-    private func getValue(from object: AnyObject, key: String) -> Any? {
-        let mirror = Mirror(reflecting: object)
-        for child in mirror.children {
-            if child.label == key {
-                return child.value
-            }
-        }
-        return nil
-    }
-    
-    private func createWidgetTask(from task: AnyObject) -> WidgetTask {
-        let id = getValue(from: task, key: "id") as? UUID
-        let title = getValue(from: task, key: "title") as? String
-        let icon = getValue(from: task, key: "icon") as? String
-        let startTime = getValue(from: task, key: "startTime") as? Date
-        let durationMinutes = getValue(from: task, key: "durationMinutes") as? Int
-        let isCompleted = getValue(from: task, key: "isCompleted") as? Bool
-        let colorHex = getValue(from: task, key: "colorHex") as? String
-        let taskTypeRawValue = getValue(from: task, key: "taskTypeRawValue") as? String
-        let statusRawValue = getValue(from: task, key: "statusRawValue") as? String
-        
+    private func createWidgetTask(from task: Task) -> WidgetTask {
         return WidgetTask(
-            id: id?.uuidString ?? UUID().uuidString,
-            title: title ?? "Unknown Task",
-            icon: icon ?? "📝",
-            startTime: startTime ?? Date(),
-            durationMinutes: durationMinutes ?? 30,
-            isCompleted: isCompleted ?? false,
-            colorHex: colorHex ?? "#0066CC",
-            taskTypeRawValue: taskTypeRawValue,
-            statusRawValue: statusRawValue ?? "scheduled"
+            id: task.id.uuidString,
+            title: task.title,
+            icon: task.icon,
+            startTime: task.startTime,
+            durationMinutes: task.durationMinutes,
+            isCompleted: task.isCompleted,
+            colorHex: task.colorHex,
+            taskTypeRawValue: task.taskTypeRawValue,
+            statusRawValue: task.statusRawValue
         )
-    }
-    
-    private func cleanupStaleData() {
-        guard let userDefaults = userDefaults else { return }
-        
-        let now = Date()
-        let calendar = Calendar.current
-        
-        // Check if data is from today
-        let lastUpdateDate = userDefaults.double(forKey: Keys.lastUpdateDate)
-        let lastUpdateDateObj = Date(timeIntervalSince1970: lastUpdateDate)
-        
-        if !calendar.isDate(lastUpdateDateObj, inSameDayAs: now) {
-            print("WidgetDataManager: Cleaning up stale data from previous day")
-            clearWidgetData()
-        }
     }
     
     // MARK: - Get Widget Data
@@ -254,6 +223,7 @@ class WidgetDataManager {
     func getCurrentTask() -> WidgetTask? {
         guard let userDefaults = userDefaults,
               let data = userDefaults.data(forKey: Keys.currentTask) else {
+            print("🚫 No current task data")
             return nil
         }
         
@@ -262,15 +232,17 @@ class WidgetDataManager {
             
             // Validate that task is still current
             let now = Date()
-            if now >= task.startTime && now <= task.endTime && !task.isCompleted {
+            if task.isCurrentlyActive {
+                print("✅ Current task: \(task.title)")
                 return task
             } else {
                 // Task is no longer current, remove it
                 userDefaults.removeObject(forKey: Keys.currentTask)
+                print("🚫 Current task expired, removed")
                 return nil
             }
         } catch {
-            print("WidgetDataManager: Error decoding current task: \(error)")
+            print("❌ Error decoding current task: \(error)")
             return nil
         }
     }
@@ -278,43 +250,74 @@ class WidgetDataManager {
     func getUpcomingTasks() -> [WidgetTask] {
         guard let userDefaults = userDefaults,
               let data = userDefaults.data(forKey: Keys.upcomingTasks) else {
+            print("🚫 No upcoming tasks data")
             return []
         }
         
         do {
             let tasks = try JSONDecoder().decode([WidgetTask].self, from: data)
-            
-            // Filter out past tasks
             let now = Date()
             let validTasks = tasks.filter { $0.startTime > now && !$0.isCompleted }
             
-            // If filtered list is different, update UserDefaults
-            if validTasks.count != tasks.count {
-                let validTasksData = try JSONEncoder().encode(validTasks)
-                userDefaults.set(validTasksData, forKey: Keys.upcomingTasks)
-            }
-            
+            print("✅ Upcoming tasks: \(validTasks.count)")
             return validTasks
         } catch {
-            print("WidgetDataManager: Error decoding upcoming tasks: \(error)")
+            print("❌ Error decoding upcoming tasks: \(error)")
             return []
         }
     }
     
     func getTodayTaskCount() -> Int {
-        return userDefaults?.integer(forKey: Keys.todayTaskCount) ?? 0
+        let count = userDefaults?.integer(forKey: Keys.todayTaskCount) ?? 0
+        print("📋 Today task count: \(count)")
+        return count
     }
     
     func getCompletedCount() -> Int {
-        return userDefaults?.integer(forKey: Keys.completedCount) ?? 0
+        let count = userDefaults?.integer(forKey: Keys.completedCount) ?? 0
+        print("✅ Completed count: \(count)")
+        return count
     }
     
-    func getLastUpdateTime() -> Date {
-        let timestamp = userDefaults?.double(forKey: Keys.lastUpdate) ?? 0
-        return Date(timeIntervalSince1970: timestamp)
+    // MARK: - Debug methods
+    
+    func debugWidgetData() {
+        print("\n🔍 WIDGET DEBUG:")
+        print("App Group ID: \(appGroupID)")
+        print("UserDefaults available: \(userDefaults != nil)")
+        
+        let current = getCurrentTask()
+        let upcoming = getUpcomingTasks()
+        let todayCount = getTodayTaskCount()
+        let completedCount = getCompletedCount()
+        
+        print("Current task: \(current?.title ?? "None")")
+        print("Upcoming tasks: \(upcoming.count)")
+        print("Today total: \(todayCount)")
+        print("Completed: \(completedCount)")
+        
+        if let userDefaults = userDefaults {
+            let lastUpdate = userDefaults.double(forKey: Keys.lastUpdate)
+            print("Last update: \(Date(timeIntervalSince1970: lastUpdate))")
+        }
     }
     
-    // MARK: - Clear Data
+    // MARK: - Helper methods
+    
+    private func cleanupStaleData() {
+        guard let userDefaults = userDefaults else { return }
+        
+        let now = Date()
+        let calendar = Calendar.current
+        
+        let lastUpdateDate = userDefaults.double(forKey: Keys.lastUpdateDate)
+        let lastUpdateDateObj = Date(timeIntervalSince1970: lastUpdateDate)
+        
+        if !calendar.isDate(lastUpdateDateObj, inSameDayAs: now) {
+            print("🧹 Cleaning up stale widget data")
+            clearWidgetData()
+        }
+    }
     
     func clearWidgetData() {
         guard let userDefaults = userDefaults else { return }
@@ -326,17 +329,14 @@ class WidgetDataManager {
         userDefaults.removeObject(forKey: Keys.lastUpdate)
         userDefaults.removeObject(forKey: Keys.lastUpdateDate)
         
-        print("WidgetDataManager: Cleared all widget data")
+        print("🧹 Cleared all widget data")
     }
-    
-    // MARK: - Utility Methods
     
     func reloadWidgets() {
         WidgetCenter.shared.reloadAllTimelines()
-    }
-    
-    func isDataFresh(maxAge: TimeInterval = 300) -> Bool { // 5 minutes
-        let lastUpdate = getLastUpdateTime()
-        return Date().timeIntervalSince(lastUpdate) < maxAge
+        print("🔄 Requested widget reload")
     }
 }
+
+// MARK: - Updated TimelineViewModel
+
