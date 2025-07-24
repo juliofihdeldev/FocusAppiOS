@@ -1,43 +1,100 @@
 import SwiftUI
 
-// MARK: - Break Suggestion Card Component
+// MARK: - Break Suggestion Card Component with Swipe Gestures
 struct BreakSuggestionCard: View {
     let suggestion: BreakSuggestion
     let onAccept: () -> Void
     let onDismiss: () -> Void
-    @State private var isExpanded = false
+    
+    @State private var dragOffset: CGSize = .zero
+    @State private var isBeingDragged = false
+    @State private var showingActionHint = false
+    
+    // Swipe thresholds
+    private let acceptThreshold: CGFloat = 80
+    private let dismissThreshold: CGFloat = -80
+    private let hapticThreshold: CGFloat = 60
+    
+    @State private var hasTriggeredAcceptHaptic = false
+    @State private var hasTriggeredDismissHaptic = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Main suggestion row
-            HStack(spacing: 12) {
-                // Timeline connector
-                VStack(spacing: 0) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2, height: 15)
-                    
-                    Circle()
-                        .fill(suggestion.type.color.opacity(0.3))
-                        .frame(width: 24, height: 24)
-                        .overlay(
-                            Circle()
-                                .stroke(suggestion.type.color, lineWidth: 2)
-                        )
-                        .overlay(
-                            Text("?")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(suggestion.type.color)
-                        )
-                    
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2, height: 15)
-                }
-                .frame(width: 60) // Match TaskCard timeline width
+        HStack(spacing: 12) {
+            // Timeline connector
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 2, height: 15)
                 
-                // Suggestion content
-                VStack(alignment: .leading, spacing: 4) {
+                Circle()
+                    .fill(suggestion.type.color.opacity(0.3))
+                    .frame(width: 24, height: 24)
+                    .overlay(
+                        Circle()
+                            .stroke(suggestion.type.color, lineWidth: 2)
+                    )
+                    .overlay(
+                        Text("?")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(suggestion.type.color)
+                    )
+                
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 2, height: 15)
+            }
+            .frame(width: 60) // Match TaskCard timeline width
+            
+            // Suggestion content with swipe overlay
+            ZStack {
+                // Background action indicators
+                HStack {
+                    // Left side - Dismiss action
+                    if dragOffset.width < -20 {
+                        HStack(spacing: 8) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                                .font(.title2)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Dismiss")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(.red)
+                                Text("Not interested")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .opacity(min(1.0, abs(dragOffset.width) / abs(dismissThreshold)))
+                        .scaleEffect(dragOffset.width <= dismissThreshold ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.3), value: dragOffset.width <= dismissThreshold)
+                    }
+                    
+                    Spacer()
+                    
+                    // Right side - Accept action
+                    if dragOffset.width > 20 {
+                        HStack(spacing: 8) {
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text("Add Break")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(suggestion.type.color)
+                                Text("\(suggestion.suggestedDuration) minutes")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(.gray)
+                            }
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(suggestion.type.color)
+                                .font(.title2)
+                        }
+                        .opacity(min(1.0, dragOffset.width / acceptThreshold))
+                        .scaleEffect(dragOffset.width >= acceptThreshold ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.3), value: dragOffset.width >= acceptThreshold)
+                    }
+                }
+                .padding(.horizontal, 20)
+                
+                // Main suggestion content
+                VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Image(systemName: "clock")
                             .foregroundColor(suggestion.type.color)
@@ -49,14 +106,21 @@ struct BreakSuggestionCard: View {
                         
                         Spacer()
                         
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                isExpanded.toggle()
+                        // Swipe hint
+                        if !isBeingDragged && showingActionHint {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.gray)
+                                Text("swipe")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.gray)
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.gray)
                             }
-                        }) {
-                            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
+                            .opacity(0.6)
+                            .transition(.opacity)
                         }
                     }
                     
@@ -73,64 +137,105 @@ struct BreakSuggestionCard: View {
                         .font(AppFonts.caption())
                         .foregroundColor(.gray)
                 }
-                
-                Spacer()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(cardBackgroundColor)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(cardBorderColor, lineWidth: cardBorderWidth)
+                        )
+                )
+                .offset(dragOffset)
+                .scaleEffect(isBeingDragged ? 1.02 : 1.0)
+                .rotation3DEffect(
+                    .degrees(Double(dragOffset.width) * 0.1),
+                    axis: (x: 0, y: 1, z: 0)
+                )
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isBeingDragged)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(suggestion.type.color.opacity(0.05))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(suggestion.type.color.opacity(0.2), lineWidth: 1)
-                    )
-            )
             
-            // Expanded actions
-            if isExpanded {
-                VStack(spacing: 8) {
-                    HStack(spacing: 12) {
-                        Button(action: onAccept) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "plus.circle.fill")
-                                Text("Add \(suggestion.suggestedDuration)m break")
-                                    .font(AppFonts.caption())
-                            }
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(suggestion.type.color)
-                            .cornerRadius(20)
-                        }
-                        
-                        Button(action: {
-                            withAnimation(.easeOut) {
-                                onDismiss()
-                            }
-                        }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "xmark.circle")
-                                Text("Not now")
-                                    .font(AppFonts.caption())
-                            }
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(20)
-                        }
-                        
-                        Spacer()
+            Spacer()
+        }
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    withAnimation(.interactiveSpring()) {
+                        dragOffset = value.translation
+                        isBeingDragged = true
+                        showingActionHint = false
+                    }
+                    
+                    // Haptic feedback when reaching thresholds
+                    if value.translation.width >= hapticThreshold && !hasTriggeredAcceptHaptic {
+                        let impact = UIImpactFeedbackGenerator(style: .medium)
+                        impact.impactOccurred()
+                        hasTriggeredAcceptHaptic = true
+                        hasTriggeredDismissHaptic = false
+                    } else if value.translation.width <= -hapticThreshold && !hasTriggeredDismissHaptic {
+                        let impact = UIImpactFeedbackGenerator(style: .medium)
+                        impact.impactOccurred()
+                        hasTriggeredDismissHaptic = true
+                        hasTriggeredAcceptHaptic = false
+                    } else if abs(value.translation.width) < hapticThreshold {
+                        hasTriggeredAcceptHaptic = false
+                        hasTriggeredDismissHaptic = false
                     }
                 }
-                .padding(.horizontal, 88) // Align with text content
-                .padding(.bottom, 12)
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                .onEnded { value in
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        if value.translation.width >= acceptThreshold {
+                            // Accept action
+                            dragOffset = CGSize(width: 300, height: 0) // Slide off screen
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                onAccept()
+                            }
+                        } else if value.translation.width <= dismissThreshold {
+                            // Dismiss action
+                            dragOffset = CGSize(width: -300, height: 0) // Slide off screen
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                onDismiss()
+                            }
+                        } else {
+                            // Snap back to center
+                            dragOffset = .zero
+                            isBeingDragged = false
+                            
+                            // Show hint after a moment if user didn't complete the gesture
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                withAnimation(.easeInOut(duration: 0.5)) {
+                                    showingActionHint = true
+                                }
+                                
+                                // Hide hint after 3 seconds
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                    withAnimation(.easeOut(duration: 0.5)) {
+                                        showingActionHint = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+        )
+        .onAppear {
+            // Show initial hint
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    showingActionHint = true
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        showingActionHint = false
+                    }
+                }
             }
         }
-        .transition(.opacity.combined(with: .scale))
     }
+    
+    // MARK: - Computed Properties
     
     private var timeUntilText: String {
         if suggestion.timeUntilOptimal <= 0 {
@@ -143,22 +248,66 @@ struct BreakSuggestionCard: View {
             return minutes > 0 ? "\(hours)h \(minutes)m" : "\(hours)h"
         }
     }
+    
+    private var cardBackgroundColor: Color {
+        if dragOffset.width >= acceptThreshold {
+            return suggestion.type.color.opacity(0.15)
+        } else if dragOffset.width <= dismissThreshold {
+            return Color.red.opacity(0.1)
+        } else {
+            return suggestion.type.color.opacity(0.05)
+        }
+    }
+    
+    private var cardBorderColor: Color {
+        if dragOffset.width >= acceptThreshold {
+            return suggestion.type.color.opacity(0.6)
+        } else if dragOffset.width <= dismissThreshold {
+            return Color.red.opacity(0.4)
+        } else {
+            return suggestion.type.color.opacity(0.2)
+        }
+    }
+    
+    private var cardBorderWidth: CGFloat {
+        if abs(dragOffset.width) >= hapticThreshold {
+            return 2
+        } else {
+            return 1
+        }
+    }
 }
 
 #Preview {
-    BreakSuggestionCard(
-        suggestion: BreakSuggestion(
-            type: .snack,
-            suggestedDuration: 15,
-            reason: "Perfect time for a snack",
-            icon: "🍎",
-            timeUntilOptimal: 34,
-            insertAfterTaskId: UUID(),
-            suggestedStartTime: Date().addingTimeInterval(34 * 60)
-        ),
-        onAccept: { print("Accepted break suggestion") },
-        onDismiss: { print("Dismissed break suggestion") }
-    )
+    VStack(spacing: 20) {
+        BreakSuggestionCard(
+            suggestion: BreakSuggestion(
+                type: .snack,
+                suggestedDuration: 15,
+                reason: "Perfect time for a snack",
+                icon: "🍎",
+                timeUntilOptimal: 34,
+                insertAfterTaskId: UUID(),
+                suggestedStartTime: Date().addingTimeInterval(34 * 60)
+            ),
+            onAccept: { print("Accepted break suggestion") },
+            onDismiss: { print("Dismissed break suggestion") }
+        )
+        
+        BreakSuggestionCard(
+            suggestion: BreakSuggestion(
+                type: .movement,
+                suggestedDuration: 10,
+                reason: "Take a walking break",
+                icon: "🚶",
+                timeUntilOptimal: 15,
+                insertAfterTaskId: UUID(),
+                suggestedStartTime: Date().addingTimeInterval(15 * 60)
+            ),
+            onAccept: { print("Accepted break suggestion") },
+            onDismiss: { print("Dismissed break suggestion") }
+        )
+    }
     .padding()
     .background(AppColors.background)
 }
