@@ -564,7 +564,6 @@ class TimelineViewModel: ObservableObject {
 
 extension TimelineViewModel {
    
-    
     // Add this method for manual debugging
     func debugWidget() {
         print("\n🔍 TIMELINE DEBUG:")

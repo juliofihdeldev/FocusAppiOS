@@ -55,16 +55,24 @@
 		437BF8F12E2D517A00544334 /* Exceptions for "FocusZone" folder in "FocusZoneWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				App/SubscriptionManager.swift,
 				App/WidgetDataManager.swift,
 				"Helpers/Extensions/Color+Ext.swift",
+				"Helpers/Extensions/Task+Ext.swift",
 				Models/BreakSuggestion.swift,
 				Models/RepeatRule.swift,
 				Models/Task.swift,
 				Models/TaskType.swift,
 				Resources/AppColors.swift,
 				Resources/AppFonts.swift,
+				Services/FocusAnalyticsEngine.swift,
+				Services/SmartNotificationService.swift,
 				ViewModels/SmartBreakAnalyzer.swift,
 				Views/Components/ItemList/BreakSuggestionCard.swift,
+				Views/Components/ItemList/FeatureRow.swift,
+				Views/Components/ItemList/InsightCard.swift,
+				Views/Components/Modal/UpgradeToProSheet.swift,
+				Views/Screens/FocusInsightsView.swift,
 			);
 			target = 437BF8D32E2D4F0200544334 /* FocusZoneWidgetExtension */;
 		};
