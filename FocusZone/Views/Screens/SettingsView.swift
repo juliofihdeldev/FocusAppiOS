@@ -18,6 +18,7 @@ struct SettingsView: View {
                         appearanceSection
                         notificationSection
                         dataSection
+                      
                         aboutSection
                     }
                     .padding(.horizontal, 20)
@@ -95,6 +96,25 @@ struct SettingsView: View {
             }
         }
     }
+    // Focus  Section
+    private var focusSection: some View {
+        SettingsSection(title: "Appearance", icon: "paintbrush") {
+            VStack(spacing: 0) {
+             
+                Section("Focus & Concentration") {
+                    NavigationLink("Focus Modes") {
+//                        FocusModesSettingsView()
+                    }
+                    
+                    NavigationLink("Automation") {
+//                        FocusAutomationSettingsView()
+                    }
+                    
+//                    Toggle("Smart Focus Suggestions", isOn: $smartSuggestions)
+                }
+            }
+        }
+    }
     
     // MARK: - Notifications Section
     private var notificationSection: some View {
@@ -108,6 +128,8 @@ struct SettingsView: View {
                 )
             }
         }
+        
+        
     }
     
     // MARK: - Data Section
