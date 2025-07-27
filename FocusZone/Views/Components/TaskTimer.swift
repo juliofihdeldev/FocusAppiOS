@@ -17,13 +17,6 @@ struct TaskTimer: View {
         NavigationView {
             VStack(spacing: 30) {
                 
-                if focusManager.isActiveFocus {
-                      FocusStatusBanner(
-                          mode: focusManager.currentFocusMode,
-                          blockedNotifications: focusManager.blockedNotifications
-                      )
-                  }
-                
                 // Task Info Header
                 VStack(spacing: 12) {
                     Text(task.icon)
@@ -169,6 +162,13 @@ struct TaskTimer: View {
 
                     }
                 } else {
+                    if focusManager.isActiveFocus {
+                          FocusStatusBanner(
+                              mode: focusManager.currentFocusMode,
+                              blockedNotifications: focusManager.blockedNotifications
+                          )
+                      }
+                    
                     Text("Controls are locked until the timer ends.")
                         .font(AppFonts.subheadline())
                         .foregroundColor(.gray)
@@ -264,10 +264,11 @@ struct TaskTimer: View {
                 isLocked = true
             }
 
-            
-            focusManager.blockedNotifications = 1
-            _Concurrency.Task {
-                await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60))
+            if ((task.focusSettings?.isEnabled) != nil) {
+                focusManager.blockedNotifications = 1
+                _Concurrency.Task {
+                    await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60))
+                }
             }
         }
         .onChange(of: timerService.currentTask?.isCompleted) { _, isCompleted in

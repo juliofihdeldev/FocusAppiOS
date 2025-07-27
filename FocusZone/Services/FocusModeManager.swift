@@ -192,9 +192,8 @@ class FocusModeManager: NSObject, ObservableObject {
     }
     
     // MARK: - System Focus Integration
-    
     private func activateSystemFocus(mode: FocusMode) async -> Bool {
-        guard let systemIdentifier = mode.systemFocusIdentifier else {
+        guard mode.systemFocusIdentifier != nil else {
             print("📱 No system focus mode for \(mode.displayName), using custom implementation")
             return false
         }
