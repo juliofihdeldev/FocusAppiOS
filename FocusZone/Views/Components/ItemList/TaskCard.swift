@@ -140,11 +140,13 @@ struct TaskCard: View {
                     .lineLimit(2)
                 
                 // Progress text for active tasks
-                if progressInfo.shouldShow && !isCompleted {
+                if progressInfo.shouldShow && !isCompleted &&
+                    overdueMinutesFun() / 60 < 12
+                {
                     Text(getProgressText())
                         .font(AppFonts.caption())
                         .foregroundColor(progressInfo.color)
-                 
+                    
                 }
                 
                 Spacer()
