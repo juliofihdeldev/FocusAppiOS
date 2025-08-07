@@ -515,50 +515,6 @@ class TimelineViewModel: ObservableObject {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
-    func updateBreakSuggestions() {
-         let breakAnalyzer = SmartBreakAnalyzer()
-         let suggestions = breakAnalyzer.analyzeTasks(tasks)
-         DispatchQueue.main.async {
-             self.breakSuggestions = suggestions
-         }
-     }
-    
-    func acceptBreakSuggestion(_ suggestion: BreakSuggestion) {
-            guard let modelContext = modelContext else { return }
-            
-            let breakTask = Task(
-                title: suggestion.type.displayName,
-                icon: suggestion.icon,
-                startTime: suggestion.suggestedStartTime,
-                durationMinutes: suggestion.suggestedDuration,
-                color: suggestion.type.color,
-                taskType: suggestion.type == .snack ? .meal : .relax
-            )
-            
-            modelContext.insert(breakTask)
-            
-            // Schedule notifications
-            notificationService.scheduleTaskReminders(for: breakTask)
-            
-            // Remove this suggestion
-            dismissBreakSuggestion(suggestion)
-            
-            saveContext()
-            refreshTasks()
-            updateBreakSuggestions() // Refresh suggestions after adding new task
-    }
-    
-    
-     func dismissBreakSuggestion(_ suggestion: BreakSuggestion) {
-         breakSuggestions.removeAll { $0.id == suggestion.id }
-     }
-     
-     // Call this method whenever tasks are loaded or updated
-     func refreshTasksWithBreakSuggestions(for date: Date = Date()) {
-         loadTodayTasks(for: date)
-         updateBreakSuggestions()
-     }
-
 }
 
 
@@ -576,4 +532,134 @@ extension TimelineViewModel {
         updateWidgetData()
         WidgetDataManager.shared.debugWidgetData()
     }
+    
+    func updateBreakSuggestions() {
+         // Enhanced break suggestion update with intelligent spacing
+         let suggestions = breakAnalyzer.analyzeTasks(tasks)
+         
+         // Log for debugging
+         print("TimelineViewModel: Generated \(suggestions.count) break suggestions")
+         for suggestion in suggestions {
+             print("  - \(suggestion.type.displayName): \(suggestion.reason) (Impact: \(suggestion.impactScore))")
+         }
+         
+         DispatchQueue.main.async {
+             self.breakSuggestions = suggestions
+         }
+     }
+    
+    func acceptBreakSuggestion(_ suggestion: BreakSuggestion) {
+            guard let modelContext = modelContext else { return }
+            
+            // Mark suggestion as accepted in the analyzer
+            breakAnalyzer.markSuggestionAccepted(suggestion)
+            
+            // Create the break task
+            let breakTask = Task(
+                title: suggestion.type.displayName,
+                icon: suggestion.icon,
+                startTime: suggestion.suggestedStartTime,
+                durationMinutes: suggestion.suggestedDuration,
+                color: suggestion.type.color,
+                taskType: suggestion.type == .snack ? .meal : .relax
+            )
+            
+            modelContext.insert(breakTask)
+            
+            // Schedule notifications
+            notificationService.scheduleTaskReminders(for: breakTask)
+            
+            saveContext()
+            
+            // Refresh tasks and suggestions
+            refreshTasks()
+            
+            // Delay before updating suggestions to avoid immediate new suggestions
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.updateBreakSuggestions()
+            }
+            
+            print("TimelineViewModel: Accepted break suggestion - \(suggestion.type.displayName)")
+        }
+    
+        func dismissBreakSuggestion(_ suggestion: BreakSuggestion) {
+            // Mark as dismissed in the analyzer
+            breakAnalyzer.markSuggestionDismissed(suggestion)
+            
+            // Remove from current suggestions
+            breakSuggestions.removeAll { $0.id == suggestion.id }
+            
+            // Don't immediately generate new suggestions to avoid spam
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.updateBreakSuggestions()
+            }
+            
+            print("TimelineViewModel: Dismissed break suggestion - \(suggestion.type.displayName)")
+        }
+       
+       // MARK: - Suggestion Quality Control
+       
+       func shouldShowBreakSuggestion(_ suggestion: BreakSuggestion) -> Bool {
+           let now = Date()
+           
+           // Don't show suggestions for the past
+           guard suggestion.suggestedStartTime > now else { return false }
+           
+           // Don't show suggestions too far in the future (more than 4 hours)
+           let timeUntilSuggestion = suggestion.suggestedStartTime.timeIntervalSince(now)
+           guard timeUntilSuggestion <= 4 * 3600 else { return false }
+           
+           // Check if there's already a task at the suggested time
+           let conflictingTask = tasks.first { task in
+               let taskEnd = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+               return suggestion.suggestedStartTime >= task.startTime &&
+                      suggestion.suggestedStartTime <= taskEnd
+           }
+           
+           if conflictingTask != nil {
+               return false
+           }
+           
+           // Check minimum impact score threshold
+           return suggestion.impactScore >= 40.0
+       }
+       
+       // MARK: - Enhanced Refresh Methods
+       
+       func refreshTasksWithBreakSuggestions(for date: Date = Date()) {
+           loadTodayTasks(for: date)
+           
+           // Add a small delay to ensure tasks are loaded before analyzing breaks
+           DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+               self.updateBreakSuggestions()
+           }
+       }
+       
+       // MARK: - Daily Cleanup
+       
+       func performDailyBreakSuggestionCleanup() {
+           // Clean up old dismissed suggestions
+           breakAnalyzer.cleanupDismissedSuggestions()
+           
+           // Remove any stale suggestions
+           let now = Date()
+           breakSuggestions.removeAll { suggestion in
+               suggestion.suggestedStartTime.addingTimeInterval(TimeInterval(suggestion.suggestedDuration * 60)) < now
+           }
+           
+           print("TimelineViewModel: Performed daily break suggestion cleanup")
+       }
+       
+       // MARK: - Analytics Integration
+       
+       func trackBreakSuggestionMetrics() {
+           let totalSuggestions = breakSuggestions.count
+           let highImpactSuggestions = breakSuggestions.filter { $0.impactScore >= 70 }.count
+           let typeDistribution = Dictionary(grouping: breakSuggestions, by: \.type)
+           
+           print("Break Suggestion Metrics:")
+           print("  - Total suggestions: \(totalSuggestions)")
+           print("  - High impact suggestions: \(highImpactSuggestions)")
+           print("  - Type distribution: \(typeDistribution.mapValues { $0.count })")
+       }
 }
