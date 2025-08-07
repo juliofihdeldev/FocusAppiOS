@@ -250,7 +250,7 @@ class TimelineViewModel: ObservableObject {
             icon: task.icon,
             startTime: task.startTime,
             durationMinutes: task.durationMinutes,
-            color: task.color,s
+            color: task.color,
             isCompleted: false,
             taskType: task.taskType,
             status: .cancelled, // Mark as cancelled to indicate deletion
