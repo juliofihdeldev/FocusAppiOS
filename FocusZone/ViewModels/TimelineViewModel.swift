@@ -245,12 +245,12 @@ class TimelineViewModel: ObservableObject {
         // Create a "deleted instance" record to prevent this virtual task from appearing again
         // This approach is better than modifying the parent task
         let deletedInstance = Task(
-            id: task.id,
+            id: UUID(), // New unique ID for virtual task
             title: task.title,
             icon: task.icon,
             startTime: task.startTime,
             durationMinutes: task.durationMinutes,
-            color: task.color,
+            color: task.color,s
             isCompleted: false,
             taskType: task.taskType,
             status: .cancelled, // Mark as cancelled to indicate deletion
