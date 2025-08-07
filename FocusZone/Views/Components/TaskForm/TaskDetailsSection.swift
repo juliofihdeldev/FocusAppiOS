@@ -10,27 +10,27 @@ struct TaskDetailsSection: View {
                 .font(AppFonts.headline())
                 .foregroundColor(.gray)
             
-            Button(action: {
-                withAnimation(.spring()) {
-                    showSubtasks.toggle()
-                }
-            }) {
-                HStack {
-                    Image(systemName: "plus")
-                        .foregroundColor(.white)
-                    Text("Add Subtask")
-                        .font(AppFonts.subheadline())
-                        .foregroundColor(.white)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color.pink)
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
+//            Button(action: {
+//                withAnimation(.spring()) {
+//                    showSubtasks.toggle()
+//                }
+//            }) {
+//                HStack {
+//                    Image(systemName: "plus")
+//                        .foregroundColor(.white)
+//                    Text("Add Subtask")
+//                        .font(AppFonts.subheadline())
+//                        .foregroundColor(.white)
+//                    Spacer()
+//                }
+//                .padding(.horizontal, 16)
+//                .padding(.vertical, 12)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 25)
+//                        .fill(Color.pink)
+//                )
+//            }
+//            .buttonStyle(PlainButtonStyle())
             
             TextField("Add notes, meeting links or phone numbers...", text: $notes, axis: .vertical)
                 .font(AppFonts.body())

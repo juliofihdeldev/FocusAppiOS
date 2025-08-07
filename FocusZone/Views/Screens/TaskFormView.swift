@@ -23,9 +23,9 @@ struct TaskFormView: View {
     @State private var selectedColor: Color = .pink
     @State private var selectedTaskType: TaskType? = nil
     @State private var selectedIcon: String = "📝"
-    @State private var repeatRule: RepeatRule = .once
+    @State private var repeatRule: RepeatRule = .none
     @State private var alerts: [String] = ["At start of task"]
-    @State private var showSubtasks: Bool = false
+    @State private var showSubtasks: Bool = true
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
@@ -91,7 +91,7 @@ struct TaskFormView: View {
                             // Notification Info Section
                             NotificationInfoSection()
                             
-                            TaskAlertsSection(alerts: $alerts)
+//                            TaskAlertsSection(alerts: $alerts)
                             
                             TaskDetailsSection(
                                 showSubtasks: $showSubtasks,
@@ -110,12 +110,6 @@ struct TaskFormView: View {
             loadTaskData()
         }
     }
-    
-    // MARK: - Notification Info Section
-    
-    
-    
-    // MARK: - Methods
     
     private func loadTaskData() {
         guard let task = taskToEdit else { return }

@@ -52,7 +52,7 @@ class Task {
         taskType: TaskType? = nil,
         status: TaskStatus = .scheduled,
         actualStartTime: Date? = nil,
-        repeatRule: RepeatRule = .once,
+        repeatRule: RepeatRule = .none,
         isGeneratedFromRepeat: Bool = false,
         parentTaskId: UUID? = nil,
         parentTask: Task? = nil
@@ -120,7 +120,7 @@ class Task {
     
     var repeatRule: RepeatRule {
         get {
-            RepeatRule(rawValue: repeatRuleRawValue) ?? .once
+            RepeatRule(rawValue: repeatRuleRawValue) ?? .none
         }
         set {
             repeatRuleRawValue = newValue.rawValue
@@ -151,7 +151,7 @@ class Task {
     
     // Helper methods for parent-child relationships
     var isParentTask: Bool {
-        return !children.isEmpty || (repeatRule != .none && repeatRule != .once && !isGeneratedFromRepeat)
+        return !children.isEmpty || (repeatRule != .none && !isGeneratedFromRepeat)
     }
     
     var isChildTask: Bool {

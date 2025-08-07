@@ -30,13 +30,10 @@ struct TaskCard: View {
                         .frame(width: 60, height: baseHeight)
                     
                     // Progress fill (only for active tasks) - aligned to top
-                    if progressInfo.shouldShow &&  !isCompleted {
+                    if progressInfo.shouldShow && !isCompleted {
                         VStack(spacing: 0) {
-                            RoundedRectangle(cornerRadius:
-                                                overdueMinutesFun() > 0  ? 30 :
-                                                progressInfo.percentage > 0.80 ? 30
-                                             : 2
-                            )
+                            // Fixed: Use proper corner radius and shape handling
+                            RoundedRectangle(cornerRadius: getProgressCornerRadius())
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
@@ -47,13 +44,10 @@ struct TaskCard: View {
                                         endPoint: .bottom
                                     )
                                 )
-                                .cornerRadius(30, corners: [.topLeft, .topRight])
-                                .cornerRadius(4, corners: [.bottomLeft, .bottomRight])
-                                .frame(width:
-                                        baseHeight < 70 && progressInfo.percentage < 0.60 ? 10:
-                                        progressInfo.percentage > 0.20 ?
-                                        60 : 10
-                                       , height: progressHeight)
+                                .frame(
+                                    width: getProgressWidth(),
+                                    height: progressHeight
+                                )
                                 .animation(.easeInOut(duration: 0.5), value: progressHeight)
                             
                             Spacer(minLength: 0) // Push progress to top
@@ -96,7 +90,6 @@ struct TaskCard: View {
                 }
             }
             
-          
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
                 Spacer()
@@ -109,44 +102,21 @@ struct TaskCard: View {
                
                     Spacer()
                     
-                    // Status indicator
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                            .font(.title3)
-                    } else if progressInfo.shouldShow {
-                        Circle()
-                            .stroke(progressInfo.color, lineWidth: 3)
-                            .frame(width: 24, height: 24)
-                            .overlay(
-                                Circle()
-                                    .trim(from: 0, to: CGFloat(progressInfo.percentage))
-                                    .stroke(progressInfo.color, lineWidth: 3)
-                                    .rotationEffect(.degrees(-90))
-                                    .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
-                            )
-                    } else {
-                        Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 3)
-                            .frame(width: 24, height: 24)
-                    }
+                    // Status indicator - Fixed logic
+                    statusIndicator(progressInfo: progressInfo)
                 }
                 
                 // Task title
-                
                 Text(title)
                     .font(AppFonts.headline())
                     .foregroundColor(.white)
                     .lineLimit(2)
                 
                 // Progress text for active tasks
-                if progressInfo.shouldShow && !isCompleted &&
-                    overdueMinutesFun() / 60 < 12
-                {
+                if progressInfo.shouldShow && !isCompleted && overdueMinutesFun() / 60 < 12 {
                     Text(getProgressText())
                         .font(AppFonts.caption())
                         .foregroundColor(progressInfo.color)
-                    
                 }
                 
                 Spacer()
@@ -157,6 +127,69 @@ struct TaskCard: View {
         }
         .onReceive(timer) { _ in
             currentTime = Date()
+        }
+    }
+    
+    // MARK: - Helper Methods for Progress Display
+    
+    private func getProgressCornerRadius() -> CGFloat {
+        let overdueMinutes = overdueMinutesFun()
+        let progressInfo = calculateProgress()
+        
+        if overdueMinutes > 0 {
+            return 30
+        } else if progressInfo.percentage > 0.80 {
+            return 30
+        } else {
+            return 2
+        }
+    }
+    
+    private func getProgressWidth() -> CGFloat {
+        let baseHeight = max(60, CGFloat(durationMinutes) * 1)
+        let progressInfo = calculateProgress()
+        
+        if baseHeight < 70 && progressInfo.percentage < 0.60 {
+            return 10
+        } else if progressInfo.percentage > 0.20 {
+            return 60
+        } else {
+            return 10
+        }
+    }
+    
+    @ViewBuilder
+    private func statusIndicator(progressInfo: (shouldShow: Bool, percentage: Double, color: Color)) -> some View {
+        if isCompleted {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+                .font(.title3)
+        } else if progressInfo.shouldShow && overdueMinutesFun() / 60 > 12 {
+            Circle()
+                .stroke(Color.white.opacity(0.55), lineWidth: 3)
+                .frame(width: 24, height: 24)
+                .overlay(
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progressInfo.percentage))
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 3)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
+                )
+        } else if progressInfo.shouldShow && overdueMinutesFun() / 60 < 12 {
+            Circle()
+                .stroke(progressInfo.color, lineWidth: 3)
+                .frame(width: 24, height: 24)
+                .overlay(
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progressInfo.percentage))
+                        .stroke(progressInfo.color, lineWidth: 3)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
+                )
+        } else {
+            Circle()
+                .stroke(Color.gray.opacity(0.3), lineWidth: 3)
+                .frame(width: 24, height: 24)
         }
     }
     
@@ -205,7 +238,6 @@ struct TaskCard: View {
         
         return (false, 0.0, color)
     }
-    
 
     private func shouldShowConnector() -> Bool {
         // Show connector for all tasks except maybe the last one
@@ -297,16 +329,18 @@ struct TaskCard: View {
         guard let task = task else { return 0 }
         
         let now = currentTime
-        let taskStartTime = task.startTime
         let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
         
-        // Task is overdue
-        let overdue = now.timeIntervalSince(taskEndTime)
-        let overdueMinutes = Int(overdue / 60)
-        return overdueMinutes;
+        // Only calculate overdue if task has passed its end time
+        if now > taskEndTime {
+            let overdue = now.timeIntervalSince(taskEndTime)
+            let overdueMinutes = Int(overdue / 60)
+            return max(0, overdueMinutes) // Ensure non-negative
+        }
+        
+        return 0
     }
 }
-
 
 struct RoundedCorner: Shape {
     var radius: CGFloat = .infinity
