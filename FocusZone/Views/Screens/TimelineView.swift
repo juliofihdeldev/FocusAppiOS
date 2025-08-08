@@ -35,13 +35,13 @@ struct TimelineView: View {
                     .padding(.bottom, 16)
                     
                     // Debug button (remove in production)
-//                    #if DEBUG
-//                    Button("Debug Notifications") {
-//                        NotificationService.shared.getPendingNotifications()
-//                    }
-//                    .foregroundColor(.blue)
-//                    .padding(.bottom, 8)
-//                    #endif
+                    #if DEBUG
+                    Button("Test Task Creation") {
+                        viewModel.createTestTask()
+                    }
+                    .foregroundColor(.blue)
+                    .padding(.bottom, 8)
+                    #endif
                     
                     // Main Content Area
                     ScrollViewReader { proxy in
