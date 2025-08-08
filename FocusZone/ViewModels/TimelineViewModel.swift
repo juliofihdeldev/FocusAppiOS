@@ -18,6 +18,7 @@ class TimelineViewModel: ObservableObject {
     
     func loadTodayTasks(for date: Date = Date()) {
         
+        print("TimelineViewModel: Loading tasks for \(dateString(date))")
         print("Rendering \(breakSuggestions.count) breakSuggestions")
 
         guard let modelContext = modelContext else {
@@ -39,6 +40,8 @@ class TimelineViewModel: ObservableObject {
 
         do {
             let allTasks = try modelContext.fetch(descriptor)
+            print("TimelineViewModel: Fetched \(allTasks.count) total tasks from database")
+            
             var todayTasks: [Task] = []
 
             // First, get all actual tasks for this specific date
@@ -440,6 +443,15 @@ class TimelineViewModel: ObservableObject {
     }
     
     func refreshTasks(for date: Date) {
+        print("TimelineViewModel: Explicitly refreshing tasks for \(dateString(date))")
+        loadTodayTasks(for: date)
+    }
+    
+    func forceRefreshTasks(for date: Date) {
+        print("TimelineViewModel: Force refreshing tasks for \(dateString(date))")
+        // Clear current tasks first
+        tasks = []
+        // Then reload
         loadTodayTasks(for: date)
     }
     

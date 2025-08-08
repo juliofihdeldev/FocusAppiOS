@@ -128,7 +128,8 @@ struct TimelineView: View {
                             }
                         }
                         .refreshable {
-                            viewModel.loadTodayTasks(for: selectedDate)
+                            viewModel.forceRefreshTasks(for: selectedDate)
+                            print("TimelineView: Pull-to-refresh triggered")
                         }
                     }
                 }
@@ -153,21 +154,37 @@ struct TimelineView: View {
         .onAppear {
             setupViewModels()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            // Refresh timeline when app becomes active
+            viewModel.forceRefreshTasks(for: selectedDate)
+            print("TimelineView: Refreshed on app becoming active")
+        }
         .onChange(of: selectedDate) { _, newDate in
             viewModel.loadTodayTasks(for: newDate)
             viewModel.refreshTasksWithBreakSuggestions(for: newDate)
 
         }
         .sheet(isPresented: $showAddTaskForm, onDismiss: {
-            // Refresh timeline after creating a task
-            viewModel.refreshTasks(for: selectedDate)
-            viewModel.updateBreakSuggestions()
+            // Refresh timeline after creating a task with a small delay to ensure data is saved
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                viewModel.forceRefreshTasks(for: selectedDate)
+                viewModel.updateBreakSuggestions()
+                print("TimelineView: Force refreshed after task creation")
+            }
         }) {
             TaskFormView()
         }
         .sheet(isPresented: Binding<Bool>(
             get: { editingTask != nil },
-            set: { if !$0 { editingTask = nil } }
+            set: { if !$0 { 
+                editingTask = nil
+                // Refresh timeline after editing a task
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    viewModel.forceRefreshTasks(for: selectedDate)
+                    viewModel.updateBreakSuggestions()
+                    print("TimelineView: Force refreshed after task edit")
+                }
+            } }
         )) {
             if let task = editingTask {
                 TaskFormView(taskToEdit: task)
