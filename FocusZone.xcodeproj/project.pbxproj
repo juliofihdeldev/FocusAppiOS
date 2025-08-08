@@ -409,7 +409,7 @@
 				DEVELOPMENT_TEAM = X3L9TQDJ62;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FocusZoneWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FocusZoneWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = "Focus Tracker";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -417,7 +417,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ios.focus.jf.com.Focus.FocusZoneWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = ios.focus.jf.com.Focus.FocusWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -437,7 +437,7 @@
 				DEVELOPMENT_TEAM = X3L9TQDJ62;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FocusZoneWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FocusZoneWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = "Focus Tracker";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -445,7 +445,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ios.focus.jf.com.Focus.FocusZoneWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = ios.focus.jf.com.Focus.FocusWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
