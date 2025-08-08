@@ -1,0 +1,13 @@
+{
+	"identifier": "focuszone_pro_monthly",
+	"type": "auto-renewable",
+	"displayName": "FocusZone Pro",
+	"description": "Unlock all premium features",
+	"price": 2.99,
+	"familyShareable": false,
+	"subscriptionDuration": "P1M",
+	"introductoryOffer": {
+		"type": "freeTrial",
+		"duration": "P7D"
+	}
+}

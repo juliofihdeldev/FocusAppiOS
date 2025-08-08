@@ -50,7 +50,12 @@ struct FocusInsightsView: View {
             }
         }
         .sheet(isPresented: $showingUpgradeSheet) {
-            UpgradeToProSheet()
+            // PaywallView is not available in widget extension
+            // TODO: Exclude this file from widget extension target in Xcode
+            Text("Upgrade to Pro")
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black)
         }
     }
     
@@ -74,23 +79,7 @@ struct FocusInsightsView: View {
                 }
                 
                 Spacer()
-                
-                Button("Upgrade") {
-                    showingUpgradeSheet = true
-                }
-                .font(AppFonts.caption())
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    LinearGradient(
-                        colors: [.purple, .blue],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .cornerRadius(16)
+            
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)

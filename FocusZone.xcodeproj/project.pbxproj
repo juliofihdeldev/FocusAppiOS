@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43116B572E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */; };
+		43116B582E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */; };
 		437BF8D72E2D4F0200544334 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BF8D62E2D4F0200544334 /* WidgetKit.framework */; };
 		437BF8D92E2D4F0200544334 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BF8D82E2D4F0200544334 /* SwiftUI.framework */; };
 		437BF8EA2E2D4F0300544334 /* FocusZoneWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 437BF8D42E2D4F0200544334 /* FocusZoneWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -45,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		431164BB2E3671A1006A9907 /* FocusZoneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusZoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = focuszone_pro_monthly.storekit; sourceTree = "<group>"; };
 		437BF8D42E2D4F0200544334 /* FocusZoneWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FocusZoneWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		437BF8D62E2D4F0200544334 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		437BF8D82E2D4F0200544334 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -63,7 +66,6 @@
 		437BF8F12E2D517A00544334 /* Exceptions for "FocusZone" folder in "FocusZoneWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				App/SubscriptionManager.swift,
 				App/WidgetDataManager.swift,
 				"Helpers/Extensions/Color+Ext.swift",
 				"Helpers/Extensions/Task+Ext.swift",
@@ -161,6 +163,7 @@
 		43B948D62E22CB9B00392FD0 = {
 			isa = PBXGroup;
 			children = (
+				43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */,
 				437BF8F92E2D526300544334 /* FocusZoneWidgetExtension.entitlements */,
 				43B948E12E22CB9B00392FD0 /* FocusZone */,
 				437BF8DA2E2D4F0200544334 /* FocusZoneWidget */,
@@ -307,6 +310,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43116B582E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +318,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43116B572E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

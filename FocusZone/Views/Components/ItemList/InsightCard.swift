@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Insight Card Component
 struct InsightCard: View {
     let insight: FocusInsight
     @State private var isExpanded = false

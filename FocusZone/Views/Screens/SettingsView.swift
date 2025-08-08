@@ -6,7 +6,9 @@ struct SettingsView: View {
     @State private var autoSaveEnabled = true
     @State private var showingAbout = false
     @State private var enableFocusMode = true
+    @State private var showPaywall = false
     @StateObject private var focusManager = FocusModeManager()
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     var body: some View {
         NavigationView {
             ScrollView {
@@ -16,6 +18,7 @@ struct SettingsView: View {
                     
                     // Settings Sections
                     VStack(spacing: 20) {
+                        subscriptionSection
                         appearanceSection
                         notificationSection
                         dataSection
@@ -36,6 +39,9 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showingAbout) {
             AboutSheet()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
     
@@ -84,6 +90,138 @@ struct SettingsView: View {
                     .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
             )
             .padding(.horizontal, 20)
+        }
+    }
+    
+    // MARK: - Subscription Section
+    private var subscriptionSection: some View {
+        VStack(spacing: 16) {
+            // Subscription status card
+            SubscriptionStatusView()
+            
+            if !subscriptionManager.isProUser {
+                // Upgrade prompt for free users
+                Button(action: {
+                    showPaywall = true
+                }) {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [Color.orange, Color.red]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ))
+                                .frame(width: 40, height: 40)
+                            
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(.white)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Upgrade to Pro")
+                                .font(AppFonts.headline())
+                                .fontWeight(.semibold)
+                                .foregroundColor(AppColors.textPrimary)
+                            
+                            Text("Unlock all features with 7-day free trial")
+                                .font(AppFonts.body())
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(AppColors.accent)
+                    }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.orange.opacity(0.1),
+                                    Color.red.opacity(0.1)
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.orange.opacity(0.3),
+                                            Color.red.opacity(0.3)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ), lineWidth: 1)
+                            )
+                    )
+                }
+            } else {
+                // Pro user management options
+                SettingsSection(title: "Subscription", icon: "crown.fill") {
+                    VStack(spacing: 0) {
+                        Button(action: {
+                            _Concurrency.Task {
+                                await subscriptionManager.restorePurchases()
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "arrow.clockwise.circle.fill")
+                                    .font(.title3)
+                                    .foregroundColor(AppColors.accent)
+                                    .frame(width: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Restore Purchases")
+                                        .font(AppFonts.body())
+                                        .foregroundColor(AppColors.textPrimary)
+                                    Text("Restore your subscription on this device")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                        }
+                        
+                        Divider()
+                            .padding(.leading, 52)
+                        
+                        Button(action: {
+                            // TODO: Open subscription management in App Store
+                            if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "gear.circle.fill")
+                                    .font(.title3)
+                                    .foregroundColor(AppColors.accent)
+                                    .frame(width: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Manage Subscription")
+                                        .font(AppFonts.body())
+                                        .foregroundColor(AppColors.textPrimary)
+                                    Text("Change or cancel your subscription")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
         }
     }
     
