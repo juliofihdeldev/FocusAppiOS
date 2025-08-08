@@ -173,6 +173,7 @@ struct TimelineView: View {
             }
         }) {
             TaskFormView()
+                .environment(\.modelContext, modelContext)
         }
         .sheet(isPresented: Binding<Bool>(
             get: { editingTask != nil },
@@ -188,6 +189,7 @@ struct TimelineView: View {
         )) {
             if let task = editingTask {
                 TaskFormView(taskToEdit: task)
+                    .environment(\.modelContext, modelContext)
             }
         }
         .sheet(isPresented: Binding<Bool>(

@@ -125,6 +125,13 @@ struct TaskFormView: View {
     }
     
     private func saveTask() {
+        
+        print(">>>>>> save task call >>>>>>>")
+        print("TaskFormView: ModelContext available: \(modelContext != nil)")
+        print("TaskFormView: Task title: \(taskTitle)")
+        print("TaskFormView: Task start time: \(startTime)")
+        print("TaskFormView: Task duration: \(duration)")
+        
         // Combine selectedDate and startTime
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
@@ -137,11 +144,15 @@ struct TaskFormView: View {
             hour: timeComponents.hour,
             minute: timeComponents.minute
         )) else {
+            print("TaskFormView: Error creating final start time")
             return
         }
         
+        print("TaskFormView: Final start time: \(finalStartTime)")
+        
         if let taskToEdit = taskToEdit {
             // Update existing task
+            print("TaskFormView: Updating existing task")
             
             // Cancel old notifications first
             notificationService.cancelNotifications(for: taskToEdit.id.uuidString)
@@ -169,6 +180,7 @@ struct TaskFormView: View {
             }
         } else {
             // Create new task
+            print("TaskFormView: Creating new task")
             let newTask = Task(
                 title: taskTitle,
                 icon: selectedIcon,
@@ -179,11 +191,13 @@ struct TaskFormView: View {
                 repeatRule: repeatRule
             )
             
+            print("TaskFormView: New task created with ID: \(newTask.id)")
             modelContext.insert(newTask)
+            print("TaskFormView: Task inserted into ModelContext")
             
             do {
                 try modelContext.save()
-                print("TaskFormView: Task created successfully")
+                print(">>>>>>> TaskFormView: Task created successfully and saved to database")
                 
                 // Schedule notifications for new task
                 notificationService.scheduleTaskReminders(for: newTask)
@@ -204,10 +218,11 @@ struct TaskFormView: View {
                 }
                 
             } catch {
-                print("TaskFormView: Error creating task: \(error)")
+                print(">>>>>TaskFormView: Error creating task: \(error)")
             }
         }
         
+        print("TaskFormView: Dismissing form")
         dismiss()
     }
 }

@@ -42,6 +42,11 @@ class TimelineViewModel: ObservableObject {
             let allTasks = try modelContext.fetch(descriptor)
             print("TimelineViewModel: Fetched \(allTasks.count) total tasks from database")
             
+            // Debug: Print all tasks
+            for (index, task) in allTasks.enumerated() {
+                print("TimelineViewModel: Task \(index): \(task.title) - \(task.startTime) - \(task.durationMinutes)m")
+            }
+            
             var todayTasks: [Task] = []
 
             // First, get all actual tasks for this specific date
