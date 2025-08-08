@@ -6,8 +6,16 @@
     <key>UIAppFonts</key>
     <array>
         <string>Montserrat-Regular.ttf</string>
-        <!-- Add subpath in case the Fonts folder is a folder reference in the bundle -->
         <string>Font/Montserrat-Regular.ttf</string>
+        <!-- Inter family (optional, if added to project) -->
+        <string>Inter-Regular.ttf</string>
+        <string>Inter-Medium.ttf</string>
+        <string>Inter-SemiBold.ttf</string>
+        <string>Inter-Bold.ttf</string>
+        <string>Font/Inter-Regular.ttf</string>
+        <string>Font/Inter-Medium.ttf</string>
+        <string>Font/Inter-SemiBold.ttf</string>
+        <string>Font/Inter-Bold.ttf</string>
     </array>
     
     <!-- Add these new entries for Focus Mode support -->
