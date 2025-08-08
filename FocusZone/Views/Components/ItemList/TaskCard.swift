@@ -17,7 +17,11 @@ struct TaskCard: View {
         // Calculate height based on duration (1 minute = 2 points, minimum 60pt)
         let baseHeight: CGFloat = max(60, CGFloat(durationMinutes) * 1)
         let progressInfo = calculateProgress()
-        let progressHeight = baseHeight * CGFloat(progressInfo.percentage)
+        // Add minimum progress height to avoid thin line appearance
+        let minProgressHeight: CGFloat = 12
+        let calculatedProgressHeight = baseHeight * CGFloat(progressInfo.percentage)
+        let progressHeight = progressInfo.shouldShow && progressInfo.percentage > 0 ? 
+            max(minProgressHeight, calculatedProgressHeight) : calculatedProgressHeight
         
         HStack(alignment: .top, spacing: 0) {
             // Left side - Timeline with progress
@@ -32,23 +36,34 @@ struct TaskCard: View {
                     // Progress fill (only for active tasks) - aligned to top
                     if progressInfo.shouldShow && !isCompleted {
                         VStack(spacing: 0) {
-                            // Fixed: Use proper corner radius and shape handling
-                            RoundedRectangle(cornerRadius: getProgressCornerRadius())
+                            // Use proper SwiftUI shape with clipShape modifier
+                            Capsule()
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
-                                            color.opacity(0.8),
-                                            color.opacity(0.3)
+                                            color.opacity(0.6),
+                                            color.opacity(0.2)
                                         ]),
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )
                                 )
                                 .frame(
-                                    width: getProgressWidth(),
+                                    width: 60,
                                     height: progressHeight
                                 )
+                                .clipShape(
+                                    progressInfo.percentage < 0.9 
+                                        ? AnyShape(UnevenRoundedRectangle(
+                                            topLeadingRadius: 30,
+                                            bottomLeadingRadius: 0,
+                                            bottomTrailingRadius: 0,
+                                            topTrailingRadius: 30
+                                        ))
+                                        : AnyShape(Capsule())
+                                )
                                 .animation(.easeInOut(duration: 0.5), value: progressHeight)
+                                .animation(.easeInOut(duration: 0.3), value: progressInfo.percentage)
                             
                             Spacer(minLength: 0) // Push progress to top
                         }
@@ -131,33 +146,7 @@ struct TaskCard: View {
     }
     
     // MARK: - Helper Methods for Progress Display
-    
-    private func getProgressCornerRadius() -> CGFloat {
-        let overdueMinutes = overdueMinutesFun()
-        let progressInfo = calculateProgress()
-        
-        if overdueMinutes > 0 {
-            return 30
-        } else if progressInfo.percentage > 0.80 {
-            return 30
-        } else {
-            return 2
-        }
-    }
-    
-    private func getProgressWidth() -> CGFloat {
-        let baseHeight = max(60, CGFloat(durationMinutes) * 1)
-        let progressInfo = calculateProgress()
-        
-        if baseHeight < 70 && progressInfo.percentage < 0.60 {
-            return 10
-        } else if progressInfo.percentage > 0.20 {
-            return 60
-        } else {
-            return 10
-        }
-    }
-    
+         
     @ViewBuilder
     private func statusIndicator(progressInfo: (shouldShow: Bool, percentage: Double, color: Color)) -> some View {
         if isCompleted {
@@ -355,6 +344,8 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+
+
 
 // MARK: - Timeline View Container
 struct _TimelineView: View {

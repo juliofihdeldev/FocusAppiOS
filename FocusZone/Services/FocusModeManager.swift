@@ -515,8 +515,6 @@ class FocusModeManager: NSObject, ObservableObject {
     }
 }
 
-// MARK: - UNUserNotificationCenterDelegate
-
 extension FocusModeManager: UNUserNotificationCenterDelegate {
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,

@@ -272,17 +272,4 @@ struct FocusInsightsView: View {
     }
 }
 
-// MARK: - Supporting Extensions
-extension InsightType {
-    var displayName: String {
-        switch self {
-        case .timeOfDay: return "Time"
-        case .taskDuration: return "Duration"
-        case .breakPattern: return "Breaks"
-        case .completion: return "Goals"
-        case .dayOfWeek: return "Schedule"
-        }
-    }
-}
-
 
