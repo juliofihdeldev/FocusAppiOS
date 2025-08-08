@@ -158,7 +158,11 @@ struct TimelineView: View {
             viewModel.refreshTasksWithBreakSuggestions(for: newDate)
 
         }
-        .sheet(isPresented: $showAddTaskForm) {
+        .sheet(isPresented: $showAddTaskForm, onDismiss: {
+            // Refresh timeline after creating a task
+            viewModel.refreshTasks(for: selectedDate)
+            viewModel.updateBreakSuggestions()
+        }) {
             TaskFormView()
         }
         .sheet(isPresented: Binding<Bool>(
