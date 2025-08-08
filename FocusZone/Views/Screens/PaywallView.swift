@@ -86,6 +86,7 @@ struct PaywallView: View {
                             // CTA Button
                             Button(action: {
                                 _Concurrency.Task {
+                                    print("Try to Purchasing subscription")
                                     isPurchasing = true
                                     let success = await subscriptionManager.purchaseSubscription()
                                     isPurchasing = false
