@@ -68,6 +68,7 @@ struct FocusZoneApp: App {
         let apiKey = "appl_OvrdrmbbOqtogqrIfROZKanDGIP"
         Purchases.logLevel = .debug
         Purchases.configure(withAPIKey: apiKey)
+        
         print("[RevenueCat] Configured Purchases SDK with provided key")
         NotificationCenter.default.post(name: .revenueCatConfigured, object: nil)
     }
