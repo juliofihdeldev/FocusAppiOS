@@ -41,25 +41,66 @@ struct WeeklyPlanPreviewSheet: View {
                 .listStyle(.plain)
 
                 HStack(spacing: 12) {
-                    Button("Undo last") { onUndo() }
+                    // Undo button - glass outline style
+                    Button(action: { onUndo() }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.uturn.backward")
+                            Text("Undo last")
+                        }
                         .font(AppFonts.body())
                         .foregroundColor(AppColors.accent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12).stroke(AppColors.accent, lineWidth: 1)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(LinearGradient(
+                                    colors: [AppColors.accent.opacity(0.9), AppColors.accent.opacity(0.3)],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                ), lineWidth: 1)
                         )
+                        .shadow(color: AppColors.accent.opacity(0.12), radius: 10, x: 0, y: 6)
+                    }
+                    .buttonStyle(CapsulePressStyle())
 
-                    Button("Apply Selected") {
+                    // Apply button - prominent gradient capsule
+                    Button(action: {
                         let selected = zip(state.changes, selection).compactMap { $1 ? $0 : nil }
                         onApply(selected)
-                    }
+                    }) {
+                        let selectedCount = selection.filter { $0 }.count
+                        HStack(spacing: 10) {
+                            Image(systemName: "calendar.badge.plus")
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundColor(.white)
+                            Text("Apply Selected")
+                                .foregroundColor(.white)
+                            if selectedCount > 0 {
+                                Text("(\(selectedCount))")
+                                    .foregroundColor(.white.opacity(0.85))
+                            }
+                        }
                         .font(AppFonts.body())
-                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(AppColors.accent)
-                        .cornerRadius(12)
+                        .background(
+                            Capsule().fill(
+                                LinearGradient(
+                                    colors: [AppColors.accent, AppColors.accent.opacity(0.85)],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                )
+                            )
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.white.opacity(0.18), lineWidth: 0.5)
+                                .blendMode(.overlay)
+                        )
+                        .shadow(color: AppColors.accent.opacity(0.25), radius: 14, x: 0, y: 10)
+                        .opacity(selection.contains(true) ? 1 : 0.6)
+                    }
+                    .disabled(!selection.contains(true))
+                    .buttonStyle(CapsulePressStyle())
                 }
                 .padding(16)
             }
@@ -88,6 +129,15 @@ struct WeeklyPlanPreviewSheet: View {
         case let .addFocusBlock(date, durationMinutes, title):
             return "\(title) — \(durationMinutes)m at \(DateFormatter.shortTime.string(from: date))"
         }
+    }
+}
+
+// Press feedback for capsule-styled buttons
+private struct CapsulePressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.spring(response: 0.28, dampingFraction: 0.85), value: configuration.isPressed)
     }
 }
 
