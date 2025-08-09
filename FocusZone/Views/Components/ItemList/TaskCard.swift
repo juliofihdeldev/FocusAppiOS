@@ -24,74 +24,24 @@ struct TaskCard: View {
             max(minProgressHeight, calculatedProgressHeight) : calculatedProgressHeight
         
         HStack(alignment: .top, spacing: 0) {
-            // Left side - Timeline with progress
+            // Left side - Timeline with progress Capsule
             VStack(spacing: 0) {
-                // Timeline pill/capsule
-                ZStack {
-                    // Background capsule (total duration)
-                    Capsule()
-                        .fill(color.opacity(0.3))
-                        .frame(width: 60, height: baseHeight)
-                    
-                    // Progress fill (only for active tasks) - aligned to top
-                    if progressInfo.shouldShow && !isCompleted {
-                        VStack(spacing: 0) {
-                            // Use proper SwiftUI shape with clipShape modifier
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            color.opacity(0.6),
-                                            color.opacity(0.2)
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .frame(
-                                    width: 60,
-                                    height: progressHeight
-                                )
-                                .clipShape(
-                                    progressInfo.percentage < 0.9 
-                                        ? AnyShape(UnevenRoundedRectangle(
-                                            topLeadingRadius: 30,
-                                            bottomLeadingRadius: 0,
-                                            bottomTrailingRadius: 0,
-                                            topTrailingRadius: 30
-                                        ))
-                                        : AnyShape(Capsule())
-                                )
-                                .animation(.easeInOut(duration: 0.5), value: progressHeight)
-                                .animation(.easeInOut(duration: 0.3), value: progressInfo.percentage)
-                            
-                            Spacer(minLength: 0) // Push progress to top
-                        }
-                        .frame(width: 60, height: baseHeight)
-                    }
-                    
-                    // Completed state - full fill
-                    if isCompleted {
-                        Capsule()
-                            .fill(color)
-                            .frame(width: 60, height: baseHeight)
-                    }
-                    
-                    // Icon container - perfectly centered
-                    VStack {
-                        Spacer()
-                        
-                        ZStack {
+                VerticalCapsuleMeter(
+                    totalHeight: baseHeight,
+                    width: 60,
+                    backgroundColor: color.opacity(0.3),
+                    baseColor: color,
+                    progress: progressInfo.shouldShow && !isCompleted ? progressInfo.percentage : (isCompleted ? 1.0 : 0.0),
+                    isCompleted: isCompleted
+                ) {
+                    VStack { Spacer() }
+                        .overlay(
                             Text(icon)
                                 .font(.title2)
                                 .foregroundColor(.white)
-                        }
-                        
-                        Spacer()
-                    }
-                    .frame(height: baseHeight)
+                        )
                 }
-                
+
                 // Timeline connector (dashed line)
                 if shouldShowConnector() {
                     Rectangle()
