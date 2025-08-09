@@ -7,9 +7,10 @@
 
 import SwiftUI
 import StoreKit
+import RevenueCat
 
 struct PricingCard: View {
-    let product: Product
+    let product: StoreProduct
     
     var body: some View {
         VStack(spacing: 16) {
@@ -32,7 +33,7 @@ struct PricingCard: View {
             // Price
             VStack(spacing: 4) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(product.displayPrice)
+                    Text(product.localizedPriceString)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)

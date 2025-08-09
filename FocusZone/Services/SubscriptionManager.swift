@@ -8,6 +8,7 @@
 import Foundation
 import StoreKit
 import SwiftUI
+import RevenueCat
 
 // MARK: - Subscription Manager
 @MainActor
@@ -16,25 +17,22 @@ class SubscriptionManager: ObservableObject {
     
     @Published var subscriptionStatus: SubscriptionStatus = .unknown
     @Published var currentSubscription: Product.SubscriptionInfo.Status?
-    @Published var availableProducts: [Product] = []
+    @Published var availableProducts: [StoreProduct] = [] // From RevenueCat packages for UI
+    @Published var availablePackages: [Package] = [] // RevenueCat packages
+    @Published var currentOffering: Offering?
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    // Product IDs - These need to match App Store Connect
-    private let productIDs = [
-        "focuszone_pro_monthly" // $2.99/month with 7-day free trial
-    ]
+    // RevenueCat entitlement identifier (configure this in the RC dashboard)
+    private let entitlementIdentifier = "pro" // TODO: Replace with your entitlement ID if different
     
     private var updateListenerTask: _Concurrency.Task<Void, Error>?
     private var transactionListener: _Concurrency.Task<Void, Error>?
     
     init() {
-        // Start listening for transaction updates
-        transactionListener = listenForTransactions()
-        
-        // Load products and check subscription status
+        // Load offerings and check status
         _Concurrency.Task {
-            await loadProducts()
+            await loadOfferings()
             await updateSubscriptionStatus()
         }
     }
@@ -44,23 +42,22 @@ class SubscriptionManager: ObservableObject {
         transactionListener?.cancel()
     }
     
-    // MARK: - Product Loading
-    
-    func loadProducts() async {
+    // MARK: - Offerings / Products (RevenueCat)
+
+    func loadOfferings() async {
         isLoading = true
         errorMessage = nil
         
         do {
-            let storeProducts = try await Product.products(for: productIDs)
-            availableProducts = storeProducts
-            print("✅ Loaded \(storeProducts.count) products")
-            
-            for product in storeProducts {
-                print("📦 Product: \(product.displayName) - \(product.displayPrice)")
-            }
+            let offerings = try await Purchases.shared.offerings()
+            currentOffering = offerings.current
+            let packages = offerings.current?.availablePackages ?? []
+            availablePackages = packages
+            availableProducts = packages.map { $0.storeProduct }
+            print("✅ Loaded RevenueCat offerings: packages=\(packages.count)")
         } catch {
-            errorMessage = "Failed to load products: \(error.localizedDescription)"
-            print("❌ Failed to load products: \(error)")
+            errorMessage = "Failed to load offerings: \(error.localizedDescription)"
+            print("❌ Failed to load offerings: \(error)")
         }
         
         isLoading = false
@@ -69,49 +66,22 @@ class SubscriptionManager: ObservableObject {
     // MARK: - Subscription Status
     
     func updateSubscriptionStatus() async {
-        var validSubscription: Product.SubscriptionInfo.Status?
-        
-        // Check for valid subscriptions
-        for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result {
-                // Check if this is our subscription product
-                if productIDs.contains(transaction.productID) {
-                    if let subscription = try? await Product.products(for: [transaction.productID]).first?.subscription {
-                        let status = try? await subscription.status.first
-                        validSubscription = status
-                        break
-                    }
-                }
-            }
-        }
-        
-        currentSubscription = validSubscription
-        
-        // Update subscription status
-        if let subscription = validSubscription {
-            switch subscription.state {
-            case .subscribed:
-                subscriptionStatus = .active
-            case .expired, .revoked:
-                subscriptionStatus = .expired
-            case .inBillingRetryPeriod, .inGracePeriod:
-                subscriptionStatus = .active // Still considered active
-            default:
-                subscriptionStatus = .inactive
-            }
-            
-            print("🔄 Subscription status: \(subscriptionStatus)")
-        } else {
-            subscriptionStatus = .inactive
-            print("🔄 No active subscription found")
+        do {
+            let info = try await Purchases.shared.customerInfo()
+            let isActive = info.entitlements[entitlementIdentifier]?.isActive == true
+            subscriptionStatus = isActive ? .active : .inactive
+            print("🔄 RC Entitlement(\(entitlementIdentifier)) active=\(isActive)")
+        } catch {
+            subscriptionStatus = .unknown
+            print("❌ Failed to fetch customerInfo: \(error)")
         }
     }
     
     // MARK: - Purchase Flow
     
     func purchaseSubscription() async -> Bool {
-        guard let product = availableProducts.first else {
-            errorMessage = "Product not available"
+        guard let package = availablePackages.first else {
+            errorMessage = "No package available"
             return false
         }
         
@@ -119,31 +89,22 @@ class SubscriptionManager: ObservableObject {
         errorMessage = nil
         
         do {
-            let result = try await product.purchase()
-            
-            switch result {
-            case .success(let verificationResult):
-                if case .verified(let transaction) = verificationResult {
-                    await transaction.finish()
-                    await updateSubscriptionStatus()
-                    
-                    // Track purchase event
-                    print("✅ Purchase successful: \(transaction.productID)")
-                    return true
-                }
-                
-            case .userCancelled:
+            let result = try await Purchases.shared.purchase(package: package)
+            let info = result.customerInfo
+            let isActive = info.entitlements[entitlementIdentifier]?.isActive == true
+            if isActive {
+                print("✅ RC purchase successful: \(package.storeProduct.productIdentifier)")
+                await updateSubscriptionStatus()
+                isLoading = false
+                return true
+            } else if result.userCancelled {
                 print("🚫 User cancelled purchase")
-                
-            case .pending:
-                print("⏳ Purchase pending")
-                
-            @unknown default:
-                print("❓ Unknown purchase result")
+            } else {
+                print("❓ Purchase completed but entitlement inactive")
             }
         } catch {
             errorMessage = "Purchase failed: \(error.localizedDescription)"
-            print("❌ Purchase failed: \(error)")
+            print("❌ RC purchase failed: \(error)")
         }
         
         isLoading = false
@@ -157,37 +118,19 @@ class SubscriptionManager: ObservableObject {
         errorMessage = nil
         
         do {
-            try await AppStore.sync()
-            await updateSubscriptionStatus()
-            
-            if subscriptionStatus == .active {
-                print("✅ Purchases restored successfully")
-                isLoading = false
-                return true
-            } else {
-                errorMessage = "No active subscription found"
-            }
+            let info = try await Purchases.shared.restorePurchases()
+            let isActive = info.entitlements[entitlementIdentifier]?.isActive == true
+            subscriptionStatus = isActive ? .active : .inactive
+            print("🔁 RC restore completed, entitlement active=\(isActive)")
+            isLoading = false
+            return isActive
         } catch {
             errorMessage = "Failed to restore purchases: \(error.localizedDescription)"
-            print("❌ Failed to restore purchases: \(error)")
+            print("❌ RC restore failed: \(error)")
         }
         
         isLoading = false
         return false
-    }
-    
-    // MARK: - Transaction Listener
-    
-    private func listenForTransactions() -> _Concurrency.Task<Void, Error> {
-        return _Concurrency.Task.detached {
-            for await result in Transaction.updates {
-                if case .verified(let transaction) = result {
-                    print("🔄 Transaction update: \(transaction.productID)")
-                    await transaction.finish()
-                    await self.updateSubscriptionStatus()
-                }
-            }
-        }
     }
     
     // MARK: - Pro Features Check

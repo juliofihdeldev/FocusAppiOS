@@ -9,6 +9,7 @@
 import SwiftUI
 import SwiftData
 import CloudKit
+import RevenueCat
 
 @main
 struct FocusZoneApp: App {
@@ -41,6 +42,9 @@ struct FocusZoneApp: App {
                 .task {
                     cloudSyncManager.refreshAccountStatus()
                 }
+                .task {
+                    configureRevenueCat()
+                }
         }
         .modelContainer(modelContainer)
     }
@@ -53,4 +57,17 @@ struct FocusZoneApp: App {
                 print("FocusZoneApp: Notification permission denied")
             }
         }
+
+    private func configureRevenueCat() {
+        // TODO: replace with your public SDK key from RevenueCat dashboard
+        let apiKey = ProcessInfo.processInfo.environment["REVENUECAT_API_KEY"] ?? ""
+        guard !apiKey.isEmpty else {
+            print("[RevenueCat] Missing API key. Set REVENUECAT_API_KEY in scheme environment.")
+            return
+        }
+
+        Purchases.logLevel = .warn
+        Purchases.configure(withAPIKey: apiKey)
+        print("[RevenueCat] Configured Purchases SDK")
+    }
 }

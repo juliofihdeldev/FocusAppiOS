@@ -63,6 +63,13 @@
             ReferencedContainer = "container:FocusZone.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "REVENUECAT_API_KEY"
+            value = "appl_OvrdrmbbOqtogqrIfROZKanDGIP"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

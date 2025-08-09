@@ -7,6 +7,7 @@
 
 import SwiftUI
 import StoreKit
+import RevenueCat
 
 struct PaywallView: View {
     @StateObject private var subscriptionManager = SubscriptionManager.shared
@@ -186,7 +187,7 @@ struct PaywallView: View {
         }
         .onAppear {
             _Concurrency.Task {
-                await subscriptionManager.loadProducts()
+                await subscriptionManager.loadOfferings()
             }
         }
     }

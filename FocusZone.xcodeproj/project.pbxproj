@@ -12,6 +12,7 @@
 		437BF8D72E2D4F0200544334 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BF8D62E2D4F0200544334 /* WidgetKit.framework */; };
 		437BF8D92E2D4F0200544334 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BF8D82E2D4F0200544334 /* SwiftUI.framework */; };
 		437BF8EA2E2D4F0300544334 /* FocusZoneWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 437BF8D42E2D4F0200544334 /* FocusZoneWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		43RC00012E48000000RC0001 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 43RC00022E48000000RC0001 /* RevenueCat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +87,7 @@
 				Views/Components/ItemList/FocusModeCard.swift,
 				Views/Components/ItemList/InsightCard.swift,
 				Views/Components/Modal/UpgradeToProSheet.swift,
-					Views/Components/Modal/WeeklyPlanPreviewSheet.swift,
+				Views/Components/Modal/WeeklyPlanPreviewSheet.swift,
 				Views/Screens/FocusInsightsView.swift,
 			);
 			target = 437BF8D32E2D4F0200544334 /* FocusZoneWidgetExtension */;
@@ -146,6 +147,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43RC00012E48000000RC0001 /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,6 +253,7 @@
 			);
 			name = FocusZone;
 			packageProductDependencies = (
+				43RC00022E48000000RC0001 /* RevenueCat */,
 			);
 			productName = FocusZone;
 			productReference = 43B948DF2E22CB9B00392FD0 /* FocusZone.app */;
@@ -287,6 +290,9 @@
 			);
 			mainGroup = 43B948D62E22CB9B00392FD0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4361ECCF2E47D9DA00C82843 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43B948E02E22CB9B00392FD0 /* Products */;
 			projectDirPath = "";
@@ -676,6 +682,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4361ECCF2E47D9DA00C82843 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.34.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+/* Begin XCSwiftPackageProductDependency section */
+		43RC00022E48000000RC0001 /* RevenueCat */ = {isa = XCSwiftPackageProductDependency; productName = RevenueCat; };
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 43B948D72E22CB9B00392FD0 /* Project object */;
 }
