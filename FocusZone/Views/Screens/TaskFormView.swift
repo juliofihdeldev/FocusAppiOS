@@ -30,7 +30,7 @@ struct TaskFormView: View {
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
-    
+    @StateObject private var taskCreationState = TaskCreationState.shared
     @Environment(\.modelContext) private var modelContext
     private let notificationService = NotificationService.shared
     
@@ -109,6 +109,28 @@ struct TaskFormView: View {
         .navigationBarHidden(true)
         .onAppear {
             loadTaskData()
+            // Prefill next start time if available (for new tasks only)
+            if taskToEdit == nil, let suggested = taskCreationState.nextSuggestedStartTime {
+                let cal = Calendar.current
+                // If suggested is the same day as the current selected date, keep the date and prefill the time.
+                // Otherwise, move both date and time to the suggested day.
+                if cal.isDate(suggested, inSameDayAs: selectedDate) {
+                    let dateComponents = cal.dateComponents([.year, .month, .day], from: selectedDate)
+                    let timeComponents = cal.dateComponents([.hour, .minute], from: suggested)
+                    if let combined = cal.date(from: DateComponents(
+                        year: dateComponents.year,
+                        month: dateComponents.month,
+                        day: dateComponents.day,
+                        hour: timeComponents.hour,
+                        minute: timeComponents.minute
+                    )) {
+                        startTime = combined
+                    }
+                } else {
+                    selectedDate = suggested
+                    startTime = suggested
+                }
+            }
         }
     }
     
@@ -226,6 +248,10 @@ struct TaskFormView: View {
                 // Schedule notifications for new task
                 notificationService.scheduleTaskReminders(for: newTask)
                 print("TaskFormView: Scheduled notifications for new task")
+
+                // Prepare suggested next start time = end of this task
+                let next = finalStartTime.addingTimeInterval(TimeInterval(duration * 60))
+                taskCreationState.nextSuggestedStartTime = next
                 
                 // Show confirmation if notifications are enabled
                 if notificationService.isAuthorized {
