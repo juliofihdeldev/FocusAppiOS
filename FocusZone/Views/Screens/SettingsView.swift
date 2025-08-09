@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
     @State private var notificationsEnabled = true
-    @State private var autoSaveEnabled = true
     @State private var showingAbout = false
     @State private var enableFocusMode = true
     @State private var showPaywall = false
@@ -72,7 +71,7 @@ struct SettingsView: View {
                     )
                 
                 VStack(spacing: 4) {
-                    Text("FocusZone")
+                    Text("Focus")
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                         .fontWeight(.semibold)
@@ -275,15 +274,7 @@ struct SettingsView: View {
     private var dataSection: some View {
         SettingsSection(title: "Data", icon: "internaldrive") {
             VStack(spacing: 0) {
-                SettingsToggleRow(
-                    title: "Auto-Save Tasks",
-                    subtitle: "Automatically save your task changes",
-                    icon: "square.and.arrow.down.circle.fill",
-                    isOn: $autoSaveEnabled
-                )
-                
-                Divider()
-                    .padding(.leading, 52)
+     
                 
                 SettingsNavigationRow(
                     title: "Clear All Data",
@@ -461,7 +452,7 @@ struct AboutSheet: View {
                             .font(.system(size: 60))
                             .foregroundColor(AppColors.accent)
                         
-                        Text("FocusZone")
+                        Text("Focus")
                             .font(AppFonts.title())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.bold)
@@ -476,7 +467,7 @@ struct AboutSheet: View {
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                         
-                        Text("FocusZone helps you stay focused and achieve more by organizing your tasks and managing your time effectively. Built with modern SwiftUI and SwiftData for a smooth, native experience.")
+                        Text("Focus helps you stay focused and achieve more by organizing your tasks and managing your time effectively. Built with modern SwiftUI and SwiftData for a smooth, native experience.")
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.secondary)
                             .multilineTextAlignment(.leading)
@@ -489,7 +480,7 @@ struct AboutSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle("About FocusZone")
+            .navigationTitle("About Focus")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

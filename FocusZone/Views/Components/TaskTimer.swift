@@ -8,6 +8,7 @@ struct TaskTimer: View {
     let task: Task
 
     @State private var showCompletionAlert = false
+    @State private var showCelebration = true
     @State private var isAutoCompleted = false
     @State private var isLocked = false
     @StateObject private var focusManager = FocusModeManager()
@@ -275,7 +276,13 @@ struct TaskTimer: View {
             if isCompleted == true && !isAutoCompleted {
                 // Task was auto-completed by timer
                 isAutoCompleted = true
-                showCompletionAlert = true
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                    showCelebration = true
+                }
+                // Keep alert as secondary acknowledgment after close
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showCompletionAlert = true
+                }
             }
         }
         .onChange(of: timerService.currentRemainingMinutes) { _, remaining in
@@ -283,17 +290,20 @@ struct TaskTimer: View {
                 isLocked = false
             }
         }
-        .alert("Task Completed!", isPresented: $showCompletionAlert) {
-            Button("Great!") {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    dismiss()
+        .overlay {
+            if showCelebration {
+                ConfettiCelebrationView(
+                    isPresented: $showCelebration,
+                    title: "Nice work!",
+                    subtitle: "You completed \(task.title)",
+                    accent: task.color,
+                    duration: 4
+                ) {
+                    // Optional: close timer on celebration close
+                    
                 }
+                .transition(.opacity)
             }
-            Button("Continue") {
-                // Allow user to continue working in overtime
-            }
-        } message: {
-            Text("You've completed your planned \(task.durationMinutes) minutes for '\(task.title)'!")
         }
     }
     
