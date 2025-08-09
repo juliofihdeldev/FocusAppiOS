@@ -45,6 +45,13 @@ class TaskTimerService: ObservableObject {
         _Concurrency.Task {
           await  focusManager.setupCustomNotificationFiltering(for: .deepWork)
         }
+        // If we've already reached or exceeded planned time, complete immediately
+        let maxAllowedSeconds = (task.durationMinutes) * 60
+        if elapsedSeconds >= maxAllowedSeconds {
+            handleTimerCompletion()
+            return
+        }
+
         startTimer()
     }
     
@@ -158,10 +165,19 @@ class TaskTimerService: ObservableObject {
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             DispatchQueue.main.async {
-                self.elapsedSeconds += 1
-                
-                // Auto-complete when reaching the planned duration
-                if self.currentRemainingMinutes <= 0 && !self.isOvertime && self.elapsedSeconds >= (self.currentTask?.durationMinutes ?? 0) * 60 {
+                guard let task = self.currentTask else { return }
+
+                let maxAllowedSeconds = (task.durationMinutes) * 60
+
+                // Increment until cap
+                if self.elapsedSeconds < maxAllowedSeconds {
+                    self.elapsedSeconds += 1
+                }
+
+                // Auto-complete exactly at cap and stop counting beyond
+                if self.elapsedSeconds >= maxAllowedSeconds {
+                    self.elapsedSeconds = maxAllowedSeconds
+                    // Prevent further ticks from changing state
                     self.handleTimerCompletion()
                 }
             }

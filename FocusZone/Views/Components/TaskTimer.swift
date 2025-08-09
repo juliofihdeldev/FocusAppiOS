@@ -8,7 +8,7 @@ struct TaskTimer: View {
     let task: Task
 
     @State private var showCompletionAlert = false
-    @State private var showCelebration = true
+    @State private var showCelebration = false
     @State private var isAutoCompleted = false
     @State private var isLocked = false
     @StateObject private var focusManager = FocusModeManager()
@@ -277,6 +277,7 @@ struct TaskTimer: View {
                 isAutoCompleted = true
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                     showCelebration = true
+                    timerService.completeTask()
                 }
             }
         }
