@@ -5,13 +5,22 @@ struct WeekDateNavigator: View {
     var tasksForDate: [Date: Int] = [:]
     @State private var showingDatePicker = false
     @State private var currentWeekOffset: Int = 0
+    @State private var baseWeekStart: Date? = nil
+    @State private var preferredDayIndex: Int? = nil // 0..6, preserves weekday across week jumps
     private var calendar: Calendar { Calendar.current }
-    private var currentWeek: [Date] {
-        let startOfSelectedWeek = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start ?? selectedDate
-        let offsetWeekStart = calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: startOfSelectedWeek) ?? startOfSelectedWeek
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: offsetWeekStart) }
+    private var effectiveBaseWeekStart: Date {
+        baseWeekStart ?? weekStart(for: selectedDate)
     }
-    private var isCurrentWeek: Bool { currentWeek.contains { calendar.isDate($0, inSameDayAs: Date()) } }
+    private var currentWeekStart: Date {
+        calendar.date(byAdding: .weekOfYear, value: currentWeekOffset, to: effectiveBaseWeekStart) ?? effectiveBaseWeekStart
+    }
+    private var currentWeek: [Date] {
+        (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: currentWeekStart) }
+    }
+    private var isCurrentWeek: Bool {
+        let todayWeekStart = weekStart(for: Date())
+        return weeksBetween(effectiveBaseWeekStart, and: todayWeekStart) == currentWeekOffset
+    }
     
     var body: some View {
         VStack(alignment: .center,  spacing: 16) {
@@ -30,7 +39,7 @@ struct WeekDateNavigator: View {
                 .buttonStyle(PlainButtonStyle())
                 Spacer()
                 HStack(spacing: 16) {
-                    Button(action: { withAnimation(.easeInOut(duration: 0.3)) { currentWeekOffset -= 1; if let first = currentWeek.first { selectedDate = first } } }) {
+                    Button(action: { withAnimation(.easeInOut(duration: 0.3)) { moveWeek(by: -1) } }) {
                         Image(systemName: "chevron.left")
                             .font(.title3)
                             .foregroundColor(AppColors.accent)
@@ -40,7 +49,7 @@ struct WeekDateNavigator: View {
                             .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     }
                     if !isCurrentWeek {
-                        Button(action: { withAnimation(.easeInOut(duration: 0.3)) { selectedDate = Date(); currentWeekOffset = 0 } }) {
+                        Button(action: { withAnimation(.easeInOut(duration: 0.3)) { jumpToToday() } }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "location").font(.caption)
                                 Text("Today").font(AppFonts.caption()).fontWeight(.medium)
@@ -53,7 +62,7 @@ struct WeekDateNavigator: View {
                             .shadow(color: AppColors.accent.opacity(0.3), radius: 4, x: 0, y: 2)
                         }
                     }
-                    Button(action: { withAnimation(.easeInOut(duration: 0.3)) { currentWeekOffset += 1; if let first = currentWeek.first { selectedDate = first } } }) {
+                    Button(action: { withAnimation(.easeInOut(duration: 0.3)) { moveWeek(by: 1) } }) {
                         Image(systemName: "chevron.right")
                             .font(.title3)
                             .foregroundColor(AppColors.accent)
@@ -81,7 +90,7 @@ struct WeekDateNavigator: View {
                 .padding(.horizontal, 20)
             }
             HStack {
-                ForEach(-2...2, id: \.self) { offset in
+                ForEach((currentWeekOffset-2)...(currentWeekOffset+2), id: \.self) { offset in
                     Circle()
                         .fill(offset == currentWeekOffset ? AppColors.accent : AppColors.accent.opacity(0.2))
                         .frame(width: offset == currentWeekOffset ? 8 : 6, height: offset == currentWeekOffset ? 8 : 6)
@@ -96,11 +105,62 @@ struct WeekDateNavigator: View {
         .sheet(isPresented: $showingDatePicker) {
             DatePickerSheet(selectedDate: $selectedDate, currentWeekOffset: $currentWeekOffset)
         }
+        .onAppear {
+            // Initialize anchor week and preferred day
+            baseWeekStart = weekStart(for: selectedDate)
+            preferredDayIndex = dayIndexInWeek(for: selectedDate)
+            // Align offset with selectedDate (in case parent prefilled)
+            if let base = baseWeekStart {
+                currentWeekOffset = weeksBetween(base, and: weekStart(for: selectedDate))
+            }
+        }
+        .onChange(of: selectedDate) { _, newValue in
+            // When selection changes (tap or external), keep weekday index and align offset
+            preferredDayIndex = dayIndexInWeek(for: newValue)
+            if let base = baseWeekStart {
+                currentWeekOffset = weeksBetween(base, and: weekStart(for: newValue))
+            } else {
+                baseWeekStart = weekStart(for: newValue)
+                currentWeekOffset = 0
+            }
+        }
     }
     
     private func monthYearString(from date: Date) -> String { let f = DateFormatter(); f.dateFormat = "MMMM yyyy"; return f.string(from: date) }
     private func normalizeDate(_ date: Date) -> Date { calendar.startOfDay(for: date) }
     private func hasTasksForDate(_ date: Date) -> Bool { (tasksForDate[normalizeDate(date)] ?? 0) > 0 }
+
+    private func weekStart(for date: Date) -> Date {
+        calendar.dateInterval(of: .weekOfYear, for: date)?.start ?? calendar.startOfDay(for: date)
+    }
+    private func dayIndexInWeek(for date: Date) -> Int {
+        let start = weekStart(for: date)
+        let comps = calendar.dateComponents([.day], from: start, to: date)
+        return max(0, min(6, comps.day ?? 0))
+    }
+    private func weeksBetween(_ from: Date, and to: Date) -> Int {
+        calendar.dateComponents([.weekOfYear], from: from, to: to).weekOfYear ?? 0
+    }
+    private func moveWeek(by delta: Int) {
+        currentWeekOffset += delta
+        let index = preferredDayIndex ?? dayIndexInWeek(for: selectedDate)
+        let newStart = currentWeekStart
+        if let newDate = calendar.date(byAdding: .day, value: index, to: newStart) {
+            selectedDate = newDate
+        }
+    }
+    private func jumpToToday() {
+        let today = Date()
+        let todayStart = weekStart(for: today)
+        if baseWeekStart == nil { baseWeekStart = weekStart(for: selectedDate) }
+        if let base = baseWeekStart {
+            currentWeekOffset = weeksBetween(base, and: todayStart)
+        } else {
+            currentWeekOffset = 0
+        }
+        preferredDayIndex = dayIndexInWeek(for: today)
+        selectedDate = today
+    }
 }
 
 #Preview {
