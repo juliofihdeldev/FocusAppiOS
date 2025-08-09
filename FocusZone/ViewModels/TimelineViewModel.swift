@@ -535,39 +535,39 @@ class TimelineViewModel: ObservableObject {
     
     // MARK: - Test Methods
     
-    func createTestTask() {
-        print("TimelineViewModel: Creating test task")
-        
-        guard let modelContext = modelContext else {
-            print("TimelineViewModel: No modelContext available for test")
-            return
-        }
-        
-        let testTask = Task(
-            title: "Test Task",
-            icon: "🧪",
-            startTime: Date(),
-            durationMinutes: 30,
-            color: .blue
-        )
-        
-        print("TimelineViewModel: Test task created with ID: \(testTask.id)")
-        modelContext.insert(testTask)
-        
-        do {
-            try modelContext.save()
-            print("TimelineViewModel: Test task saved successfully")
-            
-            // Try to fetch it back
-            let descriptor = FetchDescriptor<Task>()
-            let allTasks = try modelContext.fetch(descriptor)
-            let testTasks = allTasks.filter { $0.id == testTask.id }
-            print("TimelineViewModel: Found \(testTasks.count) test tasks after save")
-            
-        } catch {
-            print("TimelineViewModel: Error saving test task: \(error)")
-        }
-    }
+    // func createTestTask() {
+    //         print(">>>>>>>>>> TimelineViewModel: Creating test task")
+    //     
+    //     guard let modelContext = modelContext else {
+    //         print(">>>>>>>>>> TimelineViewModel: No modelContext available for test")
+    //         return
+    //     }
+    //     
+    //     let testTask = Task(
+    //         title: "Test Task",
+    //         icon: "🧪",
+    //         startTime: Date(),
+    //         durationMinutes: 30,
+    //         color: .blue
+    //     )
+    //     
+    //     print(">>>>>>>>>> TimelineViewModel: Test task created with ID: \(testTask.id)")
+    //     modelContext.insert(testTask)
+    //     
+    //     do {
+    //         try modelContext.save()
+    //         print(">>>>>>>>>> TimelineViewModel: Test task saved successfully")
+    //         
+    //         // Try to fetch it back
+    //         let descriptor = FetchDescriptor<Task>()
+    //         let allTasks = try modelContext.fetch(descriptor)
+    //         let testTasks = allTasks.filter { $0.id == testTask.id }
+    //         print(">>>>>>>>>> TimelineViewModel: Found \(testTasks.count) test tasks after save")
+    //         
+    //     } catch {
+    //         print(">>>>>>>>>> TimelineViewModel: Error saving test task: \(error)")
+    //     }
+    // }
 }
 
 
