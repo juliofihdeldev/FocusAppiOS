@@ -25,7 +25,9 @@ struct TaskColorPicker: View {
             }
             
             // Quick colors row
-            colorRow(colors: quickColors)
+            
+                colorRow(colors: quickColors)
+            
         }
         .sheet(isPresented: $showPickerSheet) {
             NavigationView {
@@ -69,7 +71,8 @@ struct TaskColorPicker: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
-            .padding(.vertical, 2)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
         }
     }
 }
