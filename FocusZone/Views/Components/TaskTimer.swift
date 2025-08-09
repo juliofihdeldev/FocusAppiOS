@@ -14,7 +14,6 @@ struct TaskTimer: View {
     @StateObject private var focusManager = FocusModeManager()
 
     var body: some View {
-
         NavigationView {
             VStack(spacing: 30) {
                 
@@ -279,10 +278,6 @@ struct TaskTimer: View {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                     showCelebration = true
                 }
-                // Keep alert as secondary acknowledgment after close
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    showCompletionAlert = true
-                }
             }
         }
         .onChange(of: timerService.currentRemainingMinutes) { _, remaining in
@@ -297,10 +292,11 @@ struct TaskTimer: View {
                     title: "Nice work!",
                     subtitle: "You completed \(task.title)",
                     accent: task.color,
-                    duration: 4
+                    duration: 5
                 ) {
-                    // Optional: close timer on celebration close
-                    
+                    timerService.completeTask()
+                    timerService.stopCurrentTask()
+                    dismiss()
                 }
                 .transition(.opacity)
             }

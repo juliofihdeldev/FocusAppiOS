@@ -16,7 +16,7 @@ struct ConfettiCelebrationView: View {
     var body: some View {
         ZStack {
             // Dimmed, vibrant background
-            LinearGradient(colors: [accent.opacity(0.2), Color.black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+            LinearGradient(colors: [accent.opacity(0.3), Color.black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
                 .transition(.opacity)
 
@@ -25,7 +25,7 @@ struct ConfettiCelebrationView: View {
 
                 VStack(spacing: 10) {
                     Text(title)
-                        .font(AppFonts.title())
+                        .font(AppFonts.largetitle())
                         .foregroundColor(.white)
                         .shadow(radius: 8)
                     if let subtitle {
@@ -58,10 +58,6 @@ struct ConfettiCelebrationView: View {
             startTime = Date()
             let gen = UINotificationFeedbackGenerator()
             gen.notificationOccurred(.success)
-            // Auto close after duration
-            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-                if isPresented { close() }
-            }
         }
     }
 
