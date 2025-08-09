@@ -11,6 +11,7 @@ import SwiftData
 import CloudKit
 import RevenueCat
 import Foundation
+import RevenueCatUI
 
 @main
 struct FocusZoneApp: App {
@@ -40,6 +41,7 @@ struct FocusZoneApp: App {
                 .environmentObject(themeManager)
                 .environmentObject(notificationService)
                 .environmentObject(cloudSyncManager)
+                .presentPaywallIfNeeded(requiredEntitlementIdentifier: "entl202dda613d") // Pro
                 .task {
                     // Request notification permission when app launches
                     await requestNotificationPermission()
