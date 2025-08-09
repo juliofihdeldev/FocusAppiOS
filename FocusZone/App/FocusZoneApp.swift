@@ -38,10 +38,11 @@ struct FocusZoneApp: App {
     var body: some Scene {
         WindowGroup {
             SplashScreen()
+         
                 .environmentObject(themeManager)
                 .environmentObject(notificationService)
                 .environmentObject(cloudSyncManager)
-                .presentPaywallIfNeeded(requiredEntitlementIdentifier: "entl202dda613d") // Pro
+                .presentPaywallIfNeeded(requiredEntitlementIdentifier: "Pro") // Pro
                 .task {
                     // Request notification permission when app launches
                     await requestNotificationPermission()
@@ -52,6 +53,7 @@ struct FocusZoneApp: App {
                 .task {
                     cloudSyncManager.refreshAccountStatus()
                 }
+                .debugRevenueCatOverlay(isPresented: .constant(true))
         }
         .modelContainer(modelContainer)
     }
