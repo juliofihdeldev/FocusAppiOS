@@ -33,16 +33,12 @@ struct TaskCard: View {
                     baseColor: color,
                     progress: progressInfo.shouldShow && !isCompleted ? progressInfo.percentage : (isCompleted ? 1.0 : 0.0),
                     isCompleted: isCompleted
-                ) {
-                    VStack { Spacer() }
-                        .overlay(
-                            Text(icon)
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        )
+                ){
+                    Text(icon)
+                        .font(.title2)
+                        .foregroundColor(.white)
                 }
 
-                // Timeline connector (dashed line)
                 if shouldShowConnector() {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
