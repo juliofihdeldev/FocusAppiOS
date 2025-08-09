@@ -82,5 +82,4 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
-        .modelContainer(for: [Task.self])
 }

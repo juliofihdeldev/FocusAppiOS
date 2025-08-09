@@ -278,14 +278,14 @@ class TimelineViewModel: ObservableObject {
         // In a more advanced implementation, you might want to show an alert asking the user
         
         // Delete all children first
-        for child in task.children {
+        for child in task.children ?? [] {
             notificationService.cancelNotifications(for: child.id.uuidString)
             modelContext.delete(child)
         }
         
         // Delete the parent task
         modelContext.delete(task)
-        print("TimelineViewModel: Deleted parent task and \(task.children.count) children")
+        print("TimelineViewModel: Deleted parent task and \(task.children?.count ?? 0) children")
     }
 
     private func handleChildTaskDeletion(_ task: Task) {
@@ -331,7 +331,7 @@ class TimelineViewModel: ObservableObject {
         let rootTask = task.rootParent
         
         // Delete all children that start after the specified date
-        let futureChildren = rootTask.children.filter { $0.startTime >= fromDate }
+        let futureChildren = (rootTask.children ?? []).filter { $0.startTime >= fromDate }
         for child in futureChildren {
             notificationService.cancelNotifications(for: child.id.uuidString)
             modelContext.delete(child)
@@ -396,7 +396,8 @@ class TimelineViewModel: ObservableObject {
             
             // Add to parent's children if parent exists
             if let parentTask = task.parentTask {
-                parentTask.children.append(realTask)
+                if parentTask.children == nil { parentTask.children = [] }
+                parentTask.children?.append(realTask)
             }
             
             saveContext()

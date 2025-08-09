@@ -15,9 +15,15 @@ struct FocusZoneApp: App {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var notificationService = NotificationService.shared
     @StateObject private var cloudSyncManager = CloudSyncManager()
-
-    // TODO: Switch to CloudKit-backed ModelContainer when available in your toolchain.
-    // For now, we keep the default local container to keep builds green.
+    // CloudKit-backed SwiftData container
+    let modelContainer: ModelContainer = {
+        do {
+            let configuration = ModelConfiguration(cloudKitDatabase: .automatic)
+            return try ModelContainer(for: Task.self, configurations: configuration)
+        } catch {
+            fatalError("Failed to create CloudKit-backed ModelContainer: \(error)")
+        }
+    }()
 
     var body: some Scene {
         WindowGroup {
@@ -36,7 +42,7 @@ struct FocusZoneApp: App {
                     cloudSyncManager.refreshAccountStatus()
                 }
         }
-        .modelContainer(for: Task.self)
+        .modelContainer(modelContainer)
     }
     
     private func requestNotificationPermission() async {

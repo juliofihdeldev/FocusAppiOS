@@ -371,5 +371,4 @@ struct FloatingActionButton: View {
     TimelineView()
         .environmentObject(ThemeManager())
         .environmentObject(NotificationService.shared)
-        .modelContainer(for: [FocusTask.self])
 }
