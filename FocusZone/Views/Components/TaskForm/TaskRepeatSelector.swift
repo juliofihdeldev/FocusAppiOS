@@ -12,11 +12,6 @@ struct TaskRepeatSelector: View {
                     .font(AppFonts.headline())
                     .foregroundColor(.gray)
                 Spacer()
-                Button("Unlock Pro") {
-                    // Handle pro unlock
-                }
-                .font(.system(size: 16))
-                .foregroundColor(.pink)
             }
             
             HStack(spacing: 8) {
@@ -44,7 +39,7 @@ struct TaskRepeatSelector: View {
 }
 
 #Preview {
-    @State var repeatRule = RepeatRule.once
+    @State var repeatRule = RepeatRule.none
     
     return TaskRepeatSelector(repeatRule: $repeatRule)
 }

@@ -10,6 +10,8 @@ class TaskTimerService: ObservableObject {
     private var startTime: Date?
     private var modelContext: ModelContext?
     
+    @StateObject private var focusManager = FocusModeManager()
+    
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
     }
@@ -40,6 +42,16 @@ class TaskTimerService: ObservableObject {
         print("TaskTimerService: Starting task '\(task.title)' with \(timeAlreadySpent)m already elapsed")
         print("TaskTimerService: Starting timer at \(startingElapsedSeconds) seconds")
         
+        _Concurrency.Task {
+          await  focusManager.setupCustomNotificationFiltering(for: .deepWork)
+        }
+        // If we've already reached or exceeded planned time, complete immediately
+        let maxAllowedSeconds = (task.durationMinutes) * 60
+        if elapsedSeconds >= maxAllowedSeconds {
+            handleTimerCompletion()
+            return
+        }
+
         startTimer()
     }
     
@@ -69,11 +81,11 @@ class TaskTimerService: ObservableObject {
                 let remainingSeconds = Int(remaining)
                 return remainingSeconds / 60
             }
-        
+            
         }
         return 0
     }
-        
+    
     
     
     // Pause the current task
@@ -140,6 +152,10 @@ class TaskTimerService: ObservableObject {
             print("TaskTimerService: Stopped task with \(totalTimeSpent)m total time")
         }
         
+        
+        _Concurrency.Task {
+            await focusManager.deactivateFocus()
+        }
         currentTask = nil
         elapsedSeconds = 0
         startTime = nil
@@ -149,10 +165,19 @@ class TaskTimerService: ObservableObject {
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             DispatchQueue.main.async {
-                self.elapsedSeconds += 1
-                
-                // Auto-complete when reaching the planned duration
-                if self.currentRemainingMinutes <= 0 && !self.isOvertime && self.elapsedSeconds >= (self.currentTask?.durationMinutes ?? 0) * 60 {
+                guard let task = self.currentTask else { return }
+
+                let maxAllowedSeconds = (task.durationMinutes) * 60
+
+                // Increment until cap
+                if self.elapsedSeconds < maxAllowedSeconds {
+                    self.elapsedSeconds += 1
+                }
+
+                // Auto-complete exactly at cap and stop counting beyond
+                if self.elapsedSeconds >= maxAllowedSeconds {
+                    self.elapsedSeconds = maxAllowedSeconds
+                    // Prevent further ticks from changing state
                     self.handleTimerCompletion()
                 }
             }

@@ -2,9 +2,59 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AppIntents</key>
+	<array>
+		<dict>
+			<key>IntentClassName</key>
+			<string>StartFocusSessionIntent</string>
+			<key>IntentType</key>
+			<string>Custom</string>
+		</dict>
+		<dict>
+			<key>IntentClassName</key>
+			<string>StopFocusSessionIntent</string>
+			<key>IntentType</key>
+			<string>Custom</string>
+		</dict>
+	</array>
+	<key>FocusModeCategories</key>
+	<array>
+		<string>Work</string>
+		<string>Study</string>
+		<string>Sleep</string>
+		<string>Fitness</string>
+	</array>
+	<key>NSIntentsSupported</key>
+	<array>
+		<string>INSetFocusStatusIntent</string>
+	</array>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>StartFocusSessionIntent</string>
+		<string>StopFocusSessionIntent</string>
+		<string>com.focuszone.start-focus</string>
+		<string>com.focuszone.stop-focus</string>
+	</array>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>FocusZone needs notification access to filter distractions during focus sessions and provide task reminders.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string> Montserrat-Regular.ttf</string>
+		<string>Montserrat-Regular.ttf</string>
+		<string>Font/Montserrat-Regular.ttf</string>
+		<string>Inter-Regular.ttf</string>
+		<string>Inter-Medium.ttf</string>
+		<string>Inter-SemiBold.ttf</string>
+		<string>Inter-Bold.ttf</string>
+		<string>Font/Inter-Regular.ttf</string>
+		<string>Font/Inter-Medium.ttf</string>
+		<string>Font/Inter-SemiBold.ttf</string>
+		<string>Font/Inter-Bold.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+		<string>remote-notification</string>
 	</array>
 </dict>
 </plist>

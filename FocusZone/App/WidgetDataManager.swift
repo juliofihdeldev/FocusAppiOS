@@ -99,7 +99,7 @@ class WidgetDataManager {
     static let shared = WidgetDataManager()
     
     // ⚠️ IMPORTANT: Make sure this matches your actual App Group ID
-    private let appGroupID = "group.com.jf.FocusZone"
+    private let appGroupID = "group.com.jf.Focus"
     private let userDefaults: UserDefaults?
     
     // Keys for UserDefaults

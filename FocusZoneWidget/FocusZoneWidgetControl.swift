@@ -10,7 +10,7 @@ import SwiftUI
 import WidgetKit
 
 struct FocusZoneWidgetControl: ControlWidget {
-    static let kind: String = "ios.focus.jf.com.FocusZone.FocusZoneWidget"
+    static let kind: String = "ios.focus.jf.com.Focus.FocusWidget"
 
     var body: some ControlWidgetConfiguration {
         AppIntentControlConfiguration(

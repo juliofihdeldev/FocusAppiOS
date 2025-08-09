@@ -8,13 +8,15 @@ struct TaskTimer: View {
     let task: Task
 
     @State private var showCompletionAlert = false
+    @State private var showCelebration = false
     @State private var isAutoCompleted = false
     @State private var isLocked = false
-    
-    var body: some View {
+    @StateObject private var focusManager = FocusModeManager()
 
+    var body: some View {
         NavigationView {
             VStack(spacing: 30) {
+                
                 // Task Info Header
                 VStack(spacing: 12) {
                     Text(task.icon)
@@ -104,8 +106,10 @@ struct TaskTimer: View {
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(10)
                     .onChange(of: isLocked) { _, _ in
+                        
                         let generator = UIImpactFeedbackGenerator(style: .medium)
                         generator.impactOccurred()
+            
                     }
                 if !isLocked {
                     VStack(spacing: 16) {
@@ -158,6 +162,13 @@ struct TaskTimer: View {
 
                     }
                 } else {
+                    if focusManager.isActiveFocus {
+                          FocusStatusBanner(
+                              mode: focusManager.currentFocusMode,
+                              blockedNotifications: focusManager.blockedNotifications
+                          )
+                      }
+                    
                     Text("Controls are locked until the timer ends.")
                         .font(AppFonts.subheadline())
                         .foregroundColor(.gray)
@@ -252,12 +263,22 @@ struct TaskTimer: View {
                 timerService.startTask(task)
                 isLocked = true
             }
+
+            if ((task.focusSettings?.isEnabled) != nil) {
+                focusManager.blockedNotifications = 1
+                _Concurrency.Task {
+                    await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60))
+                }
+            }
         }
         .onChange(of: timerService.currentTask?.isCompleted) { _, isCompleted in
             if isCompleted == true && !isAutoCompleted {
                 // Task was auto-completed by timer
                 isAutoCompleted = true
-                showCompletionAlert = true
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                    showCelebration = true
+                    timerService.completeTask()
+                }
             }
         }
         .onChange(of: timerService.currentRemainingMinutes) { _, remaining in
@@ -265,17 +286,21 @@ struct TaskTimer: View {
                 isLocked = false
             }
         }
-        .alert("Task Completed!", isPresented: $showCompletionAlert) {
-            Button("Great!") {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        .overlay {
+            if showCelebration {
+                ConfettiCelebrationView(
+                    isPresented: $showCelebration,
+                    title: "Nice work!",
+                    subtitle: "You completed \(task.title)",
+                    accent: task.color,
+                    duration: 5
+                ) {
+                    timerService.completeTask()
+                    timerService.stopCurrentTask()
                     dismiss()
                 }
+                .transition(.opacity)
             }
-            Button("Continue") {
-                // Allow user to continue working in overtime
-            }
-        } message: {
-            Text("You've completed your planned \(task.durationMinutes) minutes for '\(task.title)'!")
         }
     }
     

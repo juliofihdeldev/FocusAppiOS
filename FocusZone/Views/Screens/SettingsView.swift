@@ -3,9 +3,11 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
     @State private var notificationsEnabled = true
-    @State private var autoSaveEnabled = true
     @State private var showingAbout = false
-    
+    @State private var enableFocusMode = true
+    @State private var showPaywall = false
+    @StateObject private var focusManager = FocusModeManager()
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     var body: some View {
         NavigationView {
             ScrollView {
@@ -15,9 +17,11 @@ struct SettingsView: View {
                     
                     // Settings Sections
                     VStack(spacing: 20) {
+                        subscriptionSection
                         appearanceSection
                         notificationSection
                         dataSection
+                        focusSection
                         aboutSection
                     }
                     .padding(.horizontal, 20)
@@ -29,8 +33,14 @@ struct SettingsView: View {
             .background(AppColors.background.ignoresSafeArea())
             .navigationBarHidden(true)
         }
+        .onChange(of: theme.currentBackground) { newValue in
+            // TODO Store preference
+        }
         .sheet(isPresented: $showingAbout) {
             AboutSheet()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
     
@@ -61,7 +71,7 @@ struct SettingsView: View {
                     )
                 
                 VStack(spacing: 4) {
-                    Text("FocusZone")
+                    Text("Focus")
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                         .fontWeight(.semibold)
@@ -82,6 +92,138 @@ struct SettingsView: View {
         }
     }
     
+    // MARK: - Subscription Section
+    private var subscriptionSection: some View {
+        VStack(spacing: 16) {
+            // Subscription status card
+            SubscriptionStatusView()
+            
+            if !subscriptionManager.isProUser {
+                // Upgrade prompt for free users
+                Button(action: {
+                    showPaywall = true
+                }) {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [Color.orange, Color.red]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ))
+                                .frame(width: 40, height: 40)
+                            
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(.white)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Upgrade to Pro")
+                                .font(AppFonts.headline())
+                                .fontWeight(.semibold)
+                                .foregroundColor(AppColors.textPrimary)
+                            
+                            Text("Unlock all features with 7-day free trial")
+                                .font(AppFonts.body())
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(AppColors.accent)
+                    }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.orange.opacity(0.1),
+                                    Color.red.opacity(0.1)
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.orange.opacity(0.3),
+                                            Color.red.opacity(0.3)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ), lineWidth: 1)
+                            )
+                    )
+                }
+            } else {
+                // Pro user management options
+                SettingsSection(title: "Subscription", icon: "crown.fill") {
+                    VStack(spacing: 0) {
+                        Button(action: {
+                            _Concurrency.Task {
+                                await subscriptionManager.restorePurchases()
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "arrow.clockwise.circle.fill")
+                                    .font(.title3)
+                                    .foregroundColor(AppColors.accent)
+                                    .frame(width: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Restore Purchases")
+                                        .font(AppFonts.body())
+                                        .foregroundColor(AppColors.textPrimary)
+                                    Text("Restore your subscription on this device")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                        }
+                        
+                        Divider()
+                            .padding(.leading, 52)
+                        
+                        Button(action: {
+                            // TODO: Open subscription management in App Store
+                            if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "gear.circle.fill")
+                                    .font(.title3)
+                                    .foregroundColor(AppColors.accent)
+                                    .frame(width: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Manage Subscription")
+                                        .font(AppFonts.body())
+                                        .foregroundColor(AppColors.textPrimary)
+                                    Text("Change or cancel your subscription")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     // MARK: - Appearance Section
     private var appearanceSection: some View {
         SettingsSection(title: "Appearance", icon: "paintbrush") {
@@ -93,6 +235,22 @@ struct SettingsView: View {
                     isOn: $theme.isDarkMode
                 )
             }
+        }
+    }
+    // Focus  Section
+    private var focusSection: some View {
+        SettingsSection(title: "Appearance", icon: "paintbrush") {
+            VStack(spacing: 0) {
+                
+                SettingsToggleRow(
+                    title: "Focus & Concentration",
+                    subtitle: "Get notified when tasks are starting",
+                    icon: "bell.circle.fill",
+                    isOn: $enableFocusMode
+                )
+                
+            }
+            
         }
     }
     
@@ -108,21 +266,15 @@ struct SettingsView: View {
                 )
             }
         }
+        
+        
     }
     
     // MARK: - Data Section
     private var dataSection: some View {
         SettingsSection(title: "Data", icon: "internaldrive") {
             VStack(spacing: 0) {
-                SettingsToggleRow(
-                    title: "Auto-Save Tasks",
-                    subtitle: "Automatically save your task changes",
-                    icon: "square.and.arrow.down.circle.fill",
-                    isOn: $autoSaveEnabled
-                )
-                
-                Divider()
-                    .padding(.leading, 52)
+     
                 
                 SettingsNavigationRow(
                     title: "Clear All Data",
@@ -186,14 +338,14 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-//                Image(systemName: icon)
-//                    .font(.system(size: 18))
-//                    .foregroundColor(AppColors.accent)
+                //                Image(systemName: icon)
+                //                    .font(.system(size: 18))
+                //                    .foregroundColor(AppColors.accent)
                 
-//                Text(title)
-//                    .font(AppFonts.headline())
-//                    .foregroundColor(AppColors.textPrimary)
-//                    .fontWeight(.semibold)
+                //                Text(title)
+                //                    .font(AppFonts.headline())
+                //                    .foregroundColor(AppColors.textPrimary)
+                //                    .fontWeight(.semibold)
             }
             .padding(.horizontal, 4)
             
@@ -281,6 +433,9 @@ struct SettingsNavigationRow: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
+        .onChange(of: isDestructive) { newValue in
+          
+        }
         .buttonStyle(PlainButtonStyle())
     }
 }
@@ -297,7 +452,7 @@ struct AboutSheet: View {
                             .font(.system(size: 60))
                             .foregroundColor(AppColors.accent)
                         
-                        Text("FocusZone")
+                        Text("Focus")
                             .font(AppFonts.title())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.bold)
@@ -312,7 +467,7 @@ struct AboutSheet: View {
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                         
-                        Text("FocusZone helps you stay focused and achieve more by organizing your tasks and managing your time effectively. Built with modern SwiftUI and SwiftData for a smooth, native experience.")
+                        Text("Focus helps you stay focused and achieve more by organizing your tasks and managing your time effectively. Built with modern SwiftUI and SwiftData for a smooth, native experience.")
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.secondary)
                             .multilineTextAlignment(.leading)
@@ -325,7 +480,7 @@ struct AboutSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle("About FocusZone")
+            .navigationTitle("About Focus")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

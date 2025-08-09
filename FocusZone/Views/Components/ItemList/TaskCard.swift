@@ -17,73 +17,28 @@ struct TaskCard: View {
         // Calculate height based on duration (1 minute = 2 points, minimum 60pt)
         let baseHeight: CGFloat = max(60, CGFloat(durationMinutes) * 1)
         let progressInfo = calculateProgress()
-        let progressHeight = baseHeight * CGFloat(progressInfo.percentage)
+        // Add minimum progress height to avoid thin line appearance
+        let minProgressHeight: CGFloat = 12
+        let calculatedProgressHeight = baseHeight * CGFloat(progressInfo.percentage)
+        let progressHeight = progressInfo.shouldShow && progressInfo.percentage > 0 ? 
+            max(minProgressHeight, calculatedProgressHeight) : calculatedProgressHeight
         
         HStack(alignment: .top, spacing: 0) {
-            // Left side - Timeline with progress
+            // Left side - Timeline with progress Capsule
             VStack(spacing: 0) {
-                // Timeline pill/capsule
-                ZStack {
-                    // Background capsule (total duration)
-                    Capsule()
-                        .fill(color.opacity(0.3))
-                        .frame(width: 60, height: baseHeight)
-                    
-                    // Progress fill (only for active tasks) - aligned to top
-                    if progressInfo.shouldShow &&  !isCompleted {
-                        VStack(spacing: 0) {
-                            RoundedRectangle(cornerRadius:
-                                                overdueMinutesFun() > 0  ? 30 :
-                                                progressInfo.percentage > 0.80 ? 30
-                                             : 2
-                            )
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            color.opacity(0.8),
-                                            color.opacity(0.3)
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .cornerRadius(30, corners: [.topLeft, .topRight])
-                                .cornerRadius(4, corners: [.bottomLeft, .bottomRight])
-                                .frame(width:
-                                        baseHeight < 70 && progressInfo.percentage < 0.60 ? 10:
-                                        progressInfo.percentage > 0.20 ?
-                                        60 : 10
-                                       , height: progressHeight)
-                                .animation(.easeInOut(duration: 0.5), value: progressHeight)
-                            
-                            Spacer(minLength: 0) // Push progress to top
-                        }
-                        .frame(width: 60, height: baseHeight)
-                    }
-                    
-                    // Completed state - full fill
-                    if isCompleted {
-                        Capsule()
-                            .fill(color)
-                            .frame(width: 60, height: baseHeight)
-                    }
-                    
-                    // Icon container - perfectly centered
-                    VStack {
-                        Spacer()
-                        
-                        ZStack {
-                            Text(icon)
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        }
-                        
-                        Spacer()
-                    }
-                    .frame(height: baseHeight)
+                VerticalCapsuleMeter(
+                    totalHeight: baseHeight,
+                    width: 60,
+                    backgroundColor: color.opacity(0.3),
+                    baseColor: color,
+                    progress: progressInfo.shouldShow && !isCompleted ? progressInfo.percentage : (isCompleted ? 1.0 : 0.0),
+                    isCompleted: isCompleted
+                ){
+                    Text(icon)
+                        .font(.title2)
+                        .foregroundColor(.white)
                 }
-                
-                // Timeline connector (dashed line)
+
                 if shouldShowConnector() {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
@@ -96,7 +51,6 @@ struct TaskCard: View {
                 }
             }
             
-          
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
                 Spacer()
@@ -109,44 +63,21 @@ struct TaskCard: View {
                
                     Spacer()
                     
-                    // Status indicator
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                            .font(.title3)
-                    } else if progressInfo.shouldShow {
-                        Circle()
-                            .stroke(progressInfo.color, lineWidth: 3)
-                            .frame(width: 24, height: 24)
-                            .overlay(
-                                Circle()
-                                    .trim(from: 0, to: CGFloat(progressInfo.percentage))
-                                    .stroke(progressInfo.color, lineWidth: 3)
-                                    .rotationEffect(.degrees(-90))
-                                    .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
-                            )
-                    } else {
-                        Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 3)
-                            .frame(width: 24, height: 24)
-                    }
+                    // Status indicator - Fixed logic
+                    statusIndicator(progressInfo: progressInfo)
                 }
                 
                 // Task title
-                
                 Text(title)
                     .font(AppFonts.headline())
                     .foregroundColor(.white)
                     .lineLimit(2)
                 
                 // Progress text for active tasks
-                if progressInfo.shouldShow && !isCompleted &&
-                    overdueMinutesFun() / 60 < 12
-                {
+                if progressInfo.shouldShow && !isCompleted && overdueMinutesFun() / 60 < 12 {
                     Text(getProgressText())
                         .font(AppFonts.caption())
                         .foregroundColor(progressInfo.color)
-                    
                 }
                 
                 Spacer()
@@ -157,6 +88,43 @@ struct TaskCard: View {
         }
         .onReceive(timer) { _ in
             currentTime = Date()
+        }
+    }
+    
+    // MARK: - Helper Methods for Progress Display
+         
+    @ViewBuilder
+    private func statusIndicator(progressInfo: (shouldShow: Bool, percentage: Double, color: Color)) -> some View {
+        if isCompleted {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+                .font(.title3)
+        } else if progressInfo.shouldShow && overdueMinutesFun() / 60 > 12 {
+            Circle()
+                .stroke(Color.white.opacity(0.55), lineWidth: 3)
+                .frame(width: 24, height: 24)
+                .overlay(
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progressInfo.percentage))
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 3)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
+                )
+        } else if progressInfo.shouldShow && overdueMinutesFun() / 60 < 12 {
+            Circle()
+                .stroke(progressInfo.color, lineWidth: 3)
+                .frame(width: 24, height: 24)
+                .overlay(
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progressInfo.percentage))
+                        .stroke(progressInfo.color, lineWidth: 3)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeInOut(duration: 0.5), value: progressInfo.percentage)
+                )
+        } else {
+            Circle()
+                .stroke(Color.gray.opacity(0.3), lineWidth: 3)
+                .frame(width: 24, height: 24)
         }
     }
     
@@ -205,7 +173,6 @@ struct TaskCard: View {
         
         return (false, 0.0, color)
     }
-    
 
     private func shouldShowConnector() -> Bool {
         // Show connector for all tasks except maybe the last one
@@ -297,16 +264,18 @@ struct TaskCard: View {
         guard let task = task else { return 0 }
         
         let now = currentTime
-        let taskStartTime = task.startTime
         let taskEndTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
         
-        // Task is overdue
-        let overdue = now.timeIntervalSince(taskEndTime)
-        let overdueMinutes = Int(overdue / 60)
-        return overdueMinutes;
+        // Only calculate overdue if task has passed its end time
+        if now > taskEndTime {
+            let overdue = now.timeIntervalSince(taskEndTime)
+            let overdueMinutes = Int(overdue / 60)
+            return max(0, overdueMinutes) // Ensure non-negative
+        }
+        
+        return 0
     }
 }
-
 
 struct RoundedCorner: Shape {
     var radius: CGFloat = .infinity
@@ -322,6 +291,8 @@ struct RoundedCorner: Shape {
     }
 }
 
+
+
 // MARK: - Timeline View Container
 struct _TimelineView: View {
     @State private var selectedDate = Date()
@@ -334,7 +305,7 @@ struct _TimelineView: View {
             
             VStack(spacing: 40) {
                 // Date Header
-                DateHeader(selectedDate: $selectedDate)
+                WeekDateNavigator(selectedDate: $selectedDate)
             
                 // Timeline
                 ScrollView(.vertical, showsIndicators: false) {

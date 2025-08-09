@@ -18,6 +18,7 @@ class TimelineViewModel: ObservableObject {
     
     func loadTodayTasks(for date: Date = Date()) {
         
+        print("TimelineViewModel: Loading tasks for \(dateString(date))")
         print("Rendering \(breakSuggestions.count) breakSuggestions")
 
         guard let modelContext = modelContext else {
@@ -39,6 +40,13 @@ class TimelineViewModel: ObservableObject {
 
         do {
             let allTasks = try modelContext.fetch(descriptor)
+            print("TimelineViewModel: Fetched \(allTasks.count) total tasks from database")
+            
+            // Debug: Print all tasks
+            for (index, task) in allTasks.enumerated() {
+                print("TimelineViewModel: Task \(index): \(task.title) - \(task.startTime) - \(task.durationMinutes)m")
+            }
+            
             var todayTasks: [Task] = []
 
             // First, get all actual tasks for this specific date
@@ -245,7 +253,7 @@ class TimelineViewModel: ObservableObject {
         // Create a "deleted instance" record to prevent this virtual task from appearing again
         // This approach is better than modifying the parent task
         let deletedInstance = Task(
-            id: task.id,
+            id: UUID(), // New unique ID for virtual task
             title: task.title,
             icon: task.icon,
             startTime: task.startTime,
@@ -270,14 +278,14 @@ class TimelineViewModel: ObservableObject {
         // In a more advanced implementation, you might want to show an alert asking the user
         
         // Delete all children first
-        for child in task.children {
+        for child in task.children ?? [] {
             notificationService.cancelNotifications(for: child.id.uuidString)
             modelContext.delete(child)
         }
         
         // Delete the parent task
         modelContext.delete(task)
-        print("TimelineViewModel: Deleted parent task and \(task.children.count) children")
+        print("TimelineViewModel: Deleted parent task and \(task.children?.count ?? 0) children")
     }
 
     private func handleChildTaskDeletion(_ task: Task) {
@@ -323,7 +331,7 @@ class TimelineViewModel: ObservableObject {
         let rootTask = task.rootParent
         
         // Delete all children that start after the specified date
-        let futureChildren = rootTask.children.filter { $0.startTime >= fromDate }
+        let futureChildren = (rootTask.children ?? []).filter { $0.startTime >= fromDate }
         for child in futureChildren {
             notificationService.cancelNotifications(for: child.id.uuidString)
             modelContext.delete(child)
@@ -388,7 +396,8 @@ class TimelineViewModel: ObservableObject {
             
             // Add to parent's children if parent exists
             if let parentTask = task.parentTask {
-                parentTask.children.append(realTask)
+                if parentTask.children == nil { parentTask.children = [] }
+                parentTask.children?.append(realTask)
             }
             
             saveContext()
@@ -440,6 +449,15 @@ class TimelineViewModel: ObservableObject {
     }
     
     func refreshTasks(for date: Date) {
+        print("TimelineViewModel: Explicitly refreshing tasks for \(dateString(date))")
+        loadTodayTasks(for: date)
+    }
+    
+    func forceRefreshTasks(for date: Date) {
+        print("TimelineViewModel: Force refreshing tasks for \(dateString(date))")
+        // Clear current tasks first
+        tasks = []
+        // Then reload
         loadTodayTasks(for: date)
     }
     
@@ -515,6 +533,41 @@ class TimelineViewModel: ObservableObject {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
+    // MARK: - Test Methods
+    
+    // func createTestTask() {
+    //         print(">>>>>>>>>> TimelineViewModel: Creating test task")
+    //     
+    //     guard let modelContext = modelContext else {
+    //         print(">>>>>>>>>> TimelineViewModel: No modelContext available for test")
+    //         return
+    //     }
+    //     
+    //     let testTask = Task(
+    //         title: "Test Task",
+    //         icon: "🧪",
+    //         startTime: Date(),
+    //         durationMinutes: 30,
+    //         color: .blue
+    //     )
+    //     
+    //     print(">>>>>>>>>> TimelineViewModel: Test task created with ID: \(testTask.id)")
+    //     modelContext.insert(testTask)
+    //     
+    //     do {
+    //         try modelContext.save()
+    //         print(">>>>>>>>>> TimelineViewModel: Test task saved successfully")
+    //         
+    //         // Try to fetch it back
+    //         let descriptor = FetchDescriptor<Task>()
+    //         let allTasks = try modelContext.fetch(descriptor)
+    //         let testTasks = allTasks.filter { $0.id == testTask.id }
+    //         print(">>>>>>>>>> TimelineViewModel: Found \(testTasks.count) test tasks after save")
+    //         
+    //     } catch {
+    //         print(">>>>>>>>>> TimelineViewModel: Error saving test task: \(error)")
+    //     }
+    // }
 }
 
 

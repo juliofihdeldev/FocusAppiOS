@@ -3,7 +3,13 @@ import SwiftUI
 struct TaskDurationSelector: View {
     @Binding var duration: Int
     
-    let durations = [15, 30, 45, 60, 90, 120, 240]
+    // Base quick options
+    private let baseDurations = [15, 30, 45, 60, 90, 120, 240]
+    // Extended hour options in minutes (3h to 12h)
+    private let extendedHours: [Int] = Array(stride(from: 6, through: 12, by: 2)).map { $0 * 60 }
+    
+    @State private var showMoreSheet: Bool = false
+    @State private var showExtendedRow: Bool = false
     
     private func durationDisplayText(_ minutes: Int) -> String {
         switch minutes {
@@ -36,35 +42,100 @@ struct TaskDurationSelector: View {
                     .font(AppFonts.headline())
                     .foregroundColor(.gray)
                 Spacer()
-                Button("More...") {}
-                    .font(.system(size: 16))
-                    .foregroundColor(.pink)
+                Button(showExtendedRow ? "Hide" : "More…") {
+                    withAnimation(.spring(response: 0.25, dampingFraction: 0.9)) {
+                        showExtendedRow.toggle()
+                    }
+                }
+                .font(.system(size: 16))
+                .foregroundColor(.pink)
+                .buttonStyle(PlainButtonStyle())
+                .contextMenu {
+                    Button("Custom…") { showMoreSheet = true }
+                }
             }
             
-            HStack(spacing: 0) {
-                ForEach(Array(durations.enumerated()), id: \.offset) { index, d in
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            duration = d
+            // Quick row
+            durationRow(options: baseDurations)
+            
+            // Extended hours row (3h…12h)
+            if showExtendedRow {
+                durationRow(options: extendedHours)
+            }
+        }
+        .sheet(isPresented: $showMoreSheet) {
+            DurationPickerSheet(duration: $duration)
+        }
+    }
+    
+    private func durationRow(options: [Int]) -> some View {
+        HStack(spacing: 0) {
+            ForEach(Array(options.enumerated()), id: \.offset) { index, minutes in
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) { duration = minutes }
+                }) {
+                    Text(durationDisplayText(minutes))
+                        .font(AppFonts.caption())
+                        .foregroundColor(duration == minutes ? .white : .gray)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(duration == minutes ? Color.pink : Color.gray.opacity(0.1))
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                if index < options.count - 1 {
+                    Spacer().frame(width: 8)
+                }
+            }
+        }
+    }
+}
+
+private struct DurationPickerSheet: View {
+    @Binding var duration: Int
+    @Environment(\.dismiss) private var dismiss
+    
+    // 5 minutes to 12 hours, in 5m steps
+    private let allOptions: [Int] = Array(stride(from: 5, through: 12 * 60, by: 5))
+    @State private var selected: Int = 60
+    
+    private func label(_ minutes: Int) -> String {
+        if minutes < 60 { return "\(minutes)m" }
+        let h = minutes / 60
+        let m = minutes % 60
+        return m == 0 ? "\(h)h" : "\(h)h \(m)m"
+    }
+    
+    var body: some View {
+        NavigationView {
+            List {
+                Section("Minutes") {
+                    Picker("Minutes", selection: $selected) {
+                        ForEach(allOptions, id: \.self) { m in
+                            Text(label(m)).tag(m)
                         }
-                    }) {
-                        Text(durationDisplayText(d))
-                            .font(AppFonts.caption())
-                            .foregroundColor(duration == d ? .white : .gray)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(duration == d ? Color.pink : Color.gray.opacity(0.1))
-                            )
                     }
-                    .buttonStyle(PlainButtonStyle())
-                    
-                    if index < durations.count - 1 {
-                        Spacer().frame(width: 8)
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                    .labelsHidden()
+                }
+            }
+            .navigationTitle("Select Duration")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Set") {
+                        duration = selected
+                        dismiss()
                     }
                 }
             }
+            .onAppear { selected = duration }
         }
     }
 }

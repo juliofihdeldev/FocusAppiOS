@@ -39,7 +39,7 @@ struct MainTabView: View {
     
     @ViewBuilder
     private var proTabBadge: some View {
-        if !subscriptionManager.isSubscribed && selectedTab != 1 {
+        if !subscriptionManager.isProUser && selectedTab != 1 {
             Text("PRO")
                 .font(.system(size: 8, weight: .bold))
                 .foregroundColor(.white)
@@ -82,5 +82,4 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
-        .modelContainer(for: [Task.self])
 }

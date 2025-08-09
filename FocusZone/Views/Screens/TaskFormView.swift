@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct PreviewTask {
     let title: String
@@ -11,6 +12,8 @@ struct TaskFormView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     
+    @State private var selectedFocusMode: FocusMode? = nil
+    @State private var enableFocusMode: Bool = false
     // Task to edit (nil for new task)
     let taskToEdit: Task?
     
@@ -21,13 +24,13 @@ struct TaskFormView: View {
     @State private var selectedColor: Color = .pink
     @State private var selectedTaskType: TaskType? = nil
     @State private var selectedIcon: String = "📝"
-    @State private var repeatRule: RepeatRule = .once
+    @State private var repeatRule: RepeatRule = .none
     @State private var alerts: [String] = ["At start of task"]
-    @State private var showSubtasks: Bool = false
+    @State private var showSubtasks: Bool = true
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
-    
+    @StateObject private var taskCreationState = TaskCreationState.shared
     @Environment(\.modelContext) private var modelContext
     private let notificationService = NotificationService.shared
     
@@ -59,6 +62,12 @@ struct TaskFormView: View {
                             
                             TaskIconPicker(selectedIcon: $selectedIcon)
                             
+                            FocusModeFormSection(
+                                               isEnabled: $enableFocusMode,
+                                               selectedMode: $selectedFocusMode,
+                                               taskType: selectedTaskType
+                                           )
+                            
                             TaskColorPicker(selectedColor: $selectedColor)
                             
                             TaskRepeatSelector(repeatRule: $repeatRule)
@@ -83,7 +92,7 @@ struct TaskFormView: View {
                             // Notification Info Section
                             NotificationInfoSection()
                             
-                            TaskAlertsSection(alerts: $alerts)
+//                          TaskAlertsSection(alerts: $alerts)
                             
                             TaskDetailsSection(
                                 showSubtasks: $showSubtasks,
@@ -100,14 +109,30 @@ struct TaskFormView: View {
         .navigationBarHidden(true)
         .onAppear {
             loadTaskData()
+            // Prefill next start time if available (for new tasks only)
+            if taskToEdit == nil, let suggested = taskCreationState.nextSuggestedStartTime {
+                let cal = Calendar.current
+                // If suggested is the same day as the current selected date, keep the date and prefill the time.
+                // Otherwise, move both date and time to the suggested day.
+                if cal.isDate(suggested, inSameDayAs: selectedDate) {
+                    let dateComponents = cal.dateComponents([.year, .month, .day], from: selectedDate)
+                    let timeComponents = cal.dateComponents([.hour, .minute], from: suggested)
+                    if let combined = cal.date(from: DateComponents(
+                        year: dateComponents.year,
+                        month: dateComponents.month,
+                        day: dateComponents.day,
+                        hour: timeComponents.hour,
+                        minute: timeComponents.minute
+                    )) {
+                        startTime = combined
+                    }
+                } else {
+                    selectedDate = suggested
+                    startTime = suggested
+                }
+            }
         }
     }
-    
-    // MARK: - Notification Info Section
-    
-    
-    
-    // MARK: - Methods
     
     private func loadTaskData() {
         guard let task = taskToEdit else { return }
@@ -123,6 +148,22 @@ struct TaskFormView: View {
     }
     
     private func saveTask() {
+        
+        print(">>>>>> save task call >>>>>>>")
+        print("TaskFormView: ModelContext available: \(modelContext != nil)")
+        print("TaskFormView: ModelContext description: \(String(describing: modelContext))")
+        print("TaskFormView: Task title: \(taskTitle)")
+        print("TaskFormView: Task start time: \(startTime)")
+        print("TaskFormView: Task duration: \(duration)")
+        print("TaskFormView: Task icon: \(selectedIcon)")
+        print("TaskFormView: Task color: \(selectedColor)")
+        
+        // Validate required fields
+        guard !taskTitle.isEmpty else {
+            print("TaskFormView: Error - Task title is empty")
+            return
+        }
+        
         // Combine selectedDate and startTime
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
@@ -135,11 +176,15 @@ struct TaskFormView: View {
             hour: timeComponents.hour,
             minute: timeComponents.minute
         )) else {
+            print("TaskFormView: Error creating final start time")
             return
         }
         
+        print("TaskFormView: Final start time: \(finalStartTime)")
+        
         if let taskToEdit = taskToEdit {
             // Update existing task
+            print("TaskFormView: Updating existing task")
             
             // Cancel old notifications first
             notificationService.cancelNotifications(for: taskToEdit.id.uuidString)
@@ -154,9 +199,11 @@ struct TaskFormView: View {
             taskToEdit.updatedAt = Date()
             taskToEdit.isCompleted = false
             
+            print("TaskFormView: Task updated in memory")
+            
             do {
                 try modelContext.save()
-                print("TaskFormView: Task updated successfully")
+                print("TaskFormView: Task updated successfully in database")
                 
                 // Schedule new notifications for updated task
                 notificationService.scheduleTaskReminders(for: taskToEdit)
@@ -164,9 +211,12 @@ struct TaskFormView: View {
                 
             } catch {
                 print("TaskFormView: Error updating task: \(error)")
+                print("TaskFormView: Error details: \(error.localizedDescription)")
             }
         } else {
             // Create new task
+            print("TaskFormView: Creating new task")
+            
             let newTask = Task(
                 title: taskTitle,
                 icon: selectedIcon,
@@ -177,15 +227,31 @@ struct TaskFormView: View {
                 repeatRule: repeatRule
             )
             
+            print("TaskFormView: New task created with ID: \(newTask.id)")
+            print("TaskFormView: New task title: \(newTask.title)")
+            print("TaskFormView: New task start time: \(newTask.startTime)")
+            
             modelContext.insert(newTask)
+            print("TaskFormView: Task inserted into ModelContext")
             
             do {
                 try modelContext.save()
-                print("TaskFormView: Task created successfully")
+                print(">>>>>>> TaskFormView: Task created successfully and saved to database")
+                print("TaskFormView: Saved task ID: \(newTask.id)")
+                
+                // Verify the task was actually saved by trying to fetch it
+                let descriptor = FetchDescriptor<Task>()
+                let allTasks = try modelContext.fetch(descriptor)
+                let savedTasks = allTasks.filter { $0.id == newTask.id }
+                print("TaskFormView: Verification - Found \(savedTasks.count) tasks with ID \(newTask.id)")
                 
                 // Schedule notifications for new task
                 notificationService.scheduleTaskReminders(for: newTask)
                 print("TaskFormView: Scheduled notifications for new task")
+
+                // Prepare suggested next start time = end of this task
+                let next = finalStartTime.addingTimeInterval(TimeInterval(duration * 60))
+                taskCreationState.nextSuggestedStartTime = next
                 
                 // Show confirmation if notifications are enabled
                 if notificationService.isAuthorized {
@@ -202,10 +268,12 @@ struct TaskFormView: View {
                 }
                 
             } catch {
-                print("TaskFormView: Error creating task: \(error)")
+                print(">>>>>TaskFormView: Error creating task: \(error)")
+                print("TaskFormView: Error details: \(error.localizedDescription)")
             }
         }
         
+        print("TaskFormView: Dismissing form")
         dismiss()
     }
 }

@@ -88,7 +88,7 @@ struct TaskActionsModal: View {
             
             // Action Buttons
             VStack(spacing: 1) {
-                if !task.isCompleted {
+                if !task.isCompleted || timerService._minutesRemain(for: task) < 0 {
                     TaskActionButton(
                         title: "Launch timer",
                         icon: "play.fill",

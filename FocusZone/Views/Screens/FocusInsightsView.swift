@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct FocusInsightsView: View {
     @StateObject private var analyticsEngine = FocusAnalyticsEngine()
     @Environment(\.modelContext) private var modelContext
     @State private var showingUpgradeSheet = false
+    @State private var previewSheetState: WeeklyPlanPreviewState?
+    @State private var appliedChangeSet: AppliedChangeSet?
     
     var body: some View {
         NavigationView {
@@ -52,6 +55,21 @@ struct FocusInsightsView: View {
         .sheet(isPresented: $showingUpgradeSheet) {
             UpgradeToProSheet()
         }
+        .sheet(item: $previewSheetState) { state in
+            WeeklyPlanPreviewSheet(state: state) { selection in
+                if let ctx = modelContextOptional() {
+                    do {
+                        let changeSet = try analyticsEngine.apply(changes: selection, in: ctx)
+                        appliedChangeSet = changeSet
+                    } catch { }
+                }
+            } onUndo: {
+                if let ctx = modelContextOptional(), let set = appliedChangeSet {
+                    try? analyticsEngine.undo(changeSet: set, in: ctx)
+                    appliedChangeSet = nil
+                }
+            }
+        }
     }
     
     // MARK: - Header Section
@@ -74,23 +92,7 @@ struct FocusInsightsView: View {
                 }
                 
                 Spacer()
-                
-                Button("Upgrade") {
-                    showingUpgradeSheet = true
-                }
-                .font(AppFonts.caption())
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    LinearGradient(
-                        colors: [.purple, .blue],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .cornerRadius(16)
+            
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)
@@ -219,6 +221,26 @@ struct FocusInsightsView: View {
                 )
             }
             .padding(.horizontal, 20)
+
+            Button(action: {
+                _Concurrency.Task {
+                    let range = currentWeekRange()
+                    let changes = await analyticsEngine.buildWeeklyPlan(for: range)
+                    previewSheetState = WeeklyPlanPreviewState(changes: changes)
+                }
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: "calendar.badge.plus")
+                    Text("Apply for this week")
+                }
+                .font(AppFonts.body())
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(AppColors.accent)
+                .cornerRadius(12)
+            }
+            .padding(.horizontal, 20)
             
             Button("Upgrade for Advanced Insights") {
                 showingUpgradeSheet = true
@@ -235,6 +257,16 @@ struct FocusInsightsView: View {
         _Concurrency.Task {
             await analyticsEngine.generateWeeklyInsights()
         }
+    }
+
+    // Helper to avoid generic env wrapper in stored context
+    private func modelContextOptional() -> ModelContext? { modelContext }
+    
+    private func currentWeekRange() -> DateInterval {
+        let cal = Calendar.current
+        let start = cal.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        let end = cal.date(byAdding: .day, value: 7, to: start) ?? start
+        return DateInterval(start: start, end: end)
     }
     
     private func showSampleInsights() {
@@ -268,19 +300,6 @@ struct FocusInsightsView: View {
         case .breakPattern: return .green
         case .completion: return .purple
         case .dayOfWeek: return .pink
-        }
-    }
-}
-
-// MARK: - Supporting Extensions
-extension InsightType {
-    var displayName: String {
-        switch self {
-        case .timeOfDay: return "Time"
-        case .taskDuration: return "Duration"
-        case .breakPattern: return "Breaks"
-        case .completion: return "Goals"
-        case .dayOfWeek: return "Schedule"
         }
     }
 }

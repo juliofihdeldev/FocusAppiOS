@@ -10,6 +10,7 @@ import SwiftUI
 // MARK: - Upgrade Sheet
 struct UpgradeToProSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var showPaywall = false
     
     var body: some View {
         NavigationView {
@@ -39,25 +40,28 @@ struct UpgradeToProSheet: View {
                     VStack(spacing: 20) {
                         FeatureRow(
                             icon: "chart.line.uptrend.xyaxis",
-                            title: "Smart Analytics",
-                            description: "Discover your peak performance hours and patterns"
+                            title: "Smart Analytics", delay: 12,
+                            description: "Track your performance in real time and see how AI optimizes your focus"
+                        
                         )
                         
                         FeatureRow(
                             icon: "lightbulb.fill",
-                            title: "Weekly Insights",
+                            title: "Weekly Insights", delay: 1,
                             description: "Get 5+ personalized recommendations every week"
                         )
                         
                         FeatureRow(
                             icon: "target",
                             title: "Goal Optimization",
+                            delay: 15,
                             description: "AI-powered suggestions to hit your focus targets"
                         )
                         
                         FeatureRow(
                             icon: "brain.head.profile",
                             title: "Burnout Prevention",
+                            delay: 20,
                             description: "Early warnings when you're overloading yourself"
                         )
                     }
@@ -76,9 +80,9 @@ struct UpgradeToProSheet: View {
                         }
                         
                         Button("Start 7-Day Free Trial") {
-                            // TODO: Implement purchase flow
-                            
-                            
+                            // In widget extension, this will just dismiss
+                            // In main app, this will show PaywallView
+                            showPaywall = true
                         }
                         .font(AppFonts.headline())
                         .foregroundColor(.white)

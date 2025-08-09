@@ -12,32 +12,35 @@ enum TaskStatus: String, Codable, CaseIterable  {
 
 @Model
 class Task {
-    @Attribute(.unique) var id: UUID
-    var title: String
-    var icon: String
-    var startTime: Date
-    var durationMinutes: Int
-    var isCompleted: Bool
+    // CloudKit requires defaults or optionals for all attributes
+    var id: UUID = UUID()
+    var title: String = ""
+    var icon: String = ""
+    var startTime: Date = Date()
+    var durationMinutes: Int = 0
+    var isCompleted: Bool = false
     var taskTypeRawValue: String?
-    var statusRawValue: String
+    var statusRawValue: String = TaskStatus.scheduled.rawValue
     var actualStartTime: Date?
-    var repeatRuleRawValue: String
-    var createdAt: Date
-    var updatedAt: Date
+    var repeatRuleRawValue: String = RepeatRule.none.rawValue
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
     
     // Parent-Child Relationship
     var parentTaskId: UUID? // Track the original task for virtual tasks
     var isGeneratedFromRepeat: Bool = false
+    var focusSettingsData: Data?
+
     
     // SwiftData relationships (one-to-many)
     @Relationship(deleteRule: .cascade, inverse: \Task.parentTask)
-    var children: [Task] = []
+    var children: [Task]? = nil
     
     @Relationship
     var parentTask: Task?
     
     // Simple color storage as string
-    var colorHex: String
+    var colorHex: String = "#007AFF"
     
     init(
         id: UUID = UUID(),
@@ -50,7 +53,7 @@ class Task {
         taskType: TaskType? = nil,
         status: TaskStatus = .scheduled,
         actualStartTime: Date? = nil,
-        repeatRule: RepeatRule = .once,
+        repeatRule: RepeatRule = .none,
         isGeneratedFromRepeat: Bool = false,
         parentTaskId: UUID? = nil,
         parentTask: Task? = nil
@@ -72,6 +75,17 @@ class Task {
         self.isGeneratedFromRepeat = isGeneratedFromRepeat
         self.parentTask = parentTask
     }
+    
+    var focusSettings: FocusSettings? {
+         get {
+             guard let data = focusSettingsData else { return nil }
+             return try? JSONDecoder().decode(FocusSettings.self, from: data)
+         }
+         set {
+             focusSettingsData = try? JSONEncoder().encode(newValue)
+             updatedAt = Date()
+         }
+     }
     
     // Computed properties
     var color: Color {
@@ -107,7 +121,7 @@ class Task {
     
     var repeatRule: RepeatRule {
         get {
-            RepeatRule(rawValue: repeatRuleRawValue) ?? .once
+            RepeatRule(rawValue: repeatRuleRawValue) ?? .none
         }
         set {
             repeatRuleRawValue = newValue.rawValue
@@ -138,7 +152,7 @@ class Task {
     
     // Helper methods for parent-child relationships
     var isParentTask: Bool {
-        return !children.isEmpty || (repeatRule != .none && repeatRule != .once && !isGeneratedFromRepeat)
+        return (children?.isEmpty == false) || (repeatRule != .none && !isGeneratedFromRepeat)
     }
     
     var isChildTask: Bool {
