@@ -29,7 +29,7 @@ struct TimelineView: View {
                     }
                     
                     // Date Header - Fixed at top
-                    DateHeader(
+                    WeekDateNavigator(
                         selectedDate: $selectedDate
                     )
                     .padding(.bottom, 16)

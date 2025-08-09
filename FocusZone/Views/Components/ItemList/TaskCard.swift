@@ -305,7 +305,7 @@ struct _TimelineView: View {
             
             VStack(spacing: 40) {
                 // Date Header
-                DateHeader(selectedDate: $selectedDate)
+                WeekDateNavigator(selectedDate: $selectedDate)
             
                 // Timeline
                 ScrollView(.vertical, showsIndicators: false) {
