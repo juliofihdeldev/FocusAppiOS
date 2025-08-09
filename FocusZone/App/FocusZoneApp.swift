@@ -42,7 +42,7 @@ struct FocusZoneApp: App {
                     cloudSyncManager.refreshAccountStatus()
                 }
         }
-        .modelContainer(modelContainer)
+        .modelContainer(modelContainer
     }
     
     private func requestNotificationPermission() async {
