@@ -13,6 +13,7 @@ import SwiftData
 class FocusAnalyticsEngine: ObservableObject {
     @Published var weeklyInsights: [FocusInsight] = []
     @Published var isAnalyzing = false
+    @Published var lastAppliedChangeSet: AppliedChangeSet?
     
     private var modelContext: ModelContext?
     
@@ -41,6 +42,218 @@ class FocusAnalyticsEngine: ObservableObject {
             .sorted { $0.impactScore > $1.impactScore }
             .prefix(5)
             .map { $0 }
+    }
+
+    // MARK: - Weekly Plan Builder (Apply for this week)
+
+    func buildWeeklyPlan(for range: DateInterval) async -> [PlannedChange] {
+        guard let modelContext = modelContext else { return [] }
+        // Fetch tasks within the week window
+        let descriptor = FetchDescriptor<Task>(
+            predicate: #Predicate<Task> { task in
+                task.startTime >= range.start && task.startTime < range.end && !task.isCompleted
+            },
+            sortBy: [SortDescriptor(\.startTime)]
+        )
+        let tasksInWeek: [Task]
+        do { tasksInWeek = try modelContext.fetch(descriptor) } catch { return [] }
+
+        var changes: [PlannedChange] = []
+
+        // 1) timeOfDay: move up to 3 work/study tasks into 6-9 AM if currently outside window
+        let targetWindow = TimeOfDay.earlyMorning // 6-9 AM
+        let candidates = tasksInWeek.filter { ($0.taskType == .work || $0.taskType == .study) && !isDate($0.startTime, in: targetWindow) }
+        for task in candidates.prefix(3) {
+            if let movedStart = suggestStart(in: targetWindow, sameDayAs: task.startTime, duration: task.durationMinutes) {
+                changes.append(.moveTask(taskId: task.id, toStart: movedStart))
+                // Break before important tasks: 10 minutes
+                let breakStart = movedStart.addingTimeInterval(TimeInterval(-10 * 60))
+                if breakStart >= startOfDay(task.startTime) {
+                    changes.append(.addFocusBlock(date: breakStart, durationMinutes: 10, title: "Break (Auto)"))
+                }
+            }
+        }
+
+        // 2) taskDuration: split long tasks (> 90m) into 2 chunks (e.g., 2×45)
+        let longTasks = tasksInWeek.filter { $0.durationMinutes > 90 }
+        for task in longTasks.prefix(2) {
+            changes.append(.splitTask(taskId: task.id, chunksMinutes: [task.durationMinutes / 2, task.durationMinutes - task.durationMinutes / 2]))
+        }
+
+        // 3) completion: if last 7-day completion looks low, add a catch-up 60m block mid-week evening (6-9 PM)
+        if let lowCompletion = weeklyInsights.first(where: { $0.type == .completion && $0.title.contains("Room for Growth") }) {
+            let midWeek = Calendar.current.date(byAdding: .day, value: 3, to: range.start) ?? range.start
+            if let catchUpStart = suggestStart(in: .evening, sameDayAs: midWeek, duration: 60) {
+                changes.append(.addFocusBlock(date: catchUpStart, durationMinutes: 60, title: "Catch-up Focus (Auto)"))
+            }
+        }
+
+        return changes
+    }
+
+    func apply(changes: [PlannedChange], in context: ModelContext) throws -> AppliedChangeSet {
+        var moved: [(UUID, Date, Date)] = []
+        var createdIds: [UUID] = []
+        var splitMap: [(UUID, [UUID])] = []
+        var originalDurations: [(UUID, Int)] = []
+
+        for change in changes {
+            switch change {
+            case let .moveTask(taskId, toStart):
+                if let task: Task = fetchTask(by: taskId, in: context) {
+                    let from = task.startTime
+                    task.startTime = toStart
+                    task.updatedAt = Date()
+                    moved.append((taskId, from, toStart))
+                }
+            case let .addFocusBlock(date, durationMinutes, title):
+                let newTask = Task(
+                    title: title,
+                    icon: "🎯",
+                    startTime: date,
+                    durationMinutes: durationMinutes,
+                    color: .blue,
+                    isCompleted: false,
+                    taskType: .work,
+                    status: .scheduled
+                )
+                context.insert(newTask)
+                createdIds.append(newTask.id)
+            case let .splitTask(taskId, chunksMinutes):
+                if let task: Task = fetchTask(by: taskId, in: context), chunksMinutes.count >= 2 {
+                    originalDurations.append((taskId, task.durationMinutes))
+                    // Keep first chunk on original task
+                    task.durationMinutes = chunksMinutes[0]
+                    task.updatedAt = Date()
+                    var newIds: [UUID] = []
+                    let firstEnd = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+                    var cursor = firstEnd
+                    for chunk in chunksMinutes.dropFirst() {
+                        // Schedule subsequent chunk(s) right after previous
+                        let newTask = Task(
+                            title: task.title + " (Part)",
+                            icon: task.icon,
+                            startTime: cursor,
+                            durationMinutes: chunk,
+                            color: task.color,
+                            isCompleted: false,
+                            taskType: task.taskType,
+                            status: .scheduled,
+                            parentTaskId: task.id,
+                            parentTask: task
+                        )
+                        context.insert(newTask)
+                        newIds.append(newTask.id)
+                        createdIds.append(newTask.id)
+                        cursor = cursor.addingTimeInterval(TimeInterval(chunk * 60))
+                    }
+                    splitMap.append((taskId, newIds))
+                }
+            case let .createBreak(beforeTaskId, minutes):
+                if let task: Task = fetchTask(by: beforeTaskId, in: context) {
+                    let start = task.startTime.addingTimeInterval(TimeInterval(-minutes * 60))
+                    if start >= startOfDay(task.startTime) {
+                        let br = Task(
+                            title: "Break (Auto)",
+                            icon: "☕️",
+                            startTime: start,
+                            durationMinutes: minutes,
+                            color: .purple,
+                            isCompleted: false,
+                            taskType: .relax,
+                            status: .scheduled
+                        )
+                        context.insert(br)
+                        createdIds.append(br.id)
+                    }
+                }
+            }
+        }
+
+        try context.save()
+        let changeSet = AppliedChangeSet(
+            movedTasks: moved.map { ($0.0, $0.1, $0.2) },
+            createdTaskIds: createdIds,
+            splitMapping: splitMap,
+            originalDurations: originalDurations
+        )
+        lastAppliedChangeSet = changeSet
+        return changeSet
+    }
+
+    func undo(changeSet: AppliedChangeSet, in context: ModelContext) throws {
+        // Revert moves
+        for entry in changeSet.movedTasks {
+            if let task: Task = fetchTask(by: entry.taskId, in: context) {
+                task.startTime = entry.from
+                task.updatedAt = Date()
+            }
+        }
+        // Revert splits
+        for (taskId, newIds) in changeSet.splitMapping {
+            if let task: Task = fetchTask(by: taskId, in: context),
+               let original = changeSet.originalDurations.first(where: { $0.taskId == taskId })?.minutes {
+                task.durationMinutes = original
+                task.updatedAt = Date()
+            }
+            for nid in newIds {
+                if let t: Task = fetchTask(by: nid, in: context) {
+                    context.delete(t)
+                }
+            }
+        }
+        // Delete created tasks
+        for cid in changeSet.createdTaskIds {
+            if let t: Task = fetchTask(by: cid, in: context) {
+                context.delete(t)
+            }
+        }
+        try context.save()
+        lastAppliedChangeSet = nil
+    }
+
+    // MARK: - Helpers (planning)
+    private func fetchTask<T: PersistentModel>(by id: UUID, in context: ModelContext) -> T? {
+        let descriptor = FetchDescriptor<Task>(
+            predicate: #Predicate<Task> { task in task.id == id }
+        )
+        if let found = try? context.fetch(descriptor).first, let asT = found as? T { return asT }
+        return nil
+    }
+
+    private func startOfDay(_ date: Date) -> Date {
+        Calendar.current.startOfDay(for: date)
+    }
+
+    private func isDate(_ date: Date, in slot: TimeOfDay) -> Bool {
+        let hour = Calendar.current.component(.hour, from: date)
+        switch slot {
+        case .earlyMorning: return (6..<9).contains(hour)
+        case .lateMorning: return (9..<12).contains(hour)
+        case .earlyAfternoon: return (12..<15).contains(hour)
+        case .lateAfternoon: return (15..<18).contains(hour)
+        case .evening: return (18..<21).contains(hour)
+        case .night: return hour < 6 || hour >= 21
+        }
+    }
+
+    private func suggestStart(in slot: TimeOfDay, sameDayAs date: Date, duration: Int) -> Date? {
+        let cal = Calendar.current
+        let dayStart = startOfDay(date)
+        let components = cal.dateComponents([.year, .month, .day], from: dayStart)
+        let startHour: Int
+        switch slot {
+        case .earlyMorning: startHour = 6
+        case .lateMorning: startHour = 9
+        case .earlyAfternoon: startHour = 12
+        case .lateAfternoon: startHour = 15
+        case .evening: startHour = 18
+        case .night: startHour = 21
+        }
+        if let base = cal.date(from: DateComponents(year: components.year, month: components.month, day: components.day, hour: startHour, minute: 0)) {
+            return base
+        }
+        return nil
     }
     
     // MARK: - Pattern Analysis Functions
@@ -289,6 +502,30 @@ enum Trend: String, Codable {
     case declining = "declining"
     case stable = "stable"
     case needsImprovement = "needsImprovement"
+}
+
+// MARK: - Planning Types
+
+enum PlannedChange: Identifiable {
+    var id: String {
+        switch self {
+        case let .createBreak(beforeTaskId, minutes): return "break-\(beforeTaskId)-\(minutes)"
+        case let .moveTask(taskId, toStart): return "move-\(taskId)-\(toStart.timeIntervalSince1970)"
+        case let .splitTask(taskId, chunksMinutes): return "split-\(taskId)-\(chunksMinutes)"
+        case let .addFocusBlock(date, durationMinutes, title): return "block-\(title)-\(date.timeIntervalSince1970)-\(durationMinutes)"
+        }
+    }
+    case createBreak(beforeTaskId: UUID, minutes: Int)
+    case moveTask(taskId: UUID, toStart: Date)
+    case splitTask(taskId: UUID, chunksMinutes: [Int])
+    case addFocusBlock(date: Date, durationMinutes: Int, title: String)
+}
+
+struct AppliedChangeSet {
+    let movedTasks: [(taskId: UUID, from: Date, to: Date)]
+    let createdTaskIds: [UUID]
+    let splitMapping: [(originalId: UUID, newIds: [UUID])]
+    let originalDurations: [(taskId: UUID, minutes: Int)]
 }
 
 enum TimeOfDay: String, CaseIterable {

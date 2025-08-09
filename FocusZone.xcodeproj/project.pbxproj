@@ -86,6 +86,7 @@
 				Views/Components/ItemList/FocusModeCard.swift,
 				Views/Components/ItemList/InsightCard.swift,
 				Views/Components/Modal/UpgradeToProSheet.swift,
+					Views/Components/Modal/WeeklyPlanPreviewSheet.swift,
 				Views/Screens/FocusInsightsView.swift,
 			);
 			target = 437BF8D32E2D4F0200544334 /* FocusZoneWidgetExtension */;
