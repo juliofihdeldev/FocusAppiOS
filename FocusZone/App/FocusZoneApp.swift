@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftData
 import CloudKit
 import RevenueCat
+import Foundation
 
 @main
 struct FocusZoneApp: App {
@@ -25,6 +26,13 @@ struct FocusZoneApp: App {
             fatalError("Failed to create CloudKit-backed ModelContainer: \(error)")
         }
     }()
+
+    init() {
+        // Configure RevenueCat before any views/objects access Purchases.shared
+        configureRevenueCat()
+        // Eagerly touch SubscriptionManager to ensure observer is attached
+        _ = SubscriptionManager.shared
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -42,9 +50,6 @@ struct FocusZoneApp: App {
                 .task {
                     cloudSyncManager.refreshAccountStatus()
                 }
-                .task {
-                    configureRevenueCat()
-                }
         }
         .modelContainer(modelContainer)
     }
@@ -59,15 +64,15 @@ struct FocusZoneApp: App {
         }
 
     private func configureRevenueCat() {
-        // TODO: replace with your public SDK key from RevenueCat dashboard
-        let apiKey = ProcessInfo.processInfo.environment["REVENUECAT_API_KEY"] ?? ""
-        guard !apiKey.isEmpty else {
-            print("[RevenueCat] Missing API key. Set REVENUECAT_API_KEY in scheme environment.")
-            return
-        }
-
-        Purchases.logLevel = .warn
+        // Configure with provided public SDK key
+        let apiKey = "appl_OvrdrmbbOqtogqrIfROZKanDGIP"
+        Purchases.logLevel = .debug
         Purchases.configure(withAPIKey: apiKey)
-        print("[RevenueCat] Configured Purchases SDK")
+        print("[RevenueCat] Configured Purchases SDK with provided key")
+        NotificationCenter.default.post(name: .revenueCatConfigured, object: nil)
     }
+}
+
+extension Notification.Name {
+    static let revenueCatConfigured = Notification.Name("RevenueCatConfigured")
 }

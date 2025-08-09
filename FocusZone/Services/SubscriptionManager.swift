@@ -28,12 +28,34 @@ class SubscriptionManager: ObservableObject {
     
     private var updateListenerTask: _Concurrency.Task<Void, Error>?
     private var transactionListener: _Concurrency.Task<Void, Error>?
+    private var revenueCatConfigured: Bool = false
     
     init() {
-        // Load offerings and check status
-        _Concurrency.Task {
-            await loadOfferings()
-            await updateSubscriptionStatus()
+        // Wait until Purchases is configured, then proceed
+        if Purchases.isConfigured {
+            revenueCatConfigured = true
+            _Concurrency.Task { await self.bootstrap() }
+        } else {
+            NotificationCenter.default.addObserver(forName: .revenueCatConfigured, object: nil, queue: .main) { [weak self] _ in
+                _Concurrency.Task { @MainActor in
+                    guard let self else { return }
+                    self.revenueCatConfigured = true
+                    await self.bootstrap()
+                }
+            }
+        }
+    }
+
+    private func bootstrap() async {
+        await loadOfferings()
+        await updateSubscriptionStatus()
+    }
+
+    private func waitForRevenueCatConfiguration() async {
+        // Suspend briefly and poll a few times to avoid races when Settings opens very fast
+        for _ in 0..<10 {
+            if Purchases.isConfigured || revenueCatConfigured { return }
+            try? await _Concurrency.Task.sleep(nanoseconds: 150_000_000) // 150 ms
         }
     }
     
@@ -45,16 +67,28 @@ class SubscriptionManager: ObservableObject {
     // MARK: - Offerings / Products (RevenueCat)
 
     func loadOfferings() async {
+        // Ensure RevenueCat is configured before calling its APIs
+        if !revenueCatConfigured && !Purchases.isConfigured {
+            await waitForRevenueCatConfiguration()
+        }
         isLoading = true
         errorMessage = nil
-        
+    
         do {
-            let offerings = try await Purchases.shared.offerings()
-            currentOffering = offerings.current
-            let packages = offerings.current?.availablePackages ?? []
-            availablePackages = packages
-            availableProducts = packages.map { $0.storeProduct }
-            print("✅ Loaded RevenueCat offerings: packages=\(packages.count)")
+//            let offerings = try await Purchases.shared.offerings()
+//            currentOffering = offerings.current
+//            let packages = offerings.current?.availablePackages ?? []
+//            availablePackages = packages
+//            availableProducts = packages.map { $0.storeProduct }
+//            print("✅ Loaded RevenueCat offerings: packages=\(packages.count)")
+//            
+            
+            Purchases.shared.getOfferings{(offer, _error) in
+                if let packages = offer?.current?.availablePackages {
+                    print(" >>>>>>>>> ",packages.map({$0.localizedPriceString}))
+                }
+            }
+            
         } catch {
             errorMessage = "Failed to load offerings: \(error.localizedDescription)"
             print("❌ Failed to load offerings: \(error)")
@@ -66,6 +100,9 @@ class SubscriptionManager: ObservableObject {
     // MARK: - Subscription Status
     
     func updateSubscriptionStatus() async {
+        if !revenueCatConfigured && !Purchases.isConfigured {
+            await waitForRevenueCatConfiguration()
+        }
         do {
             let info = try await Purchases.shared.customerInfo()
             let isActive = info.entitlements[entitlementIdentifier]?.isActive == true
@@ -80,6 +117,9 @@ class SubscriptionManager: ObservableObject {
     // MARK: - Purchase Flow
     
     func purchaseSubscription() async -> Bool {
+        if !revenueCatConfigured && !Purchases.isConfigured {
+            await waitForRevenueCatConfiguration()
+        }
         guard let package = availablePackages.first else {
             errorMessage = "No package available"
             return false
@@ -114,6 +154,9 @@ class SubscriptionManager: ObservableObject {
     // MARK: - Restore Purchases
     
     func restorePurchases() async -> Bool {
+        if !revenueCatConfigured && !Purchases.isConfigured {
+            await waitForRevenueCatConfiguration()
+        }
         isLoading = true
         errorMessage = nil
         

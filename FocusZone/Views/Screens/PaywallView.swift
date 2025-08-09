@@ -186,9 +186,7 @@ struct PaywallView: View {
             }
         }
         .onAppear {
-            _Concurrency.Task {
-                await subscriptionManager.loadOfferings()
-            }
+//            _Concurrency.Task { await subscriptionManager.loadOfferings() }
         }
     }
     

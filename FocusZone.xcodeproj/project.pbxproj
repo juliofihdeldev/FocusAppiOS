@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		43116B572E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */; };
-		43116B582E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */; };
+		4361F2C52E47EC0400C82843 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 4361F2C42E47EC0400C82843 /* RevenueCat */; };
+		4361F2C72E47EC0400C82843 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4361F2C62E47EC0400C82843 /* RevenueCatUI */; };
 		437BF8D72E2D4F0200544334 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BF8D62E2D4F0200544334 /* WidgetKit.framework */; };
 		437BF8D92E2D4F0200544334 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437BF8D82E2D4F0200544334 /* SwiftUI.framework */; };
 		437BF8EA2E2D4F0300544334 /* FocusZoneWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 437BF8D42E2D4F0200544334 /* FocusZoneWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -48,7 +48,6 @@
 
 /* Begin PBXFileReference section */
 		431164BB2E3671A1006A9907 /* FocusZoneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusZoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = focuszone_pro_monthly.storekit; sourceTree = "<group>"; };
 		437BF8D42E2D4F0200544334 /* FocusZoneWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FocusZoneWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		437BF8D62E2D4F0200544334 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		437BF8D82E2D4F0200544334 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -147,7 +146,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4361F2C52E47EC0400C82843 /* RevenueCat in Frameworks */,
 				43RC00012E48000000RC0001 /* RevenueCat in Frameworks */,
+				4361F2C72E47EC0400C82843 /* RevenueCatUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,7 +167,6 @@
 		43B948D62E22CB9B00392FD0 = {
 			isa = PBXGroup;
 			children = (
-				43116B562E4589C1006A9907 /* focuszone_pro_monthly.storekit */,
 				437BF8F92E2D526300544334 /* FocusZoneWidgetExtension.entitlements */,
 				43B948E12E22CB9B00392FD0 /* FocusZone */,
 				437BF8DA2E2D4F0200544334 /* FocusZoneWidget */,
@@ -254,6 +254,8 @@
 			name = FocusZone;
 			packageProductDependencies = (
 				43RC00022E48000000RC0001 /* RevenueCat */,
+				4361F2C42E47EC0400C82843 /* RevenueCat */,
+				4361F2C62E47EC0400C82843 /* RevenueCatUI */,
 			);
 			productName = FocusZone;
 			productReference = 43B948DF2E22CB9B00392FD0 /* FocusZone.app */;
@@ -317,7 +319,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43116B582E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,7 +326,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43116B572E4589C1006A9907 /* focuszone_pro_monthly.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,8 +693,22 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		43RC00022E48000000RC0001 /* RevenueCat */ = {isa = XCSwiftPackageProductDependency; productName = RevenueCat; };
+		4361F2C42E47EC0400C82843 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4361ECCF2E47D9DA00C82843 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		4361F2C62E47EC0400C82843 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4361ECCF2E47D9DA00C82843 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+		43RC00022E48000000RC0001 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RevenueCat;
+		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 43B948D72E22CB9B00392FD0 /* Project object */;
