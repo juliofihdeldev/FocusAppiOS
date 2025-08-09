@@ -38,15 +38,20 @@ struct ConfettiCelebrationView: View {
                 Spacer()
 
                 Button(action: close) {
-                    Text("Close")
-                        .font(AppFonts.headline())
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 12)
-                        .background(accent.opacity(0.9))
-                        .clipShape(Capsule())
-                        .shadow(radius: 6)
+                    HStack(spacing: 10) {
+                        Image(systemName: "sparkles")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .white.opacity(0.8))
+                            .font(.headline)
+                        Text("Close")
+                            .font(AppFonts.headline())
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 28)
+                    .padding(.vertical, 14)
                 }
+                .buttonStyle(CelebrationCapsuleButtonStyle(accent: accent))
+                .accessibilityLabel("Close celebration")
                 .padding(.bottom, 30)
             }
 
@@ -66,6 +71,44 @@ struct ConfettiCelebrationView: View {
             isPresented = false
         }
         onClose?()
+    }
+}
+
+// MARK: - Button Style
+
+private struct CelebrationCapsuleButtonStyle: ButtonStyle {
+    let accent: Color
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                Capsule().fill(
+                    LinearGradient(
+                        colors: [accent.opacity(0.95), accent.opacity(0.75)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            )
+            .overlay(
+                Capsule()
+                    .stroke(Color.white.opacity(0.25), lineWidth: 1)
+            )
+            .overlay(
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.28), .clear],
+                            startPoint: .top,
+                            endPoint: .center
+                        )
+                    )
+                    .blendMode(.screen)
+            )
+            .shadow(color: accent.opacity(0.45), radius: 12, x: 0, y: 6)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.28, dampingFraction: 0.82), value: configuration.isPressed)
+            .contentShape(Capsule())
     }
 }
 
