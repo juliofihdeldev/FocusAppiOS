@@ -20,7 +20,7 @@
     "_applicationInternalID" : "6749811754",
     "_developerTeamID" : "X3L9TQDJ62",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 776543204.71067202,
+    "_lastSynchronizedDate" : 776553351.30404103,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -77,7 +77,7 @@
       "localizations" : [
 
       ],
-      "name" : "Pro",
+      "name" : "Pro FocusZEN+",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -86,21 +86,21 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "34.99",
+          "displayPrice" : "29.99",
           "familyShareable" : false,
-          "groupNumber" : 2,
-          "internalID" : "6749810925",
+          "groupNumber" : 3,
+          "internalID" : "6749832938",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Focus Zen+ Annual Plan ",
-              "displayName" : "Pro",
+              "description" : "FocusZen + Pro Plan",
+              "displayName" : "Annual Plan",
               "locale" : "en_US"
             }
           ],
-          "productID" : "focus_zen_plus_annual",
+          "productID" : "focus_zen_plus_pro_best_value",
           "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Annual $34.99",
+          "referenceName" : " Pro Annual $29.99",
           "subscriptionGroupID" : "21752183",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
@@ -122,7 +122,7 @@
           "localizations" : [
             {
               "description" : "Unlimited access to FocusZen+",
-              "displayName" : "Pro  ",
+              "displayName" : "Pro Monthly Plan",
               "locale" : "en_US"
             }
           ],

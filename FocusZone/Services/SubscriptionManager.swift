@@ -23,9 +23,7 @@ class SubscriptionManager: ObservableObject {
     // Product IDs - These need to match App Store Connect
     private let productIDs = [
         "focus_zen_plus_month",
-        "focus_zen_plus_annual"
-        // Monthly: $2.99/month with 7-day free trial
-        // Annual: $24.99/year with 7-day free trial (save ~30%)
+        "focus_zen_plus_pro_best_value"
     ]
     
     private var updateListenerTask: _Concurrency.Task<Void, Error>?
@@ -63,6 +61,7 @@ class SubscriptionManager: ObservableObject {
             
             for product in storeProducts {
                 print("📦 Product: \(product.displayName) - \(product.displayPrice)")
+                print(product)
             }
         } catch {
             errorMessage = "Failed to load products: \(error.localizedDescription)"
