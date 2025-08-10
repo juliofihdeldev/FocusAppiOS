@@ -73,38 +73,36 @@ class SubscriptionManager: ObservableObject {
     
     // MARK: - Product Helpers
     
-    var bestValueProduct: Product? {
-        // Return annual plan if available, otherwise monthly
-        return availableProducts.first { $0.id.contains("annual") } ?? availableProducts.first
-    }
-    
-    var monthlyProduct: Product? {
-        return availableProducts.first { $0.id.contains("month") }
-    }
-    
-    var annualProduct: Product? {
-        return availableProducts.first { $0.id.contains("annual") }
-    }
-    
-            func calculateSavingsPercentage() -> Double? {
+        // MARK: - Product Helpers
+        
+        var bestValueProduct: Product? {
+            // Return best value plan if available, otherwise monthly
+            return availableProducts.first { $0.id.contains("focus_zen_plus_pro_best_value") } ?? availableProducts.first
+        }
+        
+        var monthlyProduct: Product? {
+            return availableProducts.first { $0.id.contains("month") }
+        }
+        
+        func calculateSavingsPercentage() -> Double? {
             guard let monthly = monthlyProduct,
-                  let annual = annualProduct else { return nil }
+                  let bestValue = bestValueProduct else { return nil }
 
             let monthlyPrice = monthly.price
-            let annualPrice = annual.price
+            let bestValuePrice = bestValue.price
 
             // Calculate annual cost if paid monthly
             let annualCostIfMonthly = monthlyPrice * 12
 
             // Calculate savings
-            let savings = annualCostIfMonthly - annualPrice
+            let savings = annualCostIfMonthly - bestValuePrice
             let savingsPercentage = (savings / annualCostIfMonthly) * 100
 
             return Double(truncating: savingsPercentage as NSNumber)
         }
-    
-            func getMonthlyEquivalentPrice(for product: Product) -> String? {
-            if product.id.contains("annual") {
+        
+        func getMonthlyEquivalentPrice(for product: Product) -> String? {
+            if product.id.contains("focus_zen_plus_pro_best_value") {
                 let monthlyPrice = product.price / 12
                 let formatter = NumberFormatter()
                 formatter.numberStyle = .currency

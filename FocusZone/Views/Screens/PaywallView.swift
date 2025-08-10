@@ -336,49 +336,49 @@ struct ProductSelectionCard: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(.white)
                                 
-                                if product.id.contains("annual") {
-                                    Text("BEST VALUE")
-                                        .font(.caption2)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.orange)
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(
-                                            Capsule()
-                                                .fill(.orange.opacity(0.2))
-                                                .overlay(
+                                                                        if product.id.contains("focus_zen_plus_pro_best_value") {
+                                            Text("BEST VALUE")
+                                                .font(.caption2)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(.orange)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(
                                                     Capsule()
-                                                        .stroke(.orange, lineWidth: 1)
+                                                        .fill(.orange.opacity(0.2))
+                                                        .overlay(
+                                                            Capsule()
+                                                                .stroke(.orange, lineWidth: 1)
+                                                        )
                                                 )
-                                        )
-                                }
+                                        }
                             }
                             
                             Text(getProductDescription(for: product))
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.7))
                             
-                            if product.id.contains("annual") {
-                                let savings = SubscriptionManager.shared.calculateSavingsPercentage()
-                                if let savingsPercentage = savings {
-                                    Text("Save \(Int(round(savingsPercentage)))% vs monthly")
-                                        .font(.caption)
-                                        .foregroundColor(.green)
-                                        .fontWeight(.medium)
-                                } else {
-                                    Text("Save with yearly billing")
-                                        .font(.caption)
-                                        .foregroundColor(.green)
-                                        .fontWeight(.medium)
-                                }
-                                
-                                // Show monthly equivalent price
-                                if let monthlyEquivalent = SubscriptionManager.shared.getMonthlyEquivalentPrice(for: product) {
-                                    Text("\(monthlyEquivalent)/month when billed annually")
-                                        .font(.caption2)
-                                        .foregroundColor(.white.opacity(0.6))
-                                }
-                            }
+                                                                if product.id.contains("focus_zen_plus_pro_best_value") {
+                                        let savings = SubscriptionManager.shared.calculateSavingsPercentage()
+                                        if let savingsPercentage = savings {
+                                            Text("Save \(Int(round(savingsPercentage)))% vs monthly")
+                                                .font(.caption)
+                                                .foregroundColor(.green)
+                                                .fontWeight(.medium)
+                                        } else {
+                                            Text("Save with best value plan")
+                                                .font(.caption)
+                                                .foregroundColor(.green)
+                                                .fontWeight(.medium)
+                                        }
+
+                                        // Show monthly equivalent price
+                                        if let monthlyEquivalent = SubscriptionManager.shared.getMonthlyEquivalentPrice(for: product) {
+                                            Text("\(monthlyEquivalent)/month when billed annually")
+                                                .font(.caption2)
+                                                .foregroundColor(.white.opacity(0.6))
+                                        }
+                                    }
                         }
                         
                         Spacer()
@@ -410,25 +410,25 @@ struct ProductSelectionCard: View {
         .padding(.horizontal, 20)
     }
     
-    private func getProductDescription(for product: Product) -> String {
-        if product.id.contains("annual") {
-            return "Annual plan - Save with yearly billing"
-        } else if product.id.contains("month") {
-            return "Monthly plan - Flexible monthly billing"
-        } else {
-            return "Pro subscription"
-        }
-    }
+                private func getProductDescription(for product: Product) -> String {
+                if product.id.contains("focus_zen_plus_pro_best_value") {
+                    return "Best value plan - Save with yearly billing"
+                } else if product.id.contains("month") {
+                    return "Monthly plan - Flexible monthly billing"
+                } else {
+                    return "Pro subscription"
+                }
+            }
     
-    private func getBillingPeriod(for product: Product) -> String {
-        if product.id.contains("annual") {
-            return "/year"
-        } else if product.id.contains("month") {
-            return "/month"
-        } else {
-            return ""
-        }
-    }
+                private func getBillingPeriod(for product: Product) -> String {
+                if product.id.contains("focus_zen_plus_pro_best_value") {
+                    return "/year"
+                } else if product.id.contains("month") {
+                    return "/month"
+                } else {
+                    return ""
+                }
+            }
 }
 
 // MARK: - Array Extension
