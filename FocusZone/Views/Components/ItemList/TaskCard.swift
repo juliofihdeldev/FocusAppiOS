@@ -70,7 +70,7 @@ struct TaskCard: View {
                 // Task title
                 Text(title)
                     .font(AppFonts.headline())
-                    .foregroundColor(.white)
+                    .foregroundColor(AppColors.textLabel)
                     .lineLimit(2)
                 
                 // Progress text for active tasks
