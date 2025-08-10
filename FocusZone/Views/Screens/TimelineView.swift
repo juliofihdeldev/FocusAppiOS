@@ -75,7 +75,8 @@ struct TimelineView: View {
                                             color: viewModel.taskColor(task),
                                             isCompleted: task.isCompleted,
                                             durationMinutes: task.durationMinutes,
-                                            task: task
+                                            task: task,
+                                            timelineViewModel: viewModel
                                         )
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 6)
