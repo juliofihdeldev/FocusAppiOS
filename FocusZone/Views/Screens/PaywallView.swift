@@ -37,26 +37,26 @@ struct PaywallView: View {
                         // Header
                         VStack(spacing: 12) {
                             // App icon
-                            Image(systemName: "brain.head.profile")
-                                .font(.system(size: 60, weight: .light))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(
-                                    Circle()
-                                        .fill(.ultraThinMaterial)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(.white.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
+//                            Image(systemName: "brain.head.profile")
+//                                .font(.system(size: 60, weight: .light))
+//                                .foregroundColor(.white)
+//                                .padding()
+//                                .background(
+//                                    Circle()
+//                                        .fill(.ultraThinMaterial)
+//                                        .overlay(
+//                                            Circle()
+//                                                .stroke(.white.opacity(0.3), lineWidth: 1)
+//                                        )
+//                                )
                             
                             VStack(spacing: 8) {
                                 Text("Unlock FocusZen+ Pro")
-                                    .font(AppFonts.largetitle())
+                                    .font(AppFonts.title())
                                     .foregroundColor(.white)
                                 
                                 Text("Supercharge your productivity")
-                                    .font(AppFonts.title())
+                                    .font(AppFonts.subheadline())
                                     .foregroundColor(.white.opacity(0.8))
                                     .multilineTextAlignment(.center)
                             }

@@ -78,8 +78,8 @@ private struct AppFontResolver {
 
 struct AppFonts {
     // Public semantic fonts
-    static func largetitle() -> Font { make(size: 32, weight: .bold) }
-    static func title() -> Font { make(size: 21, weight: .semibold) }
+    static func largetitle() -> Font { make(size: 32, weight: .regular) }
+    static func title() -> Font { make(size: 21, weight: .regular) }
     static func headline() -> Font { make(size: 17, weight: .regular) }
     static func subheadline() -> Font { make(size: 16, weight: .medium) }
     static func body() -> Font { make(size: 15, weight: .regular) }
