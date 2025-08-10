@@ -35,7 +35,7 @@ struct PaywallView: View {
                 ScrollView {
                     VStack(spacing: 12) {
                         // Header
-                        VStack(spacing: 16) {
+                        VStack(spacing: 12) {
                             // App icon
                             Image(systemName: "brain.head.profile")
                                 .font(.system(size: 60, weight: .light))
@@ -51,13 +51,12 @@ struct PaywallView: View {
                                 )
                             
                             VStack(spacing: 8) {
-                                Text("Unlock FocusZin+ Pro")
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
+                                Text("Unlock FocusZen+ Pro")
+                                    .font(AppFonts.largetitle())
                                     .foregroundColor(.white)
                                 
                                 Text("Supercharge your productivity")
-                                    .font(.title3)
+                                    .font(AppFonts.title())
                                     .foregroundColor(.white.opacity(0.8))
                                     .multilineTextAlignment(.center)
                             }
@@ -65,7 +64,7 @@ struct PaywallView: View {
                         .padding(.top, 40)
                         
                         // Features showcase
-                        VStack(spacing: 24) {
+                        VStack(spacing: 12) {
                             ForEach(Array(ProFeatures.proFeaturesList.enumerated()), id: \.offset) { index, feature in
                                 FeatureRow(
                                     icon: getFeatureIcon(for: index),
@@ -86,17 +85,16 @@ struct PaywallView: View {
                                         .scaleEffect(1.2)
                                     
                                     Text("Loading subscription options...")
-                                        .font(.subheadline)
+                                        .font(AppFonts.subheadline())
                                         .foregroundColor(.white.opacity(0.7))
                                 }
                                 .padding(.vertical, 40)
                             } else if !subscriptionManager.availableProducts.isEmpty {
                                 VStack(spacing: 16) {
                                     Text("Choose Your Plan")
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
+                                        .font(AppFonts.title())
                                         .foregroundColor(.white)
-                                
+                                    
                                     ForEach(subscriptionManager.availableProducts, id: \.id) { product in
                                         ProductSelectionCard(
                                             product: product,
@@ -133,8 +131,7 @@ struct PaywallView: View {
                                         }
                                         
                                         Text(isPurchasing ? "Processing..." : getCTAButtonText())
-                                            .font(.headline)
-                                            .fontWeight(.semibold)
+                                            .font(AppFonts.headline())
                                     }
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
@@ -285,7 +282,7 @@ struct PaywallView: View {
             return "$2.99/month. Cancel anytime."
         }
         
-        if product.id.contains("annual") {
+        if product.id.contains("focus_zen_plus_pro_best_value") {
             return "Save with yearly billing. Cancel anytime."
         } else if product.id.contains("month") {
             return "$2.99/month. Cancel anytime."
@@ -332,65 +329,60 @@ struct ProductSelectionCard: View {
                         VStack(alignment: .leading, spacing: 2) {
                             HStack(spacing: 8) {
                                 Text(product.displayName)
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
+                                    .font(AppFonts.headline())
                                     .foregroundColor(.white)
                                 
-                                                                        if product.id.contains("focus_zen_plus_pro_best_value") {
-                                            Text("BEST VALUE")
-                                                .font(.caption2)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.orange)
-                                                .padding(.horizontal, 6)
-                                                .padding(.vertical, 2)
-                                                .background(
+                                if product.id.contains("focus_zen_plus_pro_best_value") {
+                                    Text("BEST VALUE")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.orange)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(
+                                            Capsule()
+                                                .fill(.orange.opacity(0.2))
+                                                .overlay(
                                                     Capsule()
-                                                        .fill(.orange.opacity(0.2))
-                                                        .overlay(
-                                                            Capsule()
-                                                                .stroke(.orange, lineWidth: 1)
-                                                        )
+                                                        .stroke(.orange, lineWidth: 1)
                                                 )
-                                        }
+                                        )
+                                }
                             }
                             
                             Text(getProductDescription(for: product))
-                                .font(.subheadline)
+                                .font(AppFonts.subheadline())
                                 .foregroundColor(.white.opacity(0.7))
                             
-                                                                if product.id.contains("focus_zen_plus_pro_best_value") {
-                                        let savings = SubscriptionManager.shared.calculateSavingsPercentage()
-                                        if let savingsPercentage = savings {
-                                            Text("Save \(Int(round(savingsPercentage)))% vs monthly")
-                                                .font(.caption)
-                                                .foregroundColor(.green)
-                                                .fontWeight(.medium)
-                                        } else {
-                                            Text("Save with best value plan")
-                                                .font(.caption)
-                                                .foregroundColor(.green)
-                                                .fontWeight(.medium)
-                                        }
-
-                                        // Show monthly equivalent price
-                                        if let monthlyEquivalent = SubscriptionManager.shared.getMonthlyEquivalentPrice(for: product) {
-                                            Text("\(monthlyEquivalent)/month when billed annually")
-                                                .font(.caption2)
-                                                .foregroundColor(.white.opacity(0.6))
-                                        }
-                                    }
+                            if product.id.contains("focus_zen_plus_pro_best_value") {
+                                let savings = SubscriptionManager.shared.calculateSavingsPercentage()
+                                if let savingsPercentage = savings {
+                                    Text("Save \(Int(round(savingsPercentage)))% vs monthly")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.green)
+                                } else {
+                                    Text("Save with best value plan")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.green)
+                                }
+                                
+                                // Show monthly equivalent price
+                                if let monthlyEquivalent = SubscriptionManager.shared.getMonthlyEquivalentPrice(for: product) {
+                                    Text("\(monthlyEquivalent)/month when billed annually")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.white.opacity(0.6))
+                                }
+                            }
                         }
                         
                         Spacer()
                         
                         VStack(alignment: .trailing, spacing: 2) {
                             Text(product.displayPrice)
-                                .font(.title2)
-                                .fontWeight(.bold)
+                                .font(AppFonts.title())
                                 .foregroundColor(.white)
                             
                             Text(getBillingPeriod(for: product))
-                                .font(.caption)
+                                .font(AppFonts.caption())
                                 .foregroundColor(.white.opacity(0.6))
                         }
                     }
@@ -410,28 +402,26 @@ struct ProductSelectionCard: View {
         .padding(.horizontal, 20)
     }
     
-                private func getProductDescription(for product: Product) -> String {
-                if product.id.contains("focus_zen_plus_pro_best_value") {
-                    return "Best value plan - Save with yearly billing"
-                } else if product.id.contains("month") {
-                    return "Monthly plan - Flexible monthly billing"
-                } else {
-                    return "Pro subscription"
-                }
-            }
+    private func getProductDescription(for product: Product) -> String {
+        if product.id.contains("focus_zen_plus_pro_best_value") {
+            return "Best value plan - Save with yearly billing"
+        } else if product.id.contains("month") {
+            return "Monthly plan - Flexible monthly billing"
+        } else {
+            return "Pro subscription"
+        }
+    }
     
-                private func getBillingPeriod(for product: Product) -> String {
-                if product.id.contains("focus_zen_plus_pro_best_value") {
-                    return "/year"
-                } else if product.id.contains("month") {
-                    return "/month"
-                } else {
-                    return ""
-                }
-            }
+    private func getBillingPeriod(for product: Product) -> String {
+        if product.id.contains("focus_zen_plus_pro_best_value") {
+            return "/year"
+        } else if product.id.contains("month") {
+            return "/month"
+        } else {
+            return ""
+        }
+    }
 }
-
-// MARK: - Array Extension
 
 extension Array {
     subscript(safe index: Index) -> Element? {
