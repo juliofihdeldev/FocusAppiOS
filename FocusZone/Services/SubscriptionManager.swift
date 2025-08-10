@@ -23,8 +23,9 @@ class SubscriptionManager: ObservableObject {
     // Product IDs - These need to match App Store Connect
     private let productIDs = [
         "focus_zen_plus_month",
-        "focus_zen_plus_annual",
-        // $2.99/month with 7-day free trial
+        "focus_zen_plus_annual"
+        // Monthly: $2.99/month with 7-day free trial
+        // Annual: $24.99/year with 7-day free trial (save ~30%)
     ]
     
     private var updateListenerTask: _Concurrency.Task<Void, Error>?
@@ -52,7 +53,12 @@ class SubscriptionManager: ObservableObject {
         
         do {
             let storeProducts = try await Product.products(for: productIDs)
-            availableProducts = storeProducts
+            // Sort products: annual first (usually better value), then monthly
+            availableProducts = storeProducts.sorted { product1, product2 in
+                let isAnnual1 = product1.id.contains("annual")
+                let isAnnual2 = product2.id.contains("annual")
+                return isAnnual1 && !isAnnual2
+            }
             print("✅ Loaded \(storeProducts.count) products")
             
             for product in storeProducts {
@@ -65,6 +71,49 @@ class SubscriptionManager: ObservableObject {
         
         isLoading = false
     }
+    
+    // MARK: - Product Helpers
+    
+    var bestValueProduct: Product? {
+        // Return annual plan if available, otherwise monthly
+        return availableProducts.first { $0.id.contains("annual") } ?? availableProducts.first
+    }
+    
+    var monthlyProduct: Product? {
+        return availableProducts.first { $0.id.contains("month") }
+    }
+    
+    var annualProduct: Product? {
+        return availableProducts.first { $0.id.contains("annual") }
+    }
+    
+            func calculateSavingsPercentage() -> Double? {
+            guard let monthly = monthlyProduct,
+                  let annual = annualProduct else { return nil }
+
+            let monthlyPrice = monthly.price
+            let annualPrice = annual.price
+
+            // Calculate annual cost if paid monthly
+            let annualCostIfMonthly = monthlyPrice * 12
+
+            // Calculate savings
+            let savings = annualCostIfMonthly - annualPrice
+            let savingsPercentage = (savings / annualCostIfMonthly) * 100
+
+            return Double(truncating: savingsPercentage as NSNumber)
+        }
+    
+            func getMonthlyEquivalentPrice(for product: Product) -> String? {
+            if product.id.contains("annual") {
+                let monthlyPrice = product.price / 12
+                let formatter = NumberFormatter()
+                formatter.numberStyle = .currency
+                formatter.locale = Locale.current
+                return formatter.string(from: NSDecimalNumber(decimal: monthlyPrice))
+            }
+            return nil
+        }
         
     func updateSubscriptionStatus() async {
         var validSubscription: Product.SubscriptionInfo.Status?
@@ -111,6 +160,10 @@ class SubscriptionManager: ObservableObject {
             return false
         }
         
+        return await purchaseProduct(product)
+    }
+    
+    func purchaseProduct(_ product: Product) async -> Bool {
         print("🛍️   >>>>>>>>>>> Start  Purchasing subscription...")
         
         isLoading = true
