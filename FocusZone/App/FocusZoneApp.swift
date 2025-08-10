@@ -8,8 +8,7 @@
 
 import SwiftUI
 import SwiftData
-import CloudKit
-
+import CloudKit 
 @main
 struct FocusZoneApp: App {
     @StateObject private var themeManager = ThemeManager()

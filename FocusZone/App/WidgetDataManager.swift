@@ -1,8 +1,6 @@
 import Foundation
 import WidgetKit
 
-// MARK: - WidgetTask Model (Shared between app and widget)
-
 struct WidgetTask: Codable, Identifiable {
     let id: String
     let title: String

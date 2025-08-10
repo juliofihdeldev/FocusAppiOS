@@ -22,7 +22,9 @@ class SubscriptionManager: ObservableObject {
     
     // Product IDs - These need to match App Store Connect
     private let productIDs = [
-        "focuszone_pro_monthly" // $2.99/month with 7-day free trial
+        "focus_zen_plus_month",
+        "focus_zen_plus_annual",
+        // $2.99/month with 7-day free trial
     ]
     
     private var updateListenerTask: _Concurrency.Task<Void, Error>?
@@ -44,8 +46,6 @@ class SubscriptionManager: ObservableObject {
         transactionListener?.cancel()
     }
     
-    // MARK: - Product Loading
-    
     func loadProducts() async {
         isLoading = true
         errorMessage = nil
@@ -65,9 +65,7 @@ class SubscriptionManager: ObservableObject {
         
         isLoading = false
     }
-    
-    // MARK: - Subscription Status
-    
+        
     func updateSubscriptionStatus() async {
         var validSubscription: Product.SubscriptionInfo.Status?
         
@@ -106,14 +104,14 @@ class SubscriptionManager: ObservableObject {
             print("🔄 No active subscription found")
         }
     }
-    
-    // MARK: - Purchase Flow
-    
+        
     func purchaseSubscription() async -> Bool {
         guard let product = availableProducts.first else {
             errorMessage = "Product not available"
             return false
         }
+        
+        print("🛍️   >>>>>>>>>>> Start  Purchasing subscription...")
         
         isLoading = true
         errorMessage = nil
@@ -149,9 +147,7 @@ class SubscriptionManager: ObservableObject {
         isLoading = false
         return false
     }
-    
-    // MARK: - Restore Purchases
-    
+
     func restorePurchases() async -> Bool {
         isLoading = true
         errorMessage = nil
@@ -176,7 +172,6 @@ class SubscriptionManager: ObservableObject {
         return false
     }
     
-    // MARK: - Transaction Listener
     
     private func listenForTransactions() -> _Concurrency.Task<Void, Error> {
         return _Concurrency.Task.detached {
@@ -189,8 +184,6 @@ class SubscriptionManager: ObservableObject {
             }
         }
     }
-    
-    // MARK: - Pro Features Check
     
     var isProUser: Bool {
         return subscriptionStatus == .active
@@ -232,8 +225,6 @@ class SubscriptionManager: ObservableObject {
     }
 }
 
-// MARK: - Supporting Types
-
 enum SubscriptionStatus: String, CaseIterable {
     case unknown = "unknown"
     case inactive = "inactive"
@@ -254,7 +245,6 @@ enum SubscriptionStatus: String, CaseIterable {
     }
 }
 
-// MARK: - Pro Features Definition
 
 struct ProFeatures {
     static let maxTasksForFree = 10
@@ -262,10 +252,9 @@ struct ProFeatures {
     static let maxInsightsForFree = 3
     
     static let proFeaturesList = [
-        "Unlimited tasks and projects",
-        "Advanced focus analytics",
+        "Unlimited tasks",
+        "Advanced insights & recommendations",
         "Custom focus modes",
         "Smart break suggestions",
-        "Advanced insights & recommendations",
     ]
 }

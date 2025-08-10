@@ -14,6 +14,7 @@ struct PaywallView: View {
     @State private var selectedTab = 0
     @State private var showingRestoreAlert = false
     @State private var isPurchasing = false
+    @State private var showPaywall = false
     
     var body: some View {
         NavigationView {
@@ -31,7 +32,7 @@ struct PaywallView: View {
                 .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 32) {
+                    VStack(spacing: 12) {
                         // Header
                         VStack(spacing: 16) {
                             // App icon
@@ -49,12 +50,12 @@ struct PaywallView: View {
                                 )
                             
                             VStack(spacing: 8) {
-                                Text("Unlock FocusZone Pro")
+                                Text("Unlock FocusZin+ Pro")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
                                 
-                                Text("Supercharge your productivity with advanced features")
+                                Text("Supercharge your productivity")
                                     .font(.title3)
                                     .foregroundColor(.white.opacity(0.8))
                                     .multilineTextAlignment(.center)
@@ -79,6 +80,7 @@ struct PaywallView: View {
                         VStack(spacing: 20) {
                             if let product = subscriptionManager.availableProducts.first {
                                 PricingCard(product: product)
+                                
                             } else {
                                 PricingCardPlaceholder()
                             }

@@ -52,9 +52,6 @@ struct FocusInsightsView: View {
                 await analyticsEngine.generateWeeklyInsights()
             }
         }
-        .sheet(isPresented: $showingUpgradeSheet) {
-            UpgradeToProSheet()
-        }
         .sheet(item: $previewSheetState) { state in
             WeeklyPlanPreviewSheet(state: state) { selection in
                 if let ctx = modelContextOptional() {
