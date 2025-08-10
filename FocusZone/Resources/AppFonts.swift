@@ -81,7 +81,7 @@ struct AppFonts {
     static func largetitle() -> Font { make(size: 32, weight: .regular) }
     static func title() -> Font { make(size: 21, weight: .regular) }
     static func headline() -> Font { make(size: 17, weight: .regular) }
-    static func subheadline() -> Font { make(size: 16, weight: .medium) }
+    static func subheadline() -> Font { make(size: 16, weight: .regular) }
     static func body() -> Font { make(size: 15, weight: .regular) }
     static func caption() -> Font { make(size: 13, weight: .regular) }
 
