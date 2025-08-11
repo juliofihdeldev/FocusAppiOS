@@ -61,7 +61,6 @@ class SubscriptionManager: ObservableObject {
             
             for product in storeProducts {
                 print("📦 Product: \(product.displayName) - \(product.displayPrice)")
-                print(product)
             }
         } catch {
             errorMessage = "Failed to load products: \(error.localizedDescription)"
@@ -71,47 +70,43 @@ class SubscriptionManager: ObservableObject {
         isLoading = false
     }
     
-    // MARK: - Product Helpers
+    var bestValueProduct: Product? {
+        // Return best value plan if available, otherwise monthly
+        return availableProducts.first { $0.id.contains("focus_zen_plus_pro_best_value") } ?? availableProducts.first
+    }
     
-        // MARK: - Product Helpers
+    var monthlyProduct: Product? {
+        return availableProducts.first { $0.id.contains("month") }
+    }
+    
+    func calculateSavingsPercentage() -> Double? {
+        guard let monthly = monthlyProduct,
+              let bestValue = bestValueProduct else { return nil }
         
-        var bestValueProduct: Product? {
-            // Return best value plan if available, otherwise monthly
-            return availableProducts.first { $0.id.contains("focus_zen_plus_pro_best_value") } ?? availableProducts.first
+        let monthlyPrice = monthly.price
+        let bestValuePrice = bestValue.price
+        
+        // Calculate annual cost if paid monthly
+        let annualCostIfMonthly = monthlyPrice * 12
+        
+        // Calculate savings
+        let savings = annualCostIfMonthly - bestValuePrice
+        let savingsPercentage = (savings / annualCostIfMonthly) * 100
+        
+        return Double(truncating: savingsPercentage as NSNumber)
+    }
+    
+    func getMonthlyEquivalentPrice(for product: Product) -> String? {
+        if product.id.contains("focus_zen_plus_pro_best_value") {
+            let monthlyPrice = product.price / 12
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .currency
+            formatter.locale = Locale.current
+            return formatter.string(from: NSDecimalNumber(decimal: monthlyPrice))
         }
-        
-        var monthlyProduct: Product? {
-            return availableProducts.first { $0.id.contains("month") }
-        }
-        
-        func calculateSavingsPercentage() -> Double? {
-            guard let monthly = monthlyProduct,
-                  let bestValue = bestValueProduct else { return nil }
-
-            let monthlyPrice = monthly.price
-            let bestValuePrice = bestValue.price
-
-            // Calculate annual cost if paid monthly
-            let annualCostIfMonthly = monthlyPrice * 12
-
-            // Calculate savings
-            let savings = annualCostIfMonthly - bestValuePrice
-            let savingsPercentage = (savings / annualCostIfMonthly) * 100
-
-            return Double(truncating: savingsPercentage as NSNumber)
-        }
-        
-        func getMonthlyEquivalentPrice(for product: Product) -> String? {
-            if product.id.contains("focus_zen_plus_pro_best_value") {
-                let monthlyPrice = product.price / 12
-                let formatter = NumberFormatter()
-                formatter.numberStyle = .currency
-                formatter.locale = Locale.current
-                return formatter.string(from: NSDecimalNumber(decimal: monthlyPrice))
-            }
-            return nil
-        }
-        
+        return nil
+    }
+    
     func updateSubscriptionStatus() async {
         var validSubscription: Product.SubscriptionInfo.Status?
         
@@ -150,7 +145,7 @@ class SubscriptionManager: ObservableObject {
             print("🔄 No active subscription found")
         }
     }
-        
+    
     func purchaseSubscription() async -> Bool {
         guard let product = availableProducts.first else {
             errorMessage = "Product not available"
@@ -197,7 +192,7 @@ class SubscriptionManager: ObservableObject {
         isLoading = false
         return false
     }
-
+    
     func restorePurchases() async -> Bool {
         isLoading = true
         errorMessage = nil
@@ -253,8 +248,6 @@ class SubscriptionManager: ObservableObject {
         
         return false
     }
-    
-    // MARK: - Subscription Info
     
     var subscriptionExpiryDate: Date? {
         guard let subscription = currentSubscription,
