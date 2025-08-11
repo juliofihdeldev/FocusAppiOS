@@ -719,6 +719,12 @@ extension TimelineViewModel {
        
        // MARK: - Task Conflict Detection
        
+       /// Detects conflicts for a given task using the enhanced conflict service
+       /// The service automatically validates that conflicting tasks are still present
+       /// and unchanged, preventing ghost conflicts and stale conflict data.
+       /// 
+       /// Note: For optimal performance, call conflictService.updateTaskStateCache(for: task)
+       /// whenever a task is modified to keep the conflict detection cache in sync.
        func detectConflicts(for task: Task) -> [TaskConflictService.TaskConflict] {
            return conflictService.detectConflicts(for: task, in: tasks)
        }
