@@ -1,0 +1,103 @@
+/* 
+ * Spanish Localization for FocusZone App
+ * 
+ * This file contains all user-facing strings in Spanish.
+ * Each string has a unique key that can be referenced in the code.
+ */
+
+// MARK: - Common UI Elements
+"close" = "Cerrar";
+"today" = "Hoy";
+"enable" = "Activar";
+"later" = "Más tarde";
+"active" = "Activo";
+"now" = "AHORA";
+"live" = "EN VIVO";
+"next" = "SIGUIENTE";
+"tasks" = "tareas";
+
+// MARK: - Task Management
+"create_task" = "Crear tarea";
+"update_task" = "Actualizar tarea";
+"no_tasks_today" = "No hay tareas para hoy";
+"add_first_task" = "Toca el botón + para crear tu primera tarea";
+"all_done" = "¡Todo listo!";
+"great_work_today" = "¡Excelente trabajo hoy!";
+"no_tasks" = "Sin tareas";
+"add_some_tasks" = "Agrega algunas tareas";
+"focus" = "Enfoque";
+"today_focus" = "Enfoque de hoy";
+
+// MARK: - Focus Modes
+"focus_mode" = "Modo de enfoque";
+"suggested_focus_mode" = "Sugerido: %@ para %@";
+
+// MARK: - Notifications
+"enable_notifications_title" = "Activar notificaciones";
+"enable_notifications_message" = "¡Activa las notificaciones para recibir recordatorios de tus tareas y mantenerte enfocado!";
+"notifications_disabled" = "Notificaciones desactivadas";
+"enable_notifications_description" = "Activa para recibir recordatorios de tareas";
+
+// MARK: - Pro Features
+"upgrade_to_pro" = "Actualizar a Pro";
+"pro" = "PRO";
+"free_trial_active" = "Prueba gratuita activa";
+"next_billing" = "Próxima facturación: %@";
+"limited_features" = "Características limitadas";
+"advanced_analytics_content" = "Contenido de análisis avanzado";
+
+// MARK: - Break Suggestions
+"long_task_stretch" = "Tarea larga - pausa de estiramiento recomendada";
+"quick_snack_time" = "Momento perfecto para un refrigerio rápido";
+"movement_opportunity" = "Buena oportunidad para moverse";
+"proper_rest_break" = "Momento para una pausa de descanso adecuada";
+"stay_hydrated" = "Mantente hidratado para un enfoque óptimo";
+"working_streak" = "¡Has estado trabajando por %@ horas - es hora de moverse!";
+"intense_work_rest" = "Sesión de trabajo intenso - el descanso te ayudará a recargarte";
+"mental_break_time" = "Momento perfecto para una pausa mental";
+"lunch_break" = "Recárgate con una pausa de almuerzo saludable";
+"fresh_air_break" = "El aire fresco aclarará tu mente y estimulará tu alerta";
+"eye_break" = "Dale un descanso a tus ojos de la pantalla";
+"social_connection" = "Conéctate con otros para mejorar tu estado de ánimo";
+
+// MARK: - Task Status
+"no_active_task" = "No hay tarea activa";
+"time_up" = "¡Se acabó el tiempo!";
+
+// MARK: - Widget
+"configuration" = "Configuración";
+"widget_description" = "Este es un widget de ejemplo.";
+"favorite_emoji" = "Emoji favorito";
+"world" = "Mundo";
+"focus_tracker" = "Rastreador de enfoque";
+"widget_description_long" = "Mantente enfocado con tus tareas actuales y próximas de un vistazo.";
+"timer" = "Temporizador";
+"timer_on" = "Encendido";
+"timer_off" = "Apagado";
+"start_timer" = "Iniciar temporizador";
+"timer_name_configuration" = "Configuración del nombre del temporizador";
+"timer_name" = "Nombre del temporizador";
+"start_timer_action" = "Iniciar un temporizador";
+"timer_is_running" = "El temporizador está funcionando";
+
+// MARK: - Task Types
+"work" = "Trabajo";
+"exercise" = "Ejercicio";
+"deep_work_session" = "Sesión de trabajo profundo";
+"team_meeting" = "Reunión de equipo";
+"morning_exercise" = "Ejercicio matutino";
+"code_review" = "Revisión de código";
+
+// MARK: - Time and Duration
+"percentage_complete" = "%@% completado";
+"time_remaining" = "Tiempo restante";
+"time_until_start" = "Tiempo hasta el inicio";
+"formatted_time_range" = "Rango de tiempo";
+"formatted_start_time" = "Hora de inicio";
+
+// MARK: - Errors and Messages
+"failed_load_products" = "Error al cargar productos: %@";
+"product_not_available" = "Producto no disponible";
+"purchase_failed" = "Error en la compra: %@";
+"no_active_subscription" = "No se encontró suscripción activa";
+"failed_restore_purchases" = "Error al restaurar compras: %@";

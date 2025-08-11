@@ -1,0 +1,103 @@
+/* 
+ * French Localization for FocusZone App
+ * 
+ * This file contains all user-facing strings in French.
+ * Each string has a unique key that can be referenced in the code.
+ */
+
+// MARK: - Common UI Elements
+"close" = "Fermer";
+"today" = "Aujourd'hui";
+"enable" = "Activer";
+"later" = "Plus tard";
+"active" = "Actif";
+"now" = "MAINTENANT";
+"live" = "EN DIRECT";
+"next" = "SUIVANT";
+"tasks" = "tâches";
+
+// MARK: - Task Management
+"create_task" = "Créer une tâche";
+"update_task" = "Mettre à jour la tâche";
+"no_tasks_today" = "Aucune tâche pour aujourd'hui";
+"add_first_task" = "Appuyez sur le bouton + pour créer votre première tâche";
+"all_done" = "Tout est fait !";
+"great_work_today" = "Excellent travail aujourd'hui";
+"no_tasks" = "Aucune tâche";
+"add_some_tasks" = "Ajoutez quelques tâches";
+"focus" = "Concentration";
+"today_focus" = "Concentration d'aujourd'hui";
+
+// MARK: - Focus Modes
+"focus_mode" = "Mode de concentration";
+"suggested_focus_mode" = "Suggéré : %@ pour %@";
+
+// MARK: - Notifications
+"enable_notifications_title" = "Activer les notifications";
+"enable_notifications_message" = "Activez les notifications pour recevoir des rappels pour vos tâches et rester concentré !";
+"notifications_disabled" = "Notifications désactivées";
+"enable_notifications_description" = "Activez pour recevoir des rappels de tâches";
+
+// MARK: - Pro Features
+"upgrade_to_pro" = "Passer à Pro";
+"pro" = "PRO";
+"free_trial_active" = "Essai gratuit actif";
+"next_billing" = "Prochaine facturation : %@";
+"limited_features" = "Fonctionnalités limitées";
+"advanced_analytics_content" = "Contenu d'analyse avancée";
+
+// MARK: - Break Suggestions
+"long_task_stretch" = "Tâche longue - pause d'étirement recommandée";
+"quick_snack_time" = "Moment parfait pour une collation rapide";
+"movement_opportunity" = "Bonne opportunité de bouger";
+"proper_rest_break" = "Moment pour une vraie pause de repos";
+"stay_hydrated" = "Restez hydraté pour une concentration optimale";
+"working_streak" = "Vous travaillez depuis %@ heures - il est temps de bouger !";
+"intense_work_rest" = "Session de travail intense - le repos vous aidera à vous ressourcer";
+"mental_break_time" = "Moment parfait pour une pause mentale";
+"lunch_break" = "Rechargez-vous avec une pause déjeuner saine";
+"fresh_air_break" = "L'air frais clarifiera votre esprit et stimulera votre vigilance";
+"eye_break" = "Donnez une pause à vos yeux de l'écran";
+"social_connection" = "Connectez-vous avec les autres pour améliorer votre humeur";
+
+// MARK: - Task Status
+"no_active_task" = "Aucune tâche active";
+"time_up" = "Temps écoulé !";
+
+// MARK: - Widget
+"configuration" = "Configuration";
+"widget_description" = "Ceci est un exemple de widget.";
+"favorite_emoji" = "Emoji préféré";
+"world" = "Monde";
+"focus_tracker" = "Suivi de concentration";
+"widget_description_long" = "Restez concentré avec vos tâches actuelles et à venir en un coup d'œil.";
+"timer" = "Minuteur";
+"timer_on" = "Marche";
+"timer_off" = "Arrêt";
+"start_timer" = "Démarrer le minuteur";
+"timer_name_configuration" = "Configuration du nom du minuteur";
+"timer_name" = "Nom du minuteur";
+"start_timer_action" = "Démarrer un minuteur";
+"timer_is_running" = "Le minuteur fonctionne";
+
+// MARK: - Task Types
+"work" = "Travail";
+"exercise" = "Exercice";
+"deep_work_session" = "Session de travail approfondi";
+"team_meeting" = "Réunion d'équipe";
+"morning_exercise" = "Exercice du matin";
+"code_review" = "Révision de code";
+
+// MARK: - Time and Duration
+"percentage_complete" = "%@% terminé";
+"time_remaining" = "Temps restant";
+"time_until_start" = "Temps jusqu'au début";
+"formatted_time_range" = "Plage horaire";
+"formatted_start_time" = "Heure de début";
+
+// MARK: - Errors and Messages
+"failed_load_products" = "Échec du chargement des produits : %@";
+"product_not_available" = "Produit non disponible";
+"purchase_failed" = "Échec de l'achat : %@";
+"no_active_subscription" = "Aucun abonnement actif trouvé";
+"failed_restore_purchases" = "Échec de la restauration des achats : %@";

@@ -1,0 +1,127 @@
+import Foundation
+
+extension String {
+    
+    /// Returns a localized version of the string
+    var localized: String {
+        return NSLocalizedString(self, comment: "")
+    }
+    
+    /// Returns a localized version of the string with format arguments
+    func localized(with arguments: CVarArg...) -> String {
+        return String(format: self.localized, arguments: arguments)
+    }
+    
+    /// Returns a localized version of the string with a single format argument
+    func localized(with argument: CVarArg) -> String {
+        return String(format: self.localized, argument)
+    }
+    
+    /// Returns a localized version of the string with multiple format arguments
+    func localized(with arguments: [CVarArg]) -> String {
+        return String(format: self.localized, arguments: arguments)
+    }
+}
+
+// MARK: - Localization Keys
+/// Centralized localization keys for the app
+/// This makes it easier to manage and avoid typos in localization keys
+struct LocalizationKeys {
+    
+    // MARK: - Common UI Elements
+    static let close = "close"
+    static let today = "today"
+    static let enable = "enable"
+    static let later = "later"
+    static let active = "active"
+    static let now = "now"
+    static let live = "live"
+    static let next = "next"
+    static let tasks = "tasks"
+    
+    // MARK: - Task Management
+    static let createTask = "create_task"
+    static let updateTask = "update_task"
+    static let noTasksToday = "no_tasks_today"
+    static let addFirstTask = "add_first_task"
+    static let allDone = "all_done"
+    static let greatWorkToday = "great_work_today"
+    static let noTasks = "no_tasks"
+    static let addSomeTasks = "add_some_tasks"
+    static let focus = "focus"
+    static let todayFocus = "today_focus"
+    
+    // MARK: - Focus Modes
+    static let focusMode = "focus_mode"
+    static let suggestedFocusMode = "suggested_focus_mode"
+    
+    // MARK: - Notifications
+    static let enableNotificationsTitle = "enable_notifications_title"
+    static let enableNotificationsMessage = "enable_notifications_message"
+    static let notificationsDisabled = "notifications_disabled"
+    static let enableNotificationsDescription = "enable_notifications_description"
+    
+    // MARK: - Pro Features
+    static let upgradeToPro = "upgrade_to_pro"
+    static let pro = "pro"
+    static let freeTrialActive = "free_trial_active"
+    static let nextBilling = "next_billing"
+    static let limitedFeatures = "limited_features"
+    static let advancedAnalyticsContent = "advanced_analytics_content"
+    
+    // MARK: - Break Suggestions
+    static let longTaskStretch = "long_task_stretch"
+    static let quickSnackTime = "quick_snack_time"
+    static let movementOpportunity = "movement_opportunity"
+    static let properRestBreak = "proper_rest_break"
+    static let stayHydrated = "stay_hydrated"
+    static let workingStreak = "working_streak"
+    static let intenseWorkRest = "intense_work_rest"
+    static let mentalBreakTime = "mental_break_time"
+    static let lunchBreak = "lunch_break"
+    static let freshAirBreak = "fresh_air_break"
+    static let eyeBreak = "eye_break"
+    static let socialConnection = "social_connection"
+    
+    // MARK: - Task Status
+    static let noActiveTask = "no_active_task"
+    static let timeUp = "time_up"
+    
+    // MARK: - Widget
+    static let configuration = "configuration"
+    static let widgetDescription = "widget_description"
+    static let favoriteEmoji = "favorite_emoji"
+    static let world = "world"
+    static let focusTracker = "focus_tracker"
+    static let widgetDescriptionLong = "widget_description_long"
+    static let timer = "timer"
+    static let timerOn = "timer_on"
+    static let timerOff = "timer_off"
+    static let startTimer = "start_timer"
+    static let timerNameConfiguration = "timer_name_configuration"
+    static let timerName = "timer_name"
+    static let startTimerAction = "start_timer_action"
+    static let timerIsRunning = "timer_is_running"
+    
+    // MARK: - Task Types
+    static let work = "work"
+    static let exercise = "exercise"
+    static let deepWorkSession = "deep_work_session"
+    static let teamMeeting = "team_meeting"
+    static let morningExercise = "morning_exercise"
+    static let codeReview = "code_review"
+    
+    // MARK: - Time and Duration
+    static let percentageComplete = "percentage_complete"
+    static let timeRemaining = "time_remaining"
+    static let timeUntilStart = "time_until_start"
+    static let formattedTimeRange = "formatted_time_range"
+    static let formattedStartTime = "formatted_start_time"
+    
+    // MARK: - Errors and Messages
+    static let failedLoadProducts = "failed_load_products"
+    static let productNotAvailable = "product_not_available"
+    static let purchaseFailed = "purchase_failed"
+    static let noActiveSubscription = "no_active_subscription"
+    static let failedRestorePurchases = "failed_restore_purchases"
+}
