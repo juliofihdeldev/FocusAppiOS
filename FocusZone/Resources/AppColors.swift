@@ -4,6 +4,7 @@ import SwiftUI
 struct AppColors {
     static let background = Color("Background")
     static let card = Color("Card")
+    static let textLabel = Color("TextLabel")
     static let primary = Color.yellow
     static let secondary = Color.orange
     static let accent = Color.blue

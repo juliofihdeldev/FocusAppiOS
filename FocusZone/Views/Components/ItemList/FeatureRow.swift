@@ -33,8 +33,7 @@ struct FeatureRow: View {
             
             // Text
             Text(title)
-                .font(.body)
-                .fontWeight(.medium)
+                .font(AppFonts.headline())
                 .foregroundColor(.white)
                 .multilineTextAlignment(.leading)
             
@@ -52,7 +51,7 @@ struct FeatureRow: View {
                 .fill(.ultraThinMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(.white.opacity(0.2), lineWidth: 1)
+                        .stroke(.white.opacity(0.5), lineWidth: 1)
                 )
         )
         .scaleEffect(isVisible ? 1.0 : 0.8)
