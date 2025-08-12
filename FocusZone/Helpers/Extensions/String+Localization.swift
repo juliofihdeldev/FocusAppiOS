@@ -23,10 +23,9 @@ extension String {
     }
 }
 
-// MARK: - Localization Keys
-/// Centralized localization keys for the app
-/// This makes it easier to manage and avoid typos in localization keys
 struct LocalizationKeys {
+    
+    static let welcome_message = "welcome_message"
     
     // MARK: - Common UI Elements
     static let close = "close"
@@ -38,6 +37,35 @@ struct LocalizationKeys {
     static let live = "live"
     static let next = "next"
     static let tasks = "tasks"
+    static let done = "done"
+    
+    // MARK: - Settings
+    static let settings = "settings"
+    static let appearance = "appearance"
+    static let language = "language"
+    static let notifications = "notifications"
+    static let data = "data"
+    static let about = "about"
+    static let darkMode = "dark_mode"
+    static let switchLightDarkThemes = "switch_light_dark_themes"
+    static let taskReminders = "task_reminders"
+    static let getNotifiedTasksStarting = "get_notified_tasks_starting"
+    static let clearAllData = "clear_all_data"
+    static let resetAllTasksSettings = "reset_all_tasks_settings"
+    static let version = "version"
+    static let contactSupport = "contact_support"
+    static let getHelpSendFeedback = "get_help_send_feedback"
+    static let builtWithSwiftUI = "built_with_swiftui"
+    static let focusHelpsStayFocused = "focus_helps_stay_focused"
+    static let stayFocusedAchieveMore = "stay_focused_achieve_more"
+    
+    // MARK: - Subscription
+    static let subscription = "subscription"
+    static let restorePurchases = "restore_purchases"
+    static let restoreSubscriptionDevice = "restore_subscription_device"
+    static let manageSubscription = "manage_subscription"
+    static let changeCancelSubscription = "change_cancel_subscription"
+    static let unlockAllFeatures = "unlock_all_features"
     
     // MARK: - Task Management
     static let createTask = "create_task"
@@ -50,6 +78,7 @@ struct LocalizationKeys {
     static let addSomeTasks = "add_some_tasks"
     static let focus = "focus"
     static let todayFocus = "today_focus"
+    static let focusConcentration = "focus_concentration"
     
     // MARK: - Focus Modes
     static let focusMode = "focus_mode"

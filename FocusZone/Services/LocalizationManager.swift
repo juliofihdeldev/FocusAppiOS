@@ -29,15 +29,17 @@ class LocalizationManager: ObservableObject {
     private init() {
         // Load saved language or default to system language
         let savedLanguage = UserDefaults.standard.string(forKey: "selectedLanguage")
+        let initialLanguage: AppLanguage
         if let savedLanguage = savedLanguage, let language = AppLanguage(rawValue: savedLanguage) {
-            self.currentLanguage = language
+            initialLanguage = language
         } else {
             // Default to system language or English
             let systemLanguage = Locale.current.language.languageCode?.identifier ?? "en"
-            self.currentLanguage = AppLanguage(rawValue: systemLanguage) ?? .english
+            initialLanguage = AppLanguage(rawValue: systemLanguage) ?? .english
         }
         
-        self.currentLocale = Locale(identifier: currentLanguage.localeIdentifier)
+        self.currentLanguage = initialLanguage
+        self.currentLocale = Locale(identifier: initialLanguage.localeIdentifier)
         updateLocale()
     }
     
@@ -159,7 +161,7 @@ extension Bundle {
     
     static func setLanguage(_ language: String) {
         defer {
-            object_setClass(Bundle.main, AnyClass.self)
+            object_setClass(Bundle.main, Bundle.self)
         }
         
         guard let path = Bundle.main.path(forResource: language, ofType: "lproj") else {
