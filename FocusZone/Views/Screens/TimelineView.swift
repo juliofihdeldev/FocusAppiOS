@@ -65,8 +65,6 @@ struct TimelineView: View {
                                     }
                                     .padding(.top, 10)
                                 } else {
-                                    // Task Cards
-                                    // Replace the existing ForEach(viewModel.tasks) with this:
                                     ForEach(Array(viewModel.tasks.enumerated()), id: \.element.id) { index, task in
                                         TaskCard(
                                             title: task.title,
@@ -78,8 +76,8 @@ struct TimelineView: View {
                                             task: task,
                                             timelineViewModel: viewModel
                                         )
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 6)
+//                                        .padding(.horizontal, 16)
+//                                        .padding(.vertical, 8)
                                         .onTapGesture {
                                             selectedTaskForActions = task
                                         }

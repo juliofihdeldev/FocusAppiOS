@@ -49,10 +49,11 @@ struct TaskCard: View {
                         .overlay(
                             Rectangle()
                                 .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
-                                .frame(width: 2, height: 30)
+                                .frame(width: 2, height: 20)
                         )
                 }
             }
+            
             
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
