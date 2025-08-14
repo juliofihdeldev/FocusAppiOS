@@ -128,8 +128,9 @@ struct TimelineView: View {
                         }
                         .refreshable {
                             viewModel.forceRefreshTasks(for: selectedDate)
-                          
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
                     }
                 }
                 
