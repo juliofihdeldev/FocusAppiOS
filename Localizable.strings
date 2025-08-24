@@ -1,0 +1,7 @@
+/* 
+   Localizable.strings
+   FocusZen+
+   
+   This file is required by the build system but the app doesn't use localization.
+   All text is hardcoded in the Swift files.
+*/
