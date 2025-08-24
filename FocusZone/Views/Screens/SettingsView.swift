@@ -562,7 +562,7 @@ struct AboutSheet: View {
                     
                     // About Us Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("About FocusZone")
+                        Text("About FocusZen+")
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
@@ -654,7 +654,7 @@ struct AboutSheet: View {
                         
                         VStack(alignment: .leading, spacing: 12) {
                             Button(action: {
-                                if let url = URL(string: "mailto:support@focuszone.app") {
+                                if let url = URL(string: "mailto:support@focuszenplus.app") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
@@ -668,14 +668,14 @@ struct AboutSheet: View {
                             }
                             
                             Button(action: {
-                                if let url = URL(string: "https://focuszone.app") {
+                                if let url = URL(string: "https://focuszenplus.app") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "globe")
                                         .foregroundColor(AppColors.accent)
-                                    Text("focuszone.app")
+                                    Text("focuszenplus.app")
                                         .foregroundColor(AppColors.accent)
                                     Spacer()
                                 }
@@ -690,7 +690,7 @@ struct AboutSheet: View {
                     
                     // Copyright
                     VStack(spacing: 8) {
-                        Text("© 2024 FocusZone")
+                        Text("© 2024 FocusZen+")
                             .font(AppFonts.caption())
                             .foregroundColor(AppColors.textSecondary)
                         

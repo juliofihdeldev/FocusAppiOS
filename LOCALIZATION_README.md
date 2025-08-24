@@ -1,14 +1,14 @@
-# FocusZone App Localization System
+# FocusZen+ App Localization System
 
 ## Overview
 
-This document describes the localization system implemented for the FocusZone iOS app, supporting English, French, and Spanish languages.
+This document describes the localization system implemented for the FocusZen+ iOS app, supporting English, French, and Spanish languages.
 
 ## Supported Languages
 
-- 🇺🇸 **English** (en) - Default language
-- 🇫🇷 **French** (fr) - Français
-- 🇪🇸 **Spanish** (es) - Español
+-   🇺🇸 **English** (en) - Default language
+-   🇫🇷 **French** (fr) - Français
+-   🇪🇸 **Spanish** (es) - Español
 
 ## Project Structure
 
@@ -81,7 +81,7 @@ struct TaskFormView: View {
         VStack {
             Text(LocalizationKeys.createTask.localized)
                 .font(.title)
-            
+
             Text(LocalizationKeys.suggestedFocusMode.localized(
                 with: focusMode.displayName,
                 taskType?.displayName ?? "this task"
@@ -114,7 +114,7 @@ class NotificationService {
     func showTaskReminder() {
         let title = LocalizationKeys.focus.localized
         let message = LocalizationKeys.timeUp.localized
-        
+
         // Show notification with localized text
     }
 }
@@ -161,7 +161,7 @@ struct LocalizationKeys {
 
 ```swift
 let title = LocalizationKeys.newFeatureTitle.localized
-let message = LocalizationKeys.welcomeMessage.localized(with: "FocusZone")
+let message = LocalizationKeys.welcomeMessage.localized(with: "FocusZen+")
 ```
 
 ## Language Switching
@@ -186,7 +186,7 @@ The `LanguageSelectorView` provides a user-friendly interface for language selec
 ```swift
 struct SettingsView: View {
     @State private var showLanguageSelector = false
-    
+
     var body: some View {
         Button("Change Language") {
             showLanguageSelector = true
@@ -203,11 +203,13 @@ struct SettingsView: View {
 ### 1. Always Use LocalizationKeys
 
 ❌ **Don't do this:**
+
 ```swift
 let text = "create_task".localized
 ```
 
 ✅ **Do this instead:**
+
 ```swift
 let text = LocalizationKeys.createTask.localized
 ```
@@ -215,11 +217,13 @@ let text = LocalizationKeys.createTask.localized
 ### 2. Handle Format Arguments Properly
 
 ❌ **Don't do this:**
+
 ```swift
 let text = "Welcome \(userName)".localized
 ```
 
 ✅ **Do this instead:**
+
 ```swift
 let text = LocalizationKeys.welcomeMessage.localized(with: userName)
 ```
@@ -241,10 +245,11 @@ struct MyView: View {
 ### 4. Test All Languages
 
 Always test your app in all supported languages to ensure:
-- Text fits properly in UI elements
-- No text is cut off
-- Format arguments work correctly
-- Cultural considerations are respected
+
+-   Text fits properly in UI elements
+-   No text is cut off
+-   Format arguments work correctly
+-   Cultural considerations are respected
 
 ## Testing Localization
 
@@ -270,6 +275,7 @@ LocalizationManager.shared.switchLanguage(to: .spanish)
 ### 3. String Validation
 
 Use Xcode's built-in localization validation:
+
 1. Select your project in Xcode
 2. Go to Product > Analyze
 3. Check for missing localizations
@@ -297,12 +303,12 @@ print("Available languages: \(available.map { $0.displayName })")
 
 ## Future Enhancements
 
-- [ ] Add more languages (German, Italian, Portuguese, etc.)
-- [ ] Implement dynamic language switching without app restart
-- [ ] Add language-specific date/time formatting
-- [ ] Support for RTL languages (Arabic, Hebrew)
-- [ ] Localized app store metadata
-- [ ] A/B testing for different language versions
+-   [ ] Add more languages (German, Italian, Portuguese, etc.)
+-   [ ] Implement dynamic language switching without app restart
+-   [ ] Add language-specific date/time formatting
+-   [ ] Support for RTL languages (Arabic, Hebrew)
+-   [ ] Localized app store metadata
+-   [ ] A/B testing for different language versions
 
 ## Contributing
 
@@ -316,6 +322,6 @@ When adding new features or modifying existing ones:
 
 ## Resources
 
-- [Apple Localization Guide](https://developer.apple.com/documentation/xcode/localization)
-- [SwiftUI Localization](https://developer.apple.com/documentation/swiftui/environmentvalues/locale)
-- [NSLocalizedString Documentation](https://developer.apple.com/documentation/foundation/nslocalizedstring)
+-   [Apple Localization Guide](https://developer.apple.com/documentation/xcode/localization)
+-   [SwiftUI Localization](https://developer.apple.com/documentation/swiftui/environmentvalues/locale)
+-   [NSLocalizedString Documentation](https://developer.apple.com/documentation/foundation/nslocalizedstring)

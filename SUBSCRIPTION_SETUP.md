@@ -41,7 +41,7 @@ Subscription Group Display Name: FocusZone Pro
 
 Add localizations for:
 
--   **Display Name**: "FocusZone Pro"
+-   **Display Name**: "FocusZen+ Pro"
 -   **Description**: "Unlock unlimited tasks, advanced analytics, custom focus modes, and premium features with a 7-day free trial."
 
 ## 2. Xcode Project Configuration
@@ -57,7 +57,7 @@ Add localizations for:
 {
 	"identifier": "focuszone_pro_monthly",
 	"type": "auto-renewable",
-	"displayName": "FocusZone Pro",
+	"displayName": "FocusZen+ Pro",
 	"description": "Unlock all premium features",
 	"price": 2.99,
 	"familyShareable": false,
