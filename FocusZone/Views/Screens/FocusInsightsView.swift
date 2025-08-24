@@ -12,8 +12,7 @@ struct FocusInsightsView: View {
     @StateObject private var analyticsEngine = FocusAnalyticsEngine()
     @Environment(\.modelContext) private var modelContext
     @State private var showingUpgradeSheet = false
-    @State private var previewSheetState: WeeklyPlanPreviewState?
-    @State private var appliedChangeSet: AppliedChangeSet?
+
     
     var body: some View {
         NavigationView {
@@ -50,21 +49,6 @@ struct FocusInsightsView: View {
             }
             .refreshable {
                 await analyticsEngine.generateWeeklyInsights()
-            }
-        }
-        .sheet(item: $previewSheetState) { state in
-            WeeklyPlanPreviewSheet(state: state) { selection in
-                if let ctx = modelContextOptional() {
-                    do {
-                        let changeSet = try analyticsEngine.apply(changes: selection, in: ctx)
-                        appliedChangeSet = changeSet
-                    } catch { }
-                }
-            } onUndo: {
-                if let ctx = modelContextOptional(), let set = appliedChangeSet {
-                    try? analyticsEngine.undo(changeSet: set, in: ctx)
-                    appliedChangeSet = nil
-                }
             }
         }
     }
@@ -219,25 +203,6 @@ struct FocusInsightsView: View {
             }
             .padding(.horizontal, 20)
 
-            Button(action: {
-                _Concurrency.Task {
-                    let range = currentWeekRange()
-                    let changes = await analyticsEngine.buildWeeklyPlan(for: range)
-                    previewSheetState = WeeklyPlanPreviewState(changes: changes)
-                }
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "calendar.badge.plus")
-                    Text("Apply for this week")
-                }
-                .font(AppFonts.body())
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(AppColors.accent)
-                .cornerRadius(12)
-            }
-            .padding(.horizontal, 20)
             
             Button("Upgrade for Advanced Insights") {
                 showingUpgradeSheet = true

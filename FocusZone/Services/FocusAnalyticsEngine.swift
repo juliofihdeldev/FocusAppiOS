@@ -13,7 +13,7 @@ import SwiftData
 class FocusAnalyticsEngine: ObservableObject {
     @Published var weeklyInsights: [FocusInsight] = []
     @Published var isAnalyzing = false
-    @Published var lastAppliedChangeSet: AppliedChangeSet?
+
     
     private var modelContext: ModelContext?
     
@@ -91,127 +91,7 @@ class FocusAnalyticsEngine: ObservableObject {
         return changes
     }
 
-    func apply(changes: [PlannedChange], in context: ModelContext) throws -> AppliedChangeSet {
-        var moved: [(UUID, Date, Date)] = []
-        var createdIds: [UUID] = []
-        var splitMap: [(UUID, [UUID])] = []
-        var originalDurations: [(UUID, Int)] = []
-
-        for change in changes {
-            switch change {
-            case let .moveTask(taskId, toStart):
-                if let task: Task = fetchTask(by: taskId, in: context) {
-                    let from = task.startTime
-                    task.startTime = toStart
-                    task.updatedAt = Date()
-                    moved.append((taskId, from, toStart))
-                }
-            case let .addFocusBlock(date, durationMinutes, title):
-                let newTask = Task(
-                    title: title,
-                    icon: "🎯",
-                    startTime: date,
-                    durationMinutes: durationMinutes,
-                    color: .blue,
-                    isCompleted: false,
-                    taskType: .work,
-                    status: .scheduled
-                )
-                context.insert(newTask)
-                createdIds.append(newTask.id)
-            case let .splitTask(taskId, chunksMinutes):
-                if let task: Task = fetchTask(by: taskId, in: context), chunksMinutes.count >= 2 {
-                    originalDurations.append((taskId, task.durationMinutes))
-                    // Keep first chunk on original task
-                    task.durationMinutes = chunksMinutes[0]
-                    task.updatedAt = Date()
-                    var newIds: [UUID] = []
-                    let firstEnd = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
-                    var cursor = firstEnd
-                    for chunk in chunksMinutes.dropFirst() {
-                        // Schedule subsequent chunk(s) right after previous
-                        let newTask = Task(
-                            title: task.title + " (Part)",
-                            icon: task.icon,
-                            startTime: cursor,
-                            durationMinutes: chunk,
-                            color: task.color,
-                            isCompleted: false,
-                            taskType: task.taskType,
-                            status: .scheduled,
-                            parentTaskId: task.id,
-                            parentTask: task
-                        )
-                        context.insert(newTask)
-                        newIds.append(newTask.id)
-                        createdIds.append(newTask.id)
-                        cursor = cursor.addingTimeInterval(TimeInterval(chunk * 60))
-                    }
-                    splitMap.append((taskId, newIds))
-                }
-            case let .createBreak(beforeTaskId, minutes):
-                if let task: Task = fetchTask(by: beforeTaskId, in: context) {
-                    let start = task.startTime.addingTimeInterval(TimeInterval(-minutes * 60))
-                    if start >= startOfDay(task.startTime) {
-                        let br = Task(
-                            title: "Break (Auto)",
-                            icon: "☕️",
-                            startTime: start,
-                            durationMinutes: minutes,
-                            color: .purple,
-                            isCompleted: false,
-                            taskType: .relax,
-                            status: .scheduled
-                        )
-                        context.insert(br)
-                        createdIds.append(br.id)
-                    }
-                }
-            }
-        }
-
-        try context.save()
-        let changeSet = AppliedChangeSet(
-            movedTasks: moved.map { ($0.0, $0.1, $0.2) },
-            createdTaskIds: createdIds,
-            splitMapping: splitMap,
-            originalDurations: originalDurations
-        )
-        lastAppliedChangeSet = changeSet
-        return changeSet
-    }
-
-    func undo(changeSet: AppliedChangeSet, in context: ModelContext) throws {
-        // Revert moves
-        for entry in changeSet.movedTasks {
-            if let task: Task = fetchTask(by: entry.taskId, in: context) {
-                task.startTime = entry.from
-                task.updatedAt = Date()
-            }
-        }
-        // Revert splits
-        for (taskId, newIds) in changeSet.splitMapping {
-            if let task: Task = fetchTask(by: taskId, in: context),
-               let original = changeSet.originalDurations.first(where: { $0.taskId == taskId })?.minutes {
-                task.durationMinutes = original
-                task.updatedAt = Date()
-            }
-            for nid in newIds {
-                if let t: Task = fetchTask(by: nid, in: context) {
-                    context.delete(t)
-                }
-            }
-        }
-        // Delete created tasks
-        for cid in changeSet.createdTaskIds {
-            if let t: Task = fetchTask(by: cid, in: context) {
-                context.delete(t)
-            }
-        }
-        try context.save()
-        lastAppliedChangeSet = nil
-    }
-
+ 
     // MARK: - Helpers (planning)
     private func fetchTask<T: PersistentModel>(by id: UUID, in context: ModelContext) -> T? {
         let descriptor = FetchDescriptor<Task>(
@@ -504,8 +384,6 @@ enum Trend: String, Codable {
     case needsImprovement = "needsImprovement"
 }
 
-// MARK: - Planning Types
-
 enum PlannedChange: Identifiable {
     var id: String {
         switch self {
@@ -519,13 +397,6 @@ enum PlannedChange: Identifiable {
     case moveTask(taskId: UUID, toStart: Date)
     case splitTask(taskId: UUID, chunksMinutes: [Int])
     case addFocusBlock(date: Date, durationMinutes: Int, title: String)
-}
-
-struct AppliedChangeSet {
-    let movedTasks: [(taskId: UUID, from: Date, to: Date)]
-    let createdTaskIds: [UUID]
-    let splitMapping: [(originalId: UUID, newIds: [UUID])]
-    let originalDurations: [(taskId: UUID, minutes: Int)]
 }
 
 enum TimeOfDay: String, CaseIterable {

@@ -45,14 +45,15 @@ struct TaskCard: View {
                 if shouldShowConnector() {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2, height: 30)
+                        .frame(width: 2, height: 60)
                         .overlay(
                             Rectangle()
                                 .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
-                                .frame(width: 2, height: 30)
+                                .frame(width: 2, height: 20)
                         )
                 }
             }
+            
             
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
@@ -333,8 +334,6 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
-
-
 
 // MARK: - Timeline View Container
 struct _TimelineView: View {

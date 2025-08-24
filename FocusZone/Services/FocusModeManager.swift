@@ -513,6 +513,13 @@ class FocusModeManager: NSObject, ObservableObject {
     func getTotalNotificationsBlocked() -> Int {
         return getFocusSessionHistory().reduce(0) { $0 + $1.notificationsBlocked }
     }
+    
+    // MARK: - Data Clearing Methods
+    
+    func clearFocusSessionHistory() {
+        UserDefaults.standard.removeObject(forKey: "focus_session_history")
+        print("🧹 Cleared focus session history")
+    }
 }
 
 extension FocusModeManager: UNUserNotificationCenterDelegate {
