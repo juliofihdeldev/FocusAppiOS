@@ -148,16 +148,6 @@ struct TaskFormView: View {
     }
     
     private func saveTask() {
-        
-        print(">>>>>> save task call >>>>>>>")
-        print("TaskFormView: ModelContext available: \(modelContext != nil)")
-        print("TaskFormView: ModelContext description: \(String(describing: modelContext))")
-        print("TaskFormView: Task title: \(taskTitle)")
-        print("TaskFormView: Task start time: \(startTime)")
-        print("TaskFormView: Task duration: \(duration)")
-        print("TaskFormView: Task icon: \(selectedIcon)")
-        print("TaskFormView: Task color: \(selectedColor)")
-        
         // Validate required fields
         guard !taskTitle.isEmpty else {
             print("TaskFormView: Error - Task title is empty")
