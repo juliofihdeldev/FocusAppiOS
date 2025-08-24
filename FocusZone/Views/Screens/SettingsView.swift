@@ -33,9 +33,9 @@ struct SettingsView: View {
 //                     TODO:   languageSection
                         notificationSection
                         dataSection
-                        cloudKitSyncSection
                         focusSection
                         aboutSection
+                        cloudKitSyncSection
                     }
                     .padding(.horizontal, 20)
                     
