@@ -10,27 +10,30 @@ struct RepeatRuleTests {
         // Test all repeat rule cases exist
         #expect(RepeatRule.allCases.contains(.none))
         #expect(RepeatRule.allCases.contains(.daily))
+        #expect(RepeatRule.allCases.contains(.weekdays))
+        #expect(RepeatRule.allCases.contains(.weekends))
         #expect(RepeatRule.allCases.contains(.weekly))
         #expect(RepeatRule.allCases.contains(.monthly))
-        #expect(RepeatRule.allCases.contains(.yearly))
     }
     
     @Test func testRepeatRuleRawValues() async throws {
         // Test raw values are correct
         #expect(RepeatRule.none.rawValue == "none")
         #expect(RepeatRule.daily.rawValue == "daily")
+        #expect(RepeatRule.weekdays.rawValue == "weekdays")
+        #expect(RepeatRule.weekends.rawValue == "weekends")
         #expect(RepeatRule.weekly.rawValue == "weekly")
         #expect(RepeatRule.monthly.rawValue == "monthly")
-        #expect(RepeatRule.yearly.rawValue == "yearly")
     }
     
     @Test func testRepeatRuleFromRawValue() async throws {
         // Test creating repeat rules from raw values
         #expect(RepeatRule(rawValue: "none") == .none)
         #expect(RepeatRule(rawValue: "daily") == .daily)
+        #expect(RepeatRule(rawValue: "weekdays") == .weekdays)
+        #expect(RepeatRule(rawValue: "weekends") == .weekends)
         #expect(RepeatRule(rawValue: "weekly") == .weekly)
         #expect(RepeatRule(rawValue: "monthly") == .monthly)
-        #expect(RepeatRule(rawValue: "yearly") == .yearly)
     }
     
     @Test func testRepeatRuleInvalidRawValue() async throws {
@@ -44,23 +47,25 @@ struct RepeatRuleTests {
     
     @Test func testRepeatRuleFrequency() async throws {
         // Test that repeat rules have logical frequency ordering
-        let rules = [RepeatRule.none, .daily, .weekly, .monthly, .yearly]
+        let rules = [RepeatRule.none, .daily, .weekdays, .weekends, .weekly, .monthly]
         
         // Verify order from least to most frequent
         #expect(rules[0] == .none)
         #expect(rules[1] == .daily)
-        #expect(rules[2] == .weekly)
-        #expect(rules[3] == .monthly)
-        #expect(rules[4] == .yearly)
+        #expect(rules[2] == .weekdays)
+        #expect(rules[3] == .weekends)
+        #expect(rules[4] == .weekly)
+        #expect(rules[5] == .monthly)
     }
     
     @Test func testRepeatRuleDescription() async throws {
         // Test that repeat rules have meaningful descriptions
         #expect(RepeatRule.none.rawValue == "none")
         #expect(RepeatRule.daily.rawValue == "daily")
+        #expect(RepeatRule.weekdays.rawValue == "weekdays")
+        #expect(RepeatRule.weekends.rawValue == "weekends")
         #expect(RepeatRule.weekly.rawValue == "weekly")
         #expect(RepeatRule.monthly.rawValue == "monthly")
-        #expect(RepeatRule.yearly.rawValue == "yearly")
     }
     
     // MARK: - Repeat Rule Comparison Tests
@@ -106,6 +111,26 @@ struct RepeatRuleTests {
         #expect(dailyRule != .weekly)
     }
     
+    @Test func testRepeatRuleWeekdaysCase() async throws {
+        // Test the weekdays case specifically
+        let weekdaysRule = RepeatRule.weekdays
+        
+        #expect(weekdaysRule.rawValue == "weekdays")
+        #expect(weekdaysRule == .weekdays)
+        #expect(weekdaysRule != .daily)
+        #expect(weekdaysRule != .weekends)
+    }
+    
+    @Test func testRepeatRuleWeekendsCase() async throws {
+        // Test the weekends case specifically
+        let weekendsRule = RepeatRule.weekends
+        
+        #expect(weekendsRule.rawValue == "weekends")
+        #expect(weekendsRule == .weekends)
+        #expect(weekendsRule != .daily)
+        #expect(weekendsRule != .weekdays)
+    }
+    
     @Test func testRepeatRuleWeeklyCase() async throws {
         // Test the weekly case specifically
         let weeklyRule = RepeatRule.weekly
@@ -123,17 +148,7 @@ struct RepeatRuleTests {
         #expect(monthlyRule.rawValue == "monthly")
         #expect(monthlyRule == .monthly)
         #expect(monthlyRule != .weekly)
-        #expect(monthlyRule != .yearly)
-    }
-    
-    @Test func testRepeatRuleYearlyCase() async throws {
-        // Test the yearly case specifically
-        let yearlyRule = RepeatRule.yearly
-        
-        #expect(yearlyRule.rawValue == "yearly")
-        #expect(yearlyRule == .yearly)
-        #expect(yearlyRule != .monthly)
-        #expect(yearlyRule != .daily)
+        #expect(monthlyRule != .daily)
     }
     
     // MARK: - Repeat Rule Array Tests
@@ -142,12 +157,13 @@ struct RepeatRuleTests {
         // Test that allCases contains all expected cases
         let allCases = RepeatRule.allCases
         
-        #expect(allCases.count == 5)
+        #expect(allCases.count == 6)
         #expect(allCases.contains(.none))
         #expect(allCases.contains(.daily))
+        #expect(allCases.contains(.weekdays))
+        #expect(allCases.contains(.weekends))
         #expect(allCases.contains(.weekly))
         #expect(allCases.contains(.monthly))
-        #expect(allCases.contains(.yearly))
     }
     
     @Test func testRepeatRuleArrayOrder() async throws {
@@ -156,9 +172,10 @@ struct RepeatRuleTests {
         
         #expect(allCases[0] == .none)
         #expect(allCases[1] == .daily)
-        #expect(allCases[2] == .weekly)
-        #expect(allCases[3] == .monthly)
-        #expect(allCases[4] == .yearly)
+        #expect(allCases[2] == .weekdays)
+        #expect(allCases[3] == .weekends)
+        #expect(allCases[4] == .weekly)
+        #expect(allCases[5] == .monthly)
     }
     
     // MARK: - Repeat Rule String Conversion Tests
@@ -167,25 +184,27 @@ struct RepeatRuleTests {
         // Test converting repeat rules to strings
         #expect(RepeatRule.none.rawValue == "none")
         #expect(RepeatRule.daily.rawValue == "daily")
+        #expect(RepeatRule.weekdays.rawValue == "weekdays")
+        #expect(RepeatRule.weekends.rawValue == "weekends")
         #expect(RepeatRule.weekly.rawValue == "weekly")
         #expect(RepeatRule.monthly.rawValue == "monthly")
-        #expect(RepeatRule.yearly.rawValue == "yearly")
     }
     
     @Test func testRepeatRuleFromString() async throws {
         // Test creating repeat rules from strings
         #expect(RepeatRule(rawValue: "none") == .none)
         #expect(RepeatRule(rawValue: "daily") == .daily)
+        #expect(RepeatRule(rawValue: "weekdays") == .weekdays)
+        #expect(RepeatRule(rawValue: "weekends") == .weekends)
         #expect(RepeatRule(rawValue: "weekly") == .weekly)
         #expect(RepeatRule(rawValue: "monthly") == .monthly)
-        #expect(RepeatRule(rawValue: "yearly") == .yearly)
     }
     
     // MARK: - Repeat Rule Validation Tests
     
     @Test func testRepeatRuleValidValues() async throws {
         // Test all valid repeat rule values
-        let validValues = ["none", "daily", "weekly", "monthly", "yearly"]
+        let validValues = ["none", "daily", "weekdays", "weekends", "weekly", "monthly"]
         
         for value in validValues {
             let rule = RepeatRule(rawValue: value)
@@ -201,5 +220,17 @@ struct RepeatRuleTests {
             let rule = RepeatRule(rawValue: value)
             #expect(rule == nil)
         }
+    }
+    
+    // MARK: - Display Name Tests
+    
+    @Test func testRepeatRuleDisplayNames() async throws {
+        // Test that display names are user-friendly
+        #expect(RepeatRule.none.displayName == "None")
+        #expect(RepeatRule.daily.displayName == "Daily")
+        #expect(RepeatRule.weekdays.displayName == "Weekdays")
+        #expect(RepeatRule.weekends.displayName == "Weekends")
+        #expect(RepeatRule.weekly.displayName == "Weekly")
+        #expect(RepeatRule.monthly.displayName == "Monthly")
     }
 }

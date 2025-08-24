@@ -116,6 +116,14 @@ class TimelineViewModel: ObservableObject {
         case "daily":
             return true // Every day after the start date
             
+        case "weekdays":
+            let weekday = calendar.component(.weekday, from: date)
+            return weekday >= 2 && weekday <= 6 // Monday=2, Friday=6
+            
+        case "weekends":
+            let weekday = calendar.component(.weekday, from: date)
+            return weekday == 1 || weekday == 7 // Sunday=1, Saturday=7
+            
         case "weekly":
             let taskWeekday = calendar.component(.weekday, from: task.startTime)
             let dateWeekday = calendar.component(.weekday, from: date)

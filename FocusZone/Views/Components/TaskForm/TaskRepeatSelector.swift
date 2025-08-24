@@ -14,14 +14,18 @@ struct TaskRepeatSelector: View {
                 Spacer()
             }
             
-            HStack(spacing: 8) {
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: 8) {
                 ForEach(repeatOptions, id: \.self) { option in
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             repeatRule = option
                         }
                     }) {
-                        Text(option.rawValue)
+                        Text(option.displayName)
                             .font(AppFonts.caption())
                             .foregroundColor(repeatRule == option ? .white : .gray)
                             .padding(.horizontal, 16)

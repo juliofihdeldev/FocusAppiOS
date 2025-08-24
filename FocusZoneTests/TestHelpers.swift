@@ -138,10 +138,26 @@ struct TestHelpers {
             repeatRule: .daily
         )
         
+        let weekdaysTask = createTestTask(
+            title: "Weekdays Task",
+            icon: "💼",
+            startTime: createTodayDate(hour: 9, minute: 0),
+            durationMinutes: 60,
+            repeatRule: .weekdays
+        )
+        
+        let weekendsTask = createTestTask(
+            title: "Weekends Task",
+            icon: "🏖️",
+            startTime: createTodayDate(hour: 10, minute: 0),
+            durationMinutes: 90,
+            repeatRule: .weekends
+        )
+        
         let weeklyTask = createTestTask(
             title: "Weekly Task",
             icon: "📅",
-            startTime: createTodayDate(hour: 10, minute: 0),
+            startTime: createTodayDate(hour: 11, minute: 0),
             durationMinutes: 90,
             repeatRule: .weekly
         )
@@ -154,7 +170,131 @@ struct TestHelpers {
             repeatRule: .monthly
         )
         
-        return [dailyTask, weeklyTask, monthlyTask]
+        return [dailyTask, weekdaysTask, weekendsTask, weeklyTask, monthlyTask]
+    }
+    
+    /// Creates a test task collection specifically for weekday/weekend testing
+    static func createWeekdayWeekendTestCollection() -> [Task] {
+        let mondayTask = createTestTask(
+            title: "Monday Task",
+            icon: "📝",
+            startTime: createWeekdayDate(weekday: 2), // Monday
+            durationMinutes: 45,
+            repeatRule: .weekdays
+        )
+        
+        let saturdayTask = createTestTask(
+            title: "Saturday Task",
+            icon: "🧘",
+            startTime: createWeekdayDate(weekday: 7), // Saturday
+            durationMinutes: 60,
+            repeatRule: .weekends
+        )
+        
+        let sundayTask = createTestTask(
+            title: "Sunday Task",
+            icon: "🏖️",
+            startTime: createWeekdayDate(weekday: 1), // Sunday
+            durationMinutes: 90,
+            repeatRule: .weekends
+        )
+        
+        return [mondayTask, saturdayTask, sundayTask]
+    }
+    
+    // MARK: - Date Creation Utilities
+    
+    /// Creates a date for a specific weekday (1=Sunday, 2=Monday, ..., 7=Saturday)
+    static func createWeekdayDate(weekday: Int) -> Date {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // Find the next occurrence of the specified weekday
+        var components = calendar.dateComponents([.year, .month, .day], from: today)
+        components.weekday = weekday
+        
+        // If today is the target weekday, use today
+        if calendar.component(.weekday, from: today) == weekday {
+            return today
+        }
+        
+        // Otherwise, find the next occurrence
+        var targetDate = calendar.date(from: components) ?? today
+        if targetDate <= today {
+            targetDate = calendar.date(byAdding: .weekOfYear, value: 1, to: targetDate) ?? today
+        }
+        
+        return targetDate
+    }
+    
+    /// Creates a date for a specific weekday in the current week
+    static func createCurrentWeekDate(weekday: Int) -> Date {
+        let calendar = Calendar.current
+        let today = Date()
+        let currentWeekday = calendar.component(.weekday, from: today)
+        
+        // Calculate days to add/subtract to reach target weekday
+        let daysToAdd = weekday - currentWeekday
+        return calendar.date(byAdding: .day, value: daysToAdd, to: today) ?? today
+    }
+    
+    /// Creates a date for a specific weekday in the next week
+    static func createNextWeekDate(weekday: Int) -> Date {
+        let calendar = Calendar.current
+        let today = Date()
+        let currentWeekday = calendar.component(.weekday, from: today)
+        
+        // Calculate days to add to reach target weekday in next week
+        let daysToAdd = (7 - currentWeekday) + weekday
+        return calendar.date(byAdding: .day, value: daysToAdd, to: today) ?? today
+    }
+    
+    /// Creates a collection of dates for testing weekday patterns
+    static func createWeekdayTestDates() -> [Date] {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        var testDates: [Date] = []
+        
+        // Add dates for the next 14 days to cover multiple weeks
+        for dayOffset in 0..<14 {
+            if let date = calendar.date(byAdding: .day, value: dayOffset, to: today) {
+                testDates.append(date)
+            }
+        }
+        
+        return testDates
+    }
+    
+    /// Creates a collection of dates for testing weekend patterns
+    static func createWeekendTestDates() -> [Date] {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        var weekendDates: [Date] = []
+        
+        // Find the next 4 weekend dates
+        for weekOffset in 0..<4 {
+            // Saturday
+            if let saturday = calendar.date(byAdding: .weekOfYear, value: weekOffset, to: today) {
+                let saturdayComponents = calendar.dateComponents([.year, .month, .day], from: saturday)
+                var saturdayDate = calendar.date(from: saturdayComponents) ?? saturday
+                
+                // Adjust to Saturday
+                let currentWeekday = calendar.component(.weekday, from: saturdayDate)
+                let daysToSaturday = 7 - currentWeekday
+                if let adjustedSaturday = calendar.date(byAdding: .day, value: daysToSaturday, to: saturdayDate) {
+                    weekendDates.append(adjustedSaturday)
+                }
+                
+                // Sunday
+                if let sunday = calendar.date(byAdding: .day, value: 1, to: adjustedSaturday) {
+                    weekendDates.append(sunday)
+                }
+            }
+        }
+        
+        return weekendDates
     }
     
     // MARK: - Test Validation Utilities

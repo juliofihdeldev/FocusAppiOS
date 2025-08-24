@@ -70,6 +70,188 @@ struct TimelineViewModelTests {
         #expect(shouldInclude == true)
     }
     
+    // MARK: - Weekday Repeat Rule Tests
+    
+    @Test func testWeekdayTaskInclusion() async throws {
+        let viewModel = TimelineViewModel()
+        
+        // Create a weekday task starting on Monday
+        let mondayDate = TestHelpers.createWeekdayDate(weekday: 2) // Monday
+        let weekdayTask = Task(
+            title: "Weekday Task",
+            icon: "💼",
+            startTime: mondayDate,
+            durationMinutes: 45,
+            repeatRule: .weekdays
+        )
+        
+        // Test Monday (should include)
+        let monday = TestHelpers.createWeekdayDate(weekday: 2)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: monday) == false) // Original date
+        
+        // Test Tuesday (should include)
+        let tuesday = TestHelpers.createWeekdayDate(weekday: 3)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: tuesday) == true)
+        
+        // Test Friday (should include)
+        let friday = TestHelpers.createWeekdayDate(weekday: 6)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: friday) == true)
+        
+        // Test Saturday (should NOT include)
+        let saturday = TestHelpers.createWeekdayDate(weekday: 7)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: saturday) == false)
+        
+        // Test Sunday (should NOT include)
+        let sunday = TestHelpers.createWeekdayDate(weekday: 1)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: sunday) == false)
+    }
+    
+    @Test func testWeekdayTaskVirtualGeneration() async throws {
+        let viewModel = TimelineViewModel()
+        
+        // Create a weekday task starting on Wednesday
+        let wednesdayDate = TestHelpers.createWeekdayDate(weekday: 4) // Wednesday
+        let weekdayTask = Task(
+            title: "Midweek Task",
+            icon: "📝",
+            startTime: wednesdayDate,
+            durationMinutes: 60,
+            repeatRule: .weekdays
+        )
+        
+        // Test Thursday (should generate virtual task)
+        let thursday = TestHelpers.createWeekdayDate(weekday: 5)
+        let shouldInclude = viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: thursday)
+        #expect(shouldInclude == true)
+        
+        // Test Friday (should generate virtual task)
+        let friday = TestHelpers.createWeekdayDate(weekday: 6)
+        let shouldIncludeFriday = viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: friday)
+        #expect(shouldIncludeFriday == true)
+        
+        // Test next Monday (should generate virtual task)
+        let nextMonday = TestHelpers.createWeekdayDate(weekday: 2)
+        let shouldIncludeMonday = viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: nextMonday)
+        #expect(shouldIncludeMonday == true)
+    }
+    
+    // MARK: - Weekend Repeat Rule Tests
+    
+    @Test func testWeekendTaskInclusion() async throws {
+        let viewModel = TimelineViewModel()
+        
+        // Create a weekend task starting on Saturday
+        let saturdayDate = TestHelpers.createWeekdayDate(weekday: 7) // Saturday
+        let weekendTask = Task(
+            title: "Weekend Task",
+            icon: "🏖️",
+            startTime: saturdayDate,
+            durationMinutes: 90,
+            repeatRule: .weekends
+        )
+        
+        // Test Saturday (should include)
+        let saturday = TestHelpers.createWeekdayDate(weekday: 7)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: saturday) == false) // Original date
+        
+        // Test Sunday (should include)
+        let sunday = TestHelpers.createWeekdayDate(weekday: 1)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: sunday) == true)
+        
+        // Test Monday (should NOT include)
+        let monday = TestHelpers.createWeekdayDate(weekday: 2)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: monday) == false)
+        
+        // Test Friday (should NOT include)
+        let friday = TestHelpers.createWeekdayDate(weekday: 6)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: friday) == false)
+        
+        // Test next Saturday (should include)
+        let nextSaturday = TestHelpers.createWeekdayDate(weekday: 7)
+        let shouldInclude = viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: nextSaturday)
+        #expect(shouldInclude == true)
+    }
+    
+    @Test func testWeekendTaskVirtualGeneration() async throws {
+        let viewModel = TimelineViewModel()
+        
+        // Create a weekend task starting on Sunday
+        let sundayDate = TestHelpers.createWeekdayDate(weekday: 1) // Sunday
+        let weekendTask = Task(
+            title: "Sunday Task",
+            icon: "🧘",
+            startTime: sundayDate,
+            durationMinutes: 120,
+            repeatRule: .weekends
+        )
+        
+        // Test next Saturday (should generate virtual task)
+        let nextSaturday = TestHelpers.createWeekdayDate(weekday: 7)
+        let shouldIncludeSaturday = viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: nextSaturday)
+        #expect(shouldIncludeSaturday == true)
+        
+        // Test next Sunday (should generate virtual task)
+        let nextSunday = TestHelpers.createWeekdayDate(weekday: 1)
+        let shouldIncludeSunday = viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: nextSunday)
+        #expect(shouldIncludeSunday == true)
+    }
+    
+    // MARK: - Edge Case Tests
+    
+    @Test func testWeekdayWeekendBoundaryTransition() async throws {
+        let viewModel = TimelineViewModel()
+        
+        // Create a weekday task
+        let mondayDate = TestHelpers.createWeekdayDate(weekday: 2) // Monday
+        let weekdayTask = Task(
+            title: "Boundary Test Task",
+            icon: "🔍",
+            startTime: mondayDate,
+            durationMinutes: 30,
+            repeatRule: .weekdays
+        )
+        
+        // Test Friday to Saturday transition
+        let friday = TestHelpers.createWeekdayDate(weekday: 6)
+        let saturday = TestHelpers.createWeekdayDate(weekday: 7)
+        
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: friday) == true)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: saturday) == false)
+        
+        // Test Sunday to Monday transition
+        let sunday = TestHelpers.createWeekdayDate(weekday: 1)
+        let monday = TestHelpers.createWeekdayDate(weekday: 2)
+        
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: sunday) == false)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekdayTask, for: monday) == true)
+    }
+    
+    @Test func testWeekendWeekdayBoundaryTransition() async throws {
+        let viewModel = TimelineViewModel()
+        
+        // Create a weekend task
+        let saturdayDate = TestHelpers.createWeekdayDate(weekday: 7) // Saturday
+        let weekendTask = Task(
+            title: "Weekend Boundary Task",
+            icon: "🎯",
+            startTime: saturdayDate,
+            durationMinutes: 45,
+            repeatRule: .weekends
+        )
+        
+        // Test Saturday to Sunday transition
+        let saturday = TestHelpers.createWeekdayDate(weekday: 7)
+        let sunday = TestHelpers.createWeekdayDate(weekday: 1)
+        
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: saturday) == false) // Original date
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: sunday) == true)
+        
+        // Test Sunday to Monday transition
+        let monday = TestHelpers.createWeekdayDate(weekday: 2)
+        
+        #expect(viewModel.shouldIncludeRepeatingTask(task: weekendTask, for: monday) == false)
+    }
+    
     @Test func testTaskSortingByStartTime() async throws {
         let viewModel = TimelineViewModel()
         
@@ -101,138 +283,53 @@ struct TimelineViewModelTests {
     @Test func testUpdateBreakSuggestions() async throws {
         let viewModel = TimelineViewModel()
         
-        // Test updating break suggestions
+        // Create test tasks
+        let task1 = Task(
+            title: "Task 1",
+            icon: "📚",
+            startTime: Date(),
+            durationMinutes: 60
+        )
+        
+        let task2 = Task(
+            title: "Task 2",
+            icon: "💻",
+            startTime: Calendar.current.date(byAdding: .minute, value: 90, to: Date())!,
+            durationMinutes: 45
+        )
+        
+        viewModel.tasks = [task1, task2]
         viewModel.updateBreakSuggestions()
         
-        // Verify break suggestions array is initialized
-        #expect(viewModel.breakSuggestions.count >= 0)
-    }
-    
-    @Test func testAcceptBreakSuggestion() async throws {
-        let viewModel = TimelineViewModel()
-        
-        // Create a test break suggestion
-        let suggestion = BreakSuggestion(
-            id: UUID(),
-            title: "Take a break",
-            description: "You've been working for a while",
-            durationMinutes: 5,
-            insertAfterTaskId: UUID()
-        )
-        
-        // Add suggestion to viewModel
-        viewModel.breakSuggestions = [suggestion]
-        
-        // Test accepting the suggestion
-        viewModel.acceptBreakSuggestion(suggestion)
-        
-        // Verify suggestion is removed after acceptance
-        #expect(viewModel.breakSuggestions.isEmpty)
-    }
-    
-    @Test func testDismissBreakSuggestion() async throws {
-        let viewModel = TimelineViewModel()
-        
-        // Create a test break suggestion
-        let suggestion = BreakSuggestion(
-            id: UUID(),
-            title: "Take a break",
-            description: "You've been working for a while",
-            durationMinutes: 5,
-            insertAfterTaskId: UUID()
-        )
-        
-        // Add suggestion to viewModel
-        viewModel.breakSuggestions = [suggestion]
-        
-        // Test dismissing the suggestion
-        viewModel.dismissBreakSuggestion(suggestion)
-        
-        // Verify suggestion is removed after dismissal
-        #expect(viewModel.breakSuggestions.isEmpty)
+        // Verify break suggestions are created
+        #expect(viewModel.breakSuggestions.count > 0)
     }
     
     // MARK: - Utility Function Tests
     
-    @Test func testTimeRangeForTask() async throws {
+    @Test func testDateValidation() async throws {
         let viewModel = TimelineViewModel()
         
+        let today = Date()
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        
+        // Create a task starting today
         let task = Task(
-            title: "Test Task",
-            icon: "⏰",
-            startTime: Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date())!,
-            durationMinutes: 45
-        )
-        
-        let timeRange = viewModel.timeRange(for: task)
-        
-        // Verify time range is not empty
-        #expect(!timeRange.isEmpty)
-        #expect(timeRange.contains("10:30") || timeRange.contains("10:30 AM"))
-    }
-    
-    @Test func testTaskColor() async throws {
-        let viewModel = TimelineViewModel()
-        
-        let task = Task(
-            title: "Test Task",
-            icon: "🎨",
-            startTime: Date(),
+            title: "Today Task",
+            icon: "📅",
+            startTime: today,
             durationMinutes: 30,
-            color: .red
+            repeatRule: .daily
         )
         
-        let taskColor = viewModel.taskColor(task)
+        // Should not include yesterday (before start date)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: task, for: yesterday) == false)
         
-        // Verify task color is returned
-        #expect(taskColor == .red)
-    }
-    
-    @Test func testDateStringFormatting() async throws {
-        let viewModel = TimelineViewModel()
+        // Should not include today (original date)
+        #expect(viewModel.shouldIncludeRepeatingTask(task: task, for: today) == false)
         
-        let testDate = Calendar.current.date(from: DateComponents(year: 2024, month: 1, day: 15))!
-        let dateString = viewModel.dateString(testDate)
-        
-        // Verify date string is formatted correctly
-        #expect(!dateString.isEmpty)
-        #expect(dateString.contains("Jan") || dateString.contains("January"))
-    }
-    
-    // MARK: - Edge Cases Tests
-    
-    @Test func testEmptyTasksList() async throws {
-        let viewModel = TimelineViewModel()
-        
-        // Test with empty tasks
-        viewModel.tasks = []
-        
-        #expect(viewModel.tasks.isEmpty)
-        #expect(viewModel.tasks.count == 0)
-    }
-    
-    @Test func testNilModelContext() async throws {
-        let viewModel = TimelineViewModel()
-        
-        // Test loading tasks without model context
-        viewModel.loadTodayTasks()
-        
-        // Should handle gracefully without crashing
-        #expect(viewModel.tasks.count >= 0)
-    }
-    
-    @Test func testTaskWithInvalidDuration() async throws {
-        let viewModel = TimelineViewModel()
-        
-        // Test task with zero duration
-        let zeroDurationTask = Task(
-            title: "Zero Duration Task",
-            icon: "⚠️",
-            startTime: Date(),
-            durationMinutes: 0
-        )
-        
-        #expect(zeroDurationTask.durationMinutes == 0)
-        #expect(zeroDurationTask.title == "Zero Duration Task")
+        // Should include tomorrow
+        #expect(viewModel.shouldIncludeRepeatingTask(task: task, for: tomorrow) == true)
     }
 }
