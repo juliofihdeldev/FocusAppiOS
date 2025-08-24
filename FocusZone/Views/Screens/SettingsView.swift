@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var notificationsEnabled = true
     @State private var showingAbout = false
+    @State private var showingContact = false
     @State private var enableFocusMode = true
     @State private var showPaywall = false
     @State private var showLanguageSelector = false
@@ -48,6 +49,9 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showingAbout) {
             AboutSheet()
+        }
+        .sheet(isPresented: $showingContact) {
+            ContactSheet()
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
@@ -351,7 +355,7 @@ struct SettingsView: View {
                     title: LocalizationKeys.contactSupport.localized,
                     subtitle: LocalizationKeys.getHelpSendFeedback.localized,
                     icon: "envelope.circle.fill",
-                    action: { contactSupport() }
+                    action: { showingContact = true }
                 )
             }
         }
@@ -740,6 +744,214 @@ struct _FeatureRow: View {
             
             Spacer()
         }
+    }
+}
+
+struct ContactSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Contact Header
+                    VStack(spacing: 16) {
+                        Image(systemName: "envelope.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(AppColors.accent)
+                        
+                        Text("Contact & Support")
+                            .font(AppFonts.title())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.bold)
+                        
+                        Text("We're here to help! Get in touch with our support team or send us feedback.")
+                            .font(AppFonts.body())
+                            .foregroundColor(AppColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(4)
+                    }
+                    .padding(.top, 20)
+                    
+                    // Support Options
+                    VStack(spacing: 16) {
+                        Text("Support Options")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        VStack(spacing: 12) {
+                            ContactOptionRow(
+                                icon: "envelope.fill",
+                                title: "Email Support",
+                                subtitle: "Get help via email",
+                                action: {
+                                    if let url = URL(string: "mailto:support@focuszenplus.app") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            )
+                            
+                            ContactOptionRow(
+                                icon: "globe",
+                                title: "Website",
+                                subtitle: "Visit our website for help",
+                                action: {
+                                    if let url = URL(string: "https://focuszenplus.app") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            )
+                            
+                            ContactOptionRow(
+                                icon: "questionmark.circle.fill",
+                                title: "FAQ & Help Center",
+                                subtitle: "Find answers to common questions",
+                                action: {
+                                    if let url = URL(string: "https://focuszenplus.app/help") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(AppColors.card)
+                    )
+                    
+                    // Feedback Section
+                    VStack(spacing: 16) {
+                        Text("Send Feedback")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        VStack(spacing: 12) {
+                            ContactOptionRow(
+                                icon: "star.fill",
+                                title: "Rate the App",
+                                subtitle: "Share your experience on the App Store",
+                                action: {
+                                    // TODO: Implement App Store rating
+                                    print("Rate app requested")
+                                }
+                            )
+                            
+                            ContactOptionRow(
+                                icon: "paperplane.fill",
+                                title: "Feature Request",
+                                subtitle: "Suggest new features or improvements",
+                                action: {
+                                    if let url = URL(string: "mailto:feedback@focuszenplus.app?subject=Feature%20Request") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            )
+                            
+                            ContactOptionRow(
+                                icon: "exclamationmark.triangle.fill",
+                                title: "Report Bug",
+                                subtitle: "Help us fix issues you encounter",
+                                action: {
+                                    if let url = URL(string: "mailto:bugs@focuszenplus.app?subject=Bug%20Report") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(AppColors.card)
+                    )
+                    
+                    // Response Time
+                    VStack(spacing: 12) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "clock.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(AppColors.accent)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Response Time")
+                                    .font(AppFonts.body())
+                                    .foregroundColor(AppColors.textPrimary)
+                                    .fontWeight(.medium)
+                                
+                                Text("We typically respond within 24 hours during business days")
+                                    .font(AppFonts.caption())
+                                    .foregroundColor(AppColors.textSecondary)
+                            }
+                            
+                            Spacer()
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(AppColors.card)
+                        )
+                    }
+                    
+                    Spacer(minLength: 50)
+                }
+                .padding(.horizontal, 20)
+            }
+            .background(AppColors.background.ignoresSafeArea())
+            .navigationTitle("Contact & Support")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct ContactOptionRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundColor(AppColors.accent)
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(AppFonts.body())
+                        .foregroundColor(AppColors.textPrimary)
+                        .fontWeight(.medium)
+                    
+                    Text(subtitle)
+                        .font(AppFonts.caption())
+                        .foregroundColor(AppColors.textSecondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(AppColors.background)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
