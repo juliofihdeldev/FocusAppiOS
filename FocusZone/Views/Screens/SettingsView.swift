@@ -21,8 +21,8 @@ struct SettingsView: View {
                     // Settings Sections
                     VStack(spacing: 20) {
                         subscriptionSection
-                        appearanceSection
-                        languageSection
+//                     TODO:   appearanceSection
+//                     TODO:   languageSection
                         notificationSection
                         dataSection
                         focusSection
@@ -314,12 +314,11 @@ struct SettingsView: View {
         SettingsSection(title: LocalizationKeys.about.localized, icon: "info.circle") {
             VStack(spacing: 0) {
                 SettingsNavigationRow(
-                    title: LocalizationKeys.version.localized,
-                    subtitle: "1.0.0",
+                    title: "Abous Us",
+                    subtitle: "Version 1.0",
                     icon: "app.badge.checkmark",
                     action: { showingAbout = true }
                 )
-                
                 
                 
                 Divider()
@@ -335,7 +334,6 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Actions
     private func clearAllData() {
         // TODO: Implement clear data functionality
         print("Clear all data requested")
@@ -347,7 +345,6 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Supporting Views
 struct SettingsSection<Content: View>: View {
     let title: String
     let icon: String
@@ -362,14 +359,7 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-                //                Image(systemName: icon)
-                //                    .font(.system(size: 18))
-                //                    .foregroundColor(AppColors.accent)
-                
-                //                Text(title)
-                //                    .font(AppFonts.headline())
-                //                    .foregroundColor(AppColors.textPrimary)
-                //                    .fontWeight(.semibold)
+              
             }
             .padding(.horizontal, 4)
             
@@ -471,6 +461,7 @@ struct AboutSheet: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
+                    // App Header
                     VStack(spacing: 16) {
                         Image(systemName: "target")
                             .font(.system(size: 60))
@@ -481,35 +472,150 @@ struct AboutSheet: View {
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.bold)
                         
-                       Text("Version 1.0.0")
-                           .font(AppFonts.body())
-                           .foregroundColor(AppColors.secondary)
-                        
-
-                       Text(LocalizationKeys.focus.localized)
-                           .font(AppFonts.title())
-                           .foregroundColor(AppColors.textPrimary)
-                           .fontWeight(.bold)
-                        
-                    }
-                    
-                    
-                    
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(LocalizationKeys.builtWithSwiftUI.localized)
-                            .font(AppFonts.headline())
-                            .foregroundColor(AppColors.textPrimary)
-                        
-                        Text(LocalizationKeys.focusHelpsStayFocused.localized)
+                        Text("Version 1.0.0")
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.secondary)
-                            .multilineTextAlignment(.leading)
+                    }
+                    
+                    // About Us Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("About FocusZone")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        Text("FocusZen+ is your personal productivity companion designed to help you stay focused, manage tasks efficiently, and achieve your goals through intelligent time management and distraction-free work sessions.")
+                            .font(AppFonts.body())
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineSpacing(4)
                     }
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(AppColors.card)
                     )
+                    
+                    // Mission Statement
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Our Mission")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        Text("To empower individuals to take control of their time, eliminate distractions, and create meaningful progress in their personal and professional lives through focused work sessions and intelligent task management.")
+                            .font(AppFonts.body())
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineSpacing(4)
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(AppColors.card)
+                    )
+                    
+                    // Key Features
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Key Features")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        VStack(alignment: .leading, spacing: 12) {
+                            _FeatureRow(icon: "target", title: "Focus Sessions", description: "Dedicated time blocks for deep work")
+                            _FeatureRow(icon: "brain.head.profile", title: "AI-Powered Insights", description: "Smart suggestions for better productivity")
+                            _FeatureRow(icon: "bell.badge", title: "Smart Notifications", description: "Intelligent reminders that don't interrupt")
+                            _FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Progress Tracking", description: "Visual insights into your productivity")
+                            _FeatureRow(icon: "gear", title: "Customizable Focus Modes", description: "Tailored settings for different work types")
+                        }
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(AppColors.card)
+                    )
+                    
+                    // Technology Stack
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Built With")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("• SwiftUI & iOS 15+")
+                                .font(AppFonts.body())
+                                .foregroundColor(AppColors.textSecondary)
+                            Text("• Core Data for persistence")
+                                .font(AppFonts.body())
+                                .foregroundColor(AppColors.textSecondary)
+                            Text("• WidgetKit for home screen widgets")
+                                .font(AppFonts.body())
+                                .foregroundColor(AppColors.textSecondary)
+                            Text("• Localization for global users")
+                                .font(AppFonts.body())
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(AppColors.card)
+                    )
+                    
+                    // Contact & Support
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Get in Touch")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                            .fontWeight(.semibold)
+                        
+                        VStack(alignment: .leading, spacing: 12) {
+                            Button(action: {
+                                if let url = URL(string: "mailto:support@focuszone.app") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "envelope.fill")
+                                        .foregroundColor(AppColors.accent)
+                                    Text("support@focuszenplus.app")
+                                        .foregroundColor(AppColors.accent)
+                                    Spacer()
+                                }
+                            }
+                            
+                            Button(action: {
+                                if let url = URL(string: "https://focuszone.app") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "globe")
+                                        .foregroundColor(AppColors.accent)
+                                    Text("focuszone.app")
+                                        .foregroundColor(AppColors.accent)
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(AppColors.card)
+                    )
+                    
+                    // Copyright
+                    VStack(spacing: 8) {
+                        Text("© 2024 FocusZone")
+                            .font(AppFonts.caption())
+                            .foregroundColor(AppColors.textSecondary)
+                        
+                        Text("Made with ❤️ for productivity")
+                            .font(AppFonts.caption())
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                    .padding(.top, 16)
                 }
                 .padding()
             }
@@ -522,6 +628,34 @@ struct AboutSheet: View {
                     }
                 }
             }
+        }
+    }
+}
+
+struct _FeatureRow: View {
+    let icon: String
+    let title: String
+    let description: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(AppColors.accent)
+                .frame(width: 20)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(AppFonts.body())
+                    .foregroundColor(AppColors.textPrimary)
+                    .fontWeight(.medium)
+                
+                Text(description)
+                    .font(AppFonts.caption())
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            
+            Spacer()
         }
     }
 }
