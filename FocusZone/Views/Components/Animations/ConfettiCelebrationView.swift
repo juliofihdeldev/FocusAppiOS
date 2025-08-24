@@ -154,8 +154,8 @@ private struct ConfettiEmitter: UIViewRepresentable {
             cell.emissionRange = .pi / 4
             cell.spin = 3
             cell.spinRange = 6
-            cell.scale = 0.6
-            cell.scaleRange = 0.4
+            cell.scale = 0.3
+            cell.scaleRange = 0.2
             cell.color = color.cgColor
             cell.contents = particleImage().cgImage
             return cell
@@ -170,10 +170,10 @@ private struct ConfettiEmitter: UIViewRepresentable {
     }
     
     private func particleImage() -> UIImage {
-        let size = CGSize(width: 8, height: 12)
+        let size = CGSize(width: 4, height: 6)
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { ctx in
-            UIBezierPath(roundedRect: CGRect(origin: .zero, size: size), cornerRadius: 2).addClip()
+            UIBezierPath(roundedRect: CGRect(origin: .zero, size: size), cornerRadius: 1).addClip()
             UIColor.white.setFill()
             ctx.fill(CGRect(origin: .zero, size: size))
         }
