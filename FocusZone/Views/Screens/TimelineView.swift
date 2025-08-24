@@ -14,7 +14,7 @@ struct TimelineView: View {
     @State private var editingTask: FocusTask?
     @State private var selectedTaskForActions: FocusTask?
     @State private var showNotificationAlert = false
-
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -65,8 +65,6 @@ struct TimelineView: View {
                                     }
                                     .padding(.top, 10)
                                 } else {
-                                    // Task Cards
-                                    // Replace the existing ForEach(viewModel.tasks) with this:
                                     ForEach(Array(viewModel.tasks.enumerated()), id: \.element.id) { index, task in
                                         TaskCard(
                                             title: task.title,
@@ -75,10 +73,11 @@ struct TimelineView: View {
                                             color: viewModel.taskColor(task),
                                             isCompleted: task.isCompleted,
                                             durationMinutes: task.durationMinutes,
-                                            task: task
+                                            task: task,
+                                            timelineViewModel: viewModel
                                         )
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 6)
+//                                        .padding(.horizontal, 16)
+//                                        .padding(.vertical, 8)
                                         .onTapGesture {
                                             selectedTaskForActions = task
                                         }
@@ -98,7 +97,7 @@ struct TimelineView: View {
                                             .padding(.vertical, 4)
                                         }
                                     }
-
+                                    
                                     // Add standalone suggestions after all tasks
                                     ForEach(viewModel.breakSuggestions.filter { $0.insertAfterTaskId == nil }) { suggestion in
                                         BreakSuggestionCard(
@@ -113,7 +112,7 @@ struct TimelineView: View {
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 4)
                                     }
-
+                                    
                                     // And add this to the onChange modifier for selectedDate:
                                     .onChange(of: selectedDate) { _, newDate in
                                         viewModel.loadTodayTasks(for: newDate)
@@ -129,8 +128,9 @@ struct TimelineView: View {
                         }
                         .refreshable {
                             viewModel.forceRefreshTasks(for: selectedDate)
-                            print("TimelineView: Pull-to-refresh triggered")
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 26)
                     }
                 }
                 
@@ -162,7 +162,7 @@ struct TimelineView: View {
         .onChange(of: selectedDate) { _, newDate in
             viewModel.loadTodayTasks(for: newDate)
             viewModel.refreshTasksWithBreakSuggestions(for: newDate)
-
+            
         }
         .sheet(isPresented: $showAddTaskForm, onDismiss: {
             // Refresh timeline after creating a task with a small delay to ensure data is saved
@@ -177,7 +177,7 @@ struct TimelineView: View {
         }
         .sheet(isPresented: Binding<Bool>(
             get: { editingTask != nil },
-            set: { if !$0 { 
+            set: { if !$0 {
                 editingTask = nil
                 // Refresh timeline after editing a task
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -204,9 +204,11 @@ struct TimelineView: View {
                     onEdit: { editTask(task) },
                     onDuplicate: { duplicateTask(task) },
                     onDelete: { deletionType in
-                                   handleTaskDeletion(task, type: deletionType)
-                               }
+                        handleTaskDeletion(task, type: deletionType)
+                    }
                 )
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             }
         }
         .alert("Enable Notifications", isPresented: $showNotificationAlert) {
@@ -220,8 +222,6 @@ struct TimelineView: View {
             Text("Enable notifications to get reminders for your tasks and stay focused!")
         }
     }
-    
-    // MARK: - Notification Permission Banner
     
     private var notificationPermissionBanner: some View {
         HStack(spacing: 12) {
@@ -278,15 +278,13 @@ struct TimelineView: View {
         }
         selectedTaskForActions = nil
     }
-    
-    // MARK: - Setup Methods
-    
+        
     private func setupViewModels() {
         viewModel.setModelContext(modelContext)
         timerService.setModelContext(modelContext)
         viewModel.loadTodayTasks(for: selectedDate)
         viewModel.refreshTasksWithBreakSuggestions(for: selectedDate) // Changed this line
-
+        
         // Show notification permission alert if not authorized
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             if !notificationService.isAuthorized {
@@ -325,8 +323,6 @@ struct TimelineView: View {
         selectedTaskForActions = nil
     }
 }
-
-// MARK: - Floating Action Button Component
 
 struct FloatingActionButton: View {
     let action: () -> Void

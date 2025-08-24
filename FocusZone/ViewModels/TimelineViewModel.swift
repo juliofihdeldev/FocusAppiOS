@@ -8,6 +8,7 @@ class TimelineViewModel: ObservableObject {
     @Published var tasks: [Task] = []
     @Published var breakSuggestions: [BreakSuggestion] = []
     private let breakAnalyzer = SmartBreakAnalyzer()
+    private let conflictService = TaskConflictService()
     
     private var modelContext: ModelContext?
     private let notificationService = NotificationService.shared
@@ -714,5 +715,27 @@ extension TimelineViewModel {
            print("  - Total suggestions: \(totalSuggestions)")
            print("  - High impact suggestions: \(highImpactSuggestions)")
            print("  - Type distribution: \(typeDistribution.mapValues { $0.count })")
+       }
+       
+       // MARK: - Task Conflict Detection
+       
+       /// Detects conflicts for a given task using the enhanced conflict service
+       /// The service automatically validates that conflicting tasks are still present
+       /// and unchanged, preventing ghost conflicts and stale conflict data.
+       /// 
+       /// Note: For optimal performance, call conflictService.updateTaskStateCache(for: task)
+       /// whenever a task is modified to keep the conflict detection cache in sync.
+       func detectConflicts(for task: Task) -> [TaskConflictService.TaskConflict] {
+           return conflictService.detectConflicts(for: task, in: tasks)
+       }
+       
+       func getConflictingTasks(for task: Task) -> [Task] {
+           let conflicts = detectConflicts(for: task)
+           let conflictingIds = conflicts.compactMap { $0.conflictingTaskId }
+           return tasks.filter { conflictingIds.contains($0.id) }
+       }
+       
+       func hasConflicts(for task: Task) -> Bool {
+           return !detectConflicts(for: task).isEmpty
        }
 }

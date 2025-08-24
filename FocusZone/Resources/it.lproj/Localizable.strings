@@ -1,11 +1,9 @@
-gt* 
+/* 
  * English Localization for FocusZen+ App
  * 
  * This file contains all user-facing strings in English.
  * Each string has a unique key that can be referenced in the code.
  */
-
-"welcome_message" = "Welcome to Focus App";
 
 // MARK: - Common UI Elements
 "close" = "Close";
@@ -47,33 +45,6 @@ gt*
 "next_billing" = "Next billing: %@";
 "limited_features" = "Limited features";
 "advanced_analytics_content" = "Advanced Analytics Content";
-
-// MARK: - Settings
-"settings" = "Settings";
-"appearance" = "Appearance";
-"language" = "Language";
-"notifications" = "Notifications";
-"data" = "Data";
-"about" = "About";
-"dark_mode" = "Dark Mode";
-"switch_light_dark_themes" = "Switch between light and dark themes";
-"task_reminders" = "Task Reminders";
-"get_notified_tasks_starting" = "Get notified when tasks are starting";
-"clear_all_data" = "Clear All Data";
-"reset_all_tasks_settings" = "Reset all tasks and settings";
-"version" = "Version";
-"contact_support" = "Contact Support";
-"get_help_send_feedback" = "Get help or send feedback";
-"built_with_swiftui" = "Built with SwiftUI";
-"focus_helps_stay_focused" = "Focus helps you stay focused";
-"stay_focused_achieve_more" = "Stay focused, achieve more";
-"focus_concentration" = "Focus Concentration";
-"subscription" = "Subscription";
-"restore_purchases" = "Restore Purchases";
-"restore_subscription_device" = "Restore subscription on this device";
-"manage_subscription" = "Manage Subscription";
-"change_cancel_subscription" = "Change or cancel subscription";
-"unlock_all_features" = "Unlock all features";
 
 // MARK: - Break Suggestions
 "long_task_stretch" = "Long task - stretch break recommended";
@@ -130,8 +101,3 @@ gt*
 "purchase_failed" = "Purchase failed: %@";
 "no_active_subscription" = "No active subscription found";
 "failed_restore_purchases" = "Failed to restore purchases: %@";
-
-
-// Welcome
-
-"welcome_message" = "Welcome to Focus App";

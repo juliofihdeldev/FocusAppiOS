@@ -1,6 +1,5 @@
 import Foundation
 
-// MARK: - iOS Version Checks
 struct FocusCapabilities {
     static let isSystemFocusAvailable = {
         if #available(iOS 15.0, *) {

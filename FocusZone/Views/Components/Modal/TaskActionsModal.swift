@@ -19,156 +19,164 @@ struct TaskActionsModal: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Task Info Header
-            VStack(spacing: 12) {
-                HStack {
-                    Text(task.icon)
-                        .font(.title)
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(task.title)
-                            .font(AppFonts.headline())
-                            .foregroundColor(AppColors.textPrimary)
-                        
-                        if let taskType = task.taskType {
-                            Text(taskType.displayName)
-                                .font(AppFonts.caption())
-                                .foregroundColor(.gray)
+        VStack(spacing: 8) {
+                    // Task Info Header Card
+                    VStack(spacing: 8) {
+                        HStack(spacing: 16) {
+                            Text(task.icon)
+                                .font(.system(size: 40))
+                            
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(task.title)
+                                    .font(AppFonts.headline())
+                                    .foregroundColor(AppColors.textPrimary)
+                                    .multilineTextAlignment(.leading)
+                                
+                                if let taskType = task.taskType {
+                                    Text(taskType.displayName)
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                // Show task type indicator
+                                if task.isGeneratedFromRepeat {
+                                    Text("Repeating task instance")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.orange)
+                                } else if task.isParentTask {
+                                    Text("Repeating task series")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            Text("\(task.durationMinutes)m")
+                                .font(AppFonts.subheadline())
+                                .foregroundColor(task.color)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(task.color.opacity(0.1))
+                                .cornerRadius(12)
                         }
                         
-                        // Show task type indicator
-                        if task.isGeneratedFromRepeat {
-                            Text("Repeating task instance")
-                                .font(AppFonts.caption())
-                                .foregroundColor(.orange)
-                        } else if task.isParentTask {
-                            Text("Repeating task series")
-                                .font(AppFonts.caption())
-                                .foregroundColor(.blue)
+                        // Progress if any
+                        if timerService._minutesRemain(for: task) > 0 {
+                            VStack(spacing: 6) {
+                                HStack {
+                                    Text("Progress")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.gray)
+                                    Spacer()
+                                    Text("\(timerService.calculateSmartElapsedTime(for: task))/\(task.durationMinutes)m")
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                ProgressView(
+                                    value: Double(timerService.calculateSmartElapsedTime(for: task)) / Double(task.durationMinutes),
+                                    label: {
+                                        Text("")
+                                    }
+                                )
+                                .progressViewStyle(LinearProgressViewStyle(tint: task.color))
+                            }
                         }
                     }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColors.card)
+                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    )
                     
-                    Spacer()
-                    
-                    Text("\(task.durationMinutes)m")
-                        .font(AppFonts.subheadline())
-                        .foregroundColor(task.color)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(task.color.opacity(0.1))
-                        .cornerRadius(12)
-                }
-                
-                // Progress if any
-                if timerService._minutesRemain(for: task) > 0 {
-                    VStack(spacing: 4) {
-                        HStack {
-                            Text("Progress")
-                                .font(AppFonts.caption())
-                                .foregroundColor(.gray)
-                            Spacer()
-                            Text("\(timerService.calculateSmartElapsedTime(for: task) )/\(task.durationMinutes)m")
-                                .font(AppFonts.caption())
-                                .foregroundColor(.gray)
+                    // Action Buttons Card
+                    VStack(spacing: 1) {
+                        if !task.isCompleted || timerService._minutesRemain(for: task) < 0 {
+                            TaskActionButton(
+                                title: "Launch timer",
+                                icon: "play.fill",
+                                color: task.color,
+                                action: {
+                                    showingTimer = true
+                                }
+                            )
                         }
                         
-                        ProgressView(
-                            value: Double(timerService.calculateSmartElapsedTime(for: task)) / Double(task.durationMinutes),
-                            label: {
-                                Text("")
+                        if !task.isCompleted {
+                            TaskActionButton(
+                                title: "Mark Complete",
+                                icon: "checkmark.circle",
+                                color: .green,
+                                action: {
+                                    onComplete()
+                                    dismiss()
+                                }
+                            )
+                        }
+                        
+                        TaskActionButton(
+                            title: "Edit Task",
+                            icon: "pencil",
+                            color: .blue,
+                            action: {
+                                onEdit()
+                                dismiss()
                             }
                         )
-                        .progressViewStyle(LinearProgressViewStyle(tint: task.color))
+                        
+                        TaskActionButton(
+                            title: "Duplicate Task",
+                            icon: "doc.on.doc",
+                            color: .orange,
+                            action: {
+                                onDuplicate()
+                                dismiss()
+                            }
+                        )
+                        
+                        Divider()
+                            .padding(.vertical, 8)
+                        
+                        TaskActionButton(
+                            title: "Delete Task",
+                            icon: "trash",
+                            color: .red,
+                            isDestructive: true,
+                            action: {
+                                if task.isGeneratedFromRepeat || task.isChildTask || task.isParentTask {
+                                    showingDeletionOptions = true
+                                } else {
+                                    onDelete(.instance)
+                                    dismiss()
+                                }
+                            }
+                        )
                     }
-                }
-            }
-            .padding(20)
-            .background(AppColors.card)
-            
-            // Action Buttons
-            VStack(spacing: 1) {
-                if !task.isCompleted || timerService._minutesRemain(for: task) < 0 {
-                    TaskActionButton(
-                        title: "Launch timer",
-                        icon: "play.fill",
-                        color: task.color,
-                        action: {
-                            // Don't call onStart() here - just show the timer
-                            showingTimer = true
-                        }
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColors.card)
+                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                     )
+                    
+//                    // TODO: Cancel Button
+//                    Button(action: { dismiss() }) {
+//                        Text("Cancel")
+//                            .font(AppFonts.body())
+//                            .foregroundColor(.gray)
+//                            .padding(.vertical, 16)
+//                            .frame(maxWidth: .infinity)
+//                            .background(
+//                                RoundedRectangle(cornerRadius: 12)
+//                                    .fill(Color.gray.opacity(0.1))
+//                            )
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
                 }
-                
-                if !task.isCompleted {
-                    TaskActionButton(
-                        title: "Mark Complete",
-                        icon: "checkmark.circle",
-                        color: .green,
-                        action: {
-                            onComplete()
-                            dismiss()
-                        }
-                    )
-                }
-                
-                TaskActionButton(
-                    title: "Edit Task",
-                    icon: "pencil",
-                    color: .blue,
-                    action: {
-                        onEdit()
-                        dismiss()
-                    }
-                )
-                
-                TaskActionButton(
-                    title: "Duplicate Task",
-                    icon: "doc.on.doc",
-                    color: .orange,
-                    action: {
-                        onDuplicate()
-                        dismiss()
-                    }
-                )
-                
-                Divider()
-                    .padding(.vertical, 8)
-                
-                TaskActionButton(
-                    title: "Delete Task",
-                    icon: "trash",
-                    color: .red,
-                    isDestructive: true,
-                    action: {
-                        if task.isGeneratedFromRepeat || task.isChildTask || task.isParentTask {
-                            showingDeletionOptions = true
-                        } else {
-                            // Simple task deletion
-                            onDelete(.instance)
-                            dismiss()
-                        }
-                    }
-                )
-            }
-            .padding(.horizontal, 20)
-            
-            Spacer()
-        }
-        .background(AppColors.background)
-        .navigationTitle("Task Actions")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Cancel") {
-                    dismiss()
-                }
-                .foregroundColor(AppColors.accent)
-            }
-        }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 24) // Add safe area padding for bottom
         .fullScreenCover(isPresented: $showingTimer, onDismiss: {
-            // Call onStart() when the timer is dismissed to update the task state
             onStart()
             dismiss()
         }) {
@@ -190,6 +198,8 @@ struct TaskActionsModal: View {
                     showingDeletionOptions = false
                 }
             )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
         }
     }
 }
@@ -203,7 +213,7 @@ struct TaskActionButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 Image(systemName: icon)
                     .font(.title3)
                     .foregroundColor(isDestructive ? .red : color)
@@ -220,15 +230,12 @@ struct TaskActionButton: View {
                     .foregroundColor(.gray)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .background(AppColors.card)
+            .padding(.vertical, 14)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
-
-// MARK: - TaskDeletionModal
 
 struct DeletionOptionButton: View {
     let title: String

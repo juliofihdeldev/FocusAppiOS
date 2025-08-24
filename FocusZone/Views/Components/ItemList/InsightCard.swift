@@ -182,14 +182,14 @@ struct InsightCard: View {
                         // Enhanced action buttons
                         HStack(spacing: 12) {
                             Button(action: {
-                                // TODO: Implement apply recommendation
+                                // TODO: Implement add to reminders
                                 let generator = UIImpactFeedbackGenerator(style: .light)
                                 generator.impactOccurred()
                             }) {
                                 HStack(spacing: 6) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 12, weight: .medium))
-                                    Text("Apply This Week")
+                                    Text("Add to reminders")
                                         .font(.system(size: 13, weight: .medium))
                                 }
                                 .foregroundColor(.white)
@@ -207,30 +207,6 @@ struct InsightCard: View {
                                 )
                                 .cornerRadius(18)
                                 .shadow(color: trendColor.opacity(0.3), radius: 4, x: 0, y: 2)
-                            }
-                            
-                            Button(action: {
-                                // TODO: Implement reminder
-                                let generator = UIImpactFeedbackGenerator(style: .light)
-                                generator.impactOccurred()
-                            }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "clock.fill")
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text("Remind Later")
-                                        .font(.system(size: 13, weight: .medium))
-                                }
-                                .foregroundColor(trendColor)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 18)
-                                        .fill(trendColor.opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 18)
-                                                .stroke(trendColor.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
                             }
                             
                             Spacer()

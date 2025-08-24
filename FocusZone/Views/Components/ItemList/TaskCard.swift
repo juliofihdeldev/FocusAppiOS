@@ -8,8 +8,11 @@ struct TaskCard: View {
     var isCompleted: Bool
     var durationMinutes: Int = 60
     var task: Task? = nil
+    var timelineViewModel: TimelineViewModel? = nil
     
     @State private var currentTime = Date()
+    @State private var hasConflicts: Bool = false
+    @State private var conflictDetails: [TaskConflictService.TaskConflict] = []
     private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
     @StateObject private var timerService = TaskTimerService()
 
@@ -42,14 +45,15 @@ struct TaskCard: View {
                 if shouldShowConnector() {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2, height: 30)
+                        .frame(width: 2, height: 60)
                         .overlay(
                             Rectangle()
                                 .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
-                                .frame(width: 2, height: 30)
+                                .frame(width: 2, height: 20)
                         )
                 }
             }
+            
             
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
@@ -69,9 +73,18 @@ struct TaskCard: View {
                 
                 // Task title
                 Text(title)
-                    .font(AppFonts.headline())
-                    .foregroundColor(.white)
+                    .font(AppFonts.subheadline())
+                    .foregroundColor(AppColors.textPrimary)
                     .lineLimit(2)
+                
+                // Conflict indicators
+                if hasConflicts {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(conflictDetails) { conflict in
+                            TaskConflictIndicator(conflict: conflict)
+                        }
+                    }
+                }
                 
                 // Progress text for active tasks
                 if progressInfo.shouldShow && !isCompleted && overdueMinutesFun() / 60 < 12 {
@@ -88,6 +101,12 @@ struct TaskCard: View {
         }
         .onReceive(timer) { _ in
             currentTime = Date()
+        }
+        .onAppear {
+            checkForConflicts()
+        }
+        .onChange(of: task) { _, _ in
+            checkForConflicts()
         }
     }
     
@@ -275,6 +294,31 @@ struct TaskCard: View {
         
         return 0
     }
+    
+    // MARK: - Conflict Detection
+    
+    private func checkForConflicts() {
+        guard let task = task else {
+            hasConflicts = false
+            conflictDetails = []
+            return
+        }
+        
+        // For now, we'll use a simple approach to get the TimelineViewModel
+        // In a real implementation, you might want to pass this as a parameter
+        // or use an environment object
+        if let timelineViewModel = getTimelineViewModel() {
+            conflictDetails = timelineViewModel.detectConflicts(for: task)
+            hasConflicts = !conflictDetails.isEmpty
+        } else {
+            hasConflicts = false
+            conflictDetails = []
+        }
+    }
+    
+    private func getTimelineViewModel() -> TimelineViewModel? {
+        return timelineViewModel
+    }
 }
 
 struct RoundedCorner: Shape {
@@ -290,8 +334,6 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
-
-
 
 // MARK: - Timeline View Container
 struct _TimelineView: View {
@@ -318,7 +360,8 @@ struct _TimelineView: View {
                                 color: task.color,
                                 isCompleted: task.isCompleted,
                                 durationMinutes: task.durationMinutes,
-                                task: task
+                                task: task,
+                                timelineViewModel: nil
                             )
                         }
                     }
@@ -356,6 +399,16 @@ let sampleTasks: [Task] = [
         icon: "🏃‍♂️",
         startTime: Calendar.current.date(bySettingHour: 19, minute: 15, second: 0, of: Date()) ?? Date(),
         durationMinutes: 90, // 1h 30min
+        color: .orange,
+        isCompleted: false
+    ),
+    
+    Task(
+        id: UUID(),
+        title: "Go for a Run!",
+        icon: "🏃‍♂️",
+        startTime: Calendar.current.date(bySettingHour: 19, minute: 35, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 60, // 1h 30min
         color: .orange,
         isCompleted: false
     ),
