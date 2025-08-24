@@ -37,8 +37,16 @@ struct FocusZoneApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: .CKAccountChanged)) { _ in
                     cloudSyncManager.refreshAccountStatus()
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    // Trigger sync when app becomes active
+                    _Concurrency.Task {
+                        await cloudSyncManager.syncData(modelContext: modelContainer.mainContext)
+                    }
+                }
                 .task {
                     cloudSyncManager.refreshAccountStatus()
+                    // Initial sync when app launches
+                    await cloudSyncManager.syncData(modelContext: modelContainer.mainContext)
                 }
         }
         .modelContainer(modelContainer)
