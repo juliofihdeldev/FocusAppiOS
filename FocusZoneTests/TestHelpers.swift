@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUICore
 import SwiftData
 @testable import FocusZone
 
@@ -31,35 +32,28 @@ struct TestHelpers {
         )
     }
     
-    /// Creates a test break suggestion with default values
-    static func createTestBreakSuggestion(
-        id: UUID = UUID(),
-        title: String = "Take a Break",
-        description: String = "You've been working for a while",
-        durationMinutes: Int = 5,
-        insertAfterTaskId: UUID = UUID()
-    ) -> BreakSuggestion {
+    /// Creates a test break suggestion
+    static func createTestBreakSuggestion() -> BreakSuggestion {
         return BreakSuggestion(
-            id: id,
-            title: title,
-            description: description,
-            durationMinutes: durationMinutes,
-            insertAfterTaskId: insertAfterTaskId
+            type: .rest,
+            suggestedDuration: 5,
+            reason: "Take a short break",
+            icon: "☕",
+            timeUntilOptimal: 0,
+            insertAfterTaskId: UUID(),
+            suggestedStartTime: Date()
         )
     }
     
-    /// Creates a test focus settings object
-    static func createTestFocusSettings(
-        focusMode: FocusMode = .work,
-        breakDuration: Int = 5,
-        longBreakDuration: Int = 15,
-        sessionsUntilLongBreak: Int = 4
-    ) -> FocusSettings {
+    /// Creates test focus settings
+    static func createTestFocusSettings() -> FocusSettings {
         return FocusSettings(
-            focusMode: focusMode,
-            breakDuration: breakDuration,
-            longBreakDuration: longBreakDuration,
-            sessionsUntilLongBreak: sessionsUntilLongBreak
+            isEnabled: true,
+            mode: .workMode,
+            allowUrgentNotifications: true,
+            customAllowedApps: [],
+            autoActivate: false,
+            scheduledActivation: nil
         )
     }
     
@@ -285,11 +279,11 @@ struct TestHelpers {
                 let daysToSaturday = 7 - currentWeekday
                 if let adjustedSaturday = calendar.date(byAdding: .day, value: daysToSaturday, to: saturdayDate) {
                     weekendDates.append(adjustedSaturday)
-                }
-                
-                // Sunday
-                if let sunday = calendar.date(byAdding: .day, value: 1, to: adjustedSaturday) {
-                    weekendDates.append(sunday)
+                    
+                    // Sunday
+                    if let sunday = calendar.date(byAdding: .day, value: 1, to: adjustedSaturday) {
+                        weekendDates.append(sunday)
+                    }
                 }
             }
         }
@@ -316,35 +310,30 @@ struct TestHelpers {
     /// Validates that a break suggestion has the expected properties
     static func validateBreakSuggestion(
         _ suggestion: BreakSuggestion,
-        expectedTitle: String,
+        expectedReason: String,
         expectedDuration: Int
     ) -> Bool {
-        return suggestion.title == expectedTitle &&
-               suggestion.durationMinutes == expectedDuration
+        return suggestion.reason == expectedReason &&
+               suggestion.suggestedDuration == expectedDuration
     }
     
     // MARK: - Test Environment Setup
     
     /// Creates a mock model context for testing
     static func createMockModelContext() -> ModelContext? {
-        // In a real test environment, you would create a mock or in-memory context
-        // For now, return nil to test error handling
+        // This would typically create a mock or in-memory context
+        // For now, return nil as this is a placeholder
         return nil
     }
     
-    /// Creates a test TimelineViewModel with mock data
+    /// Creates a test TimelineViewModel for testing
+    @MainActor
     static func createTestTimelineViewModel() -> TimelineViewModel {
         let viewModel = TimelineViewModel()
-        
-        // Add some test tasks
         viewModel.tasks = createTestTaskCollection()
-        
-        // Add some test break suggestions
         viewModel.breakSuggestions = [
-            createTestBreakSuggestion(title: "Morning Break", durationMinutes: 5),
-            createTestBreakSuggestion(title: "Afternoon Break", durationMinutes: 10)
+            createTestBreakSuggestion()
         ]
-        
         return viewModel
     }
     
