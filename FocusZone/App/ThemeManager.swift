@@ -16,4 +16,9 @@ class ThemeManager: ObservableObject {
     func toggleTheme() {
         isDarkMode.toggle()
     }
+    
+    func resetToDefaults() {
+        isDarkMode = false
+        print("🎨 Theme reset to defaults")
+    }
 }

@@ -1,12 +1,18 @@
 import SwiftUI
+import SwiftData
+import UserNotifications
 
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
+    @Environment(\.modelContext) private var modelContext
     @State private var notificationsEnabled = true
     @State private var showingAbout = false
     @State private var enableFocusMode = true
     @State private var showPaywall = false
     @State private var showLanguageSelector = false
+    @State private var showingClearDataConfirmation = false
+    @State private var showingClearDataAlert = false
+    @State private var clearDataMessage = ""
     @StateObject private var focusManager = FocusModeManager()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @StateObject private var localizationManager = LocalizationManager.shared
@@ -48,6 +54,23 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showLanguageSelector) {
             LanguageSelectorView()
+        }
+        .confirmationDialog(
+            "Clear All Data",
+            isPresented: $showingClearDataConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Clear All Data", role: .destructive) {
+                clearAllData()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will permanently delete all tasks, settings, and app data. This action cannot be undone.")
+        }
+        .alert("Data Cleared", isPresented: $showingClearDataAlert) {
+            Button("OK") { }
+        } message: {
+            Text(clearDataMessage)
         }
         .localized()
         .rtlSupport()
@@ -303,7 +326,7 @@ struct SettingsView: View {
                     subtitle: LocalizationKeys.resetAllTasksSettings.localized,
                     icon: "trash.circle.fill",
                     isDestructive: true,
-                    action: { clearAllData() }
+                    action: { showingClearDataConfirmation = true }
                 )
             }
         }
@@ -335,8 +358,68 @@ struct SettingsView: View {
     }
     
     private func clearAllData() {
-        // TODO: Implement clear data functionality
-        print("Clear all data requested")
+        _Concurrency.Task {
+            do {
+                // Clear SwiftData - Delete all tasks
+                let taskDescriptor = FetchDescriptor<Task>()
+                let allTasks = try modelContext.fetch(taskDescriptor)
+                
+                for task in allTasks {
+                    modelContext.delete(task)
+                }
+                
+                // Save the context to persist deletions
+                try modelContext.save()
+                
+                // Clear UserDefaults data
+                let defaults = UserDefaults.standard
+                let domain = Bundle.main.bundleIdentifier!
+                defaults.removePersistentDomain(forName: domain)
+                
+                // Clear specific UserDefaults keys that might not be in the domain
+                let keysToRemove = [
+                    "active_focus_session",
+                    "focus_session_history",
+                    "focus_mode_preferences",
+                    "notification_preferences",
+                    "theme_preferences",
+                    "last_analytics_date",
+                    "user_preferences"
+                ]
+                
+                for key in keysToRemove {
+                    defaults.removeObject(forKey: key)
+                }
+                
+                // Clear all pending notifications
+                await UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                await UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+                
+                // Clear analytics data
+                focusManager.clearFocusSessionHistory()
+                
+                // Reset local state variables
+                await MainActor.run {
+                    notificationsEnabled = true
+                    enableFocusMode = true
+                    theme.resetToDefaults()
+                    
+                    clearDataMessage = "All data has been successfully cleared. The app will now restart to apply changes."
+                    showingClearDataAlert = true
+                }
+                
+                // Restart the app after a brief delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    exit(0)
+                }
+                
+            } catch {
+                await MainActor.run {
+                    clearDataMessage = "Error clearing data: \(error.localizedDescription)"
+                    showingClearDataAlert = true
+                }
+            }
+        }
     }
     
     private func contactSupport() {
