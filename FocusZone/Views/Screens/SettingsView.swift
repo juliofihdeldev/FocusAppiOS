@@ -315,8 +315,6 @@ struct SettingsView: View {
                 )
             }
         }
-        
-        
     }
     
     // MARK: - Data Section
@@ -834,8 +832,7 @@ struct ContactSheet: View {
                                 title: "Rate the App",
                                 subtitle: "Share your experience on the App Store",
                                 action: {
-                                    // TODO: Implement App Store rating
-                                    print("Rate app requested")
+                                    rateApp()
                                 }
                             )
                             
@@ -908,6 +905,36 @@ struct ContactSheet: View {
                         dismiss()
                     }
                 }
+            }
+        }
+    }
+    
+    // MARK: - Helper Functions
+    
+    private func rateApp() {
+        // Get the app's bundle identifier
+        let bundleId = Bundle.main.bundleIdentifier ?? "ios.focus.jf.com.Focus"
+        
+        // Create the App Store URL for rating
+        let appStoreURL = "https://apps.apple.com/app/id[APP_ID]?action=write-review"
+        
+        // Alternative: Use the app's name to search (more reliable)
+        let searchURL = "https://apps.apple.com/search?term=FocusZen%2B&media=software"
+        
+        // Try to open the App Store rating page
+        if let url = URL(string: appStoreURL) {
+            UIApplication.shared.open(url) { success in
+                if !success {
+                    // Fallback to search page if rating page fails
+                    if let searchURL = URL(string: searchURL) {
+                        UIApplication.shared.open(searchURL)
+                    }
+                }
+            }
+        } else {
+            // Fallback to search page
+            if let searchURL = URL(string: searchURL) {
+                UIApplication.shared.open(searchURL)
             }
         }
     }
