@@ -22,7 +22,7 @@ struct TimelineView: View {
                 AppColors.background
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                VStack(spacing: 40) {
                     // Notification permission banner
                     if !notificationService.isAuthorized {
                         notificationPermissionBanner
@@ -32,16 +32,6 @@ struct TimelineView: View {
                     WeekDateNavigator(
                         selectedDate: $selectedDate
                     )
-                    .padding(.bottom, 16)
-                    
-                    // // Debug button (remove in production)
-                    // #if DEBUG
-                    // Button("Test Task Creation") {
-                    //     viewModel.createTestTask()
-                    // }
-                    // .foregroundColor(.blue)
-                    // .padding(.bottom, 8)
-                    // #endif
                     
                     // Main Content Area
                     ScrollViewReader { proxy in
@@ -130,7 +120,7 @@ struct TimelineView: View {
                             viewModel.forceRefreshTasks(for: selectedDate)
                         }
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 26)
+//                        .padding(.vertical, 26)
                     }
                 }
                 
@@ -363,8 +353,98 @@ struct FloatingActionButton: View {
     }
 }
 
+
+
+// MARK: - Sample Data
+let _sampleTasks: [Task] = [
+    Task(
+        id: UUID(),
+        title: "Rise and Shine",
+        icon: "🌅",
+        startTime: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 45,
+        color: .pink,
+        isCompleted: true
+    ),
+    Task(
+        id: UUID(),
+        title: "Keep working",
+        icon: "💼",
+        startTime: Calendar.current.date(bySettingHour: 16, minute: 11, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 120, // 2h 30min
+        color: .green,
+        isCompleted: false
+    ),
+    Task(
+        id: UUID(),
+        title: "Go for a Run!",
+        icon: "🏃‍♂️",
+        startTime: Calendar.current.date(bySettingHour: 19, minute: 15, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 90, // 1h 30min
+        color: .orange,
+        isCompleted: false
+    ),
+    
+    Task(
+        id: UUID(),
+        title: "Go for a Run!",
+        icon: "🏃‍♂️",
+        startTime: Calendar.current.date(bySettingHour: 19, minute: 35, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 60, // 1h 30min
+        color: .orange,
+        isCompleted: false
+    ),
+    Task(
+        id: UUID(),
+        title: "Wind Down",
+        icon: "🌙",
+        startTime: Calendar.current.date(bySettingHour: 15, minute: 00, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 45,
+        color: .blue,
+        isCompleted: false
+    )
+]
+
+// MARK: - Timeline View Container
+struct TimelineViewPreview: View {
+    @State private var selectedDate = Date()
+    @State private var tasks: [Task] = _sampleTasks
+    
+    var body: some View {
+        ZStack {
+            // Dark background
+            Color.black.ignoresSafeArea()
+            
+            VStack(spacing: 40) {
+                // Date Header
+                WeekDateNavigator(selectedDate: $selectedDate)
+            
+                // Timeline
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(tasks) { task in
+                            TaskCard(
+                                title: task.title,
+                                time: "",
+                                icon: task.icon,
+                                color: task.color,
+                                isCompleted: task.isCompleted,
+                                durationMinutes: task.durationMinutes,
+                                task: task,
+                                timelineViewModel: nil
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                
+                }
+            }
+        }
+    }
+}
+
 #Preview {
-    TimelineView()
+    TimelineViewPreview()
         .environmentObject(ThemeManager())
         .environmentObject(NotificationService.shared)
 }
