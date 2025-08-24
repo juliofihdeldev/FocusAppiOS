@@ -19,9 +19,9 @@ struct TaskActionsModal: View {
     }
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
                     // Task Info Header Card
-                    VStack(spacing: 12) {
+                    VStack(spacing: 8) {
                         HStack(spacing: 16) {
                             Text(task.icon)
                                 .font(.system(size: 40))
@@ -160,19 +160,19 @@ struct TaskActionsModal: View {
                             .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                     )
                     
-                    // Cancel Button
-                    Button(action: { dismiss() }) {
-                        Text("Cancel")
-                            .font(AppFonts.body())
-                            .foregroundColor(.gray)
-                            .padding(.vertical, 16)
-                            .frame(maxWidth: .infinity)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.gray.opacity(0.1))
-                            )
-                    }
-                    .buttonStyle(PlainButtonStyle())
+//                    // TODO: Cancel Button
+//                    Button(action: { dismiss() }) {
+//                        Text("Cancel")
+//                            .font(AppFonts.body())
+//                            .foregroundColor(.gray)
+//                            .padding(.vertical, 16)
+//                            .frame(maxWidth: .infinity)
+//                            .background(
+//                                RoundedRectangle(cornerRadius: 12)
+//                                    .fill(Color.gray.opacity(0.1))
+//                            )
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24) // Add safe area padding for bottom
@@ -198,6 +198,8 @@ struct TaskActionsModal: View {
                     showingDeletionOptions = false
                 }
             )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
         }
     }
 }
@@ -229,14 +231,11 @@ struct TaskActionButton: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(Color.clear)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
-
-// MARK: - TaskDeletionModal
 
 struct DeletionOptionButton: View {
     let title: String
