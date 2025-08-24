@@ -17,6 +17,7 @@ struct SettingsView: View {
     @StateObject private var focusManager = FocusModeManager()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @StateObject private var localizationManager = LocalizationManager.shared
+    @StateObject private var cloudSyncManager = CloudSyncManager()
     
     var body: some View {
         NavigationView {
@@ -34,6 +35,7 @@ struct SettingsView: View {
                         dataSection
                         focusSection
                         aboutSection
+                        cloudKitSyncSection
                     }
                     .padding(.horizontal, 20)
                     
@@ -331,6 +333,13 @@ struct SettingsView: View {
                     action: { showingClearDataConfirmation = true }
                 )
             }
+        }
+    }
+    
+    // MARK: - CloudKit Sync Section
+    private var cloudKitSyncSection: some View {
+        SettingsSection(title: "iCloud Sync", icon: "icloud") {
+            CloudKitSyncStatusView(cloudSyncManager: cloudSyncManager)
         }
     }
     
