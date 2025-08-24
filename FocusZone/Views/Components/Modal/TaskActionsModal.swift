@@ -19,20 +19,9 @@ struct TaskActionsModal: View {
     }
     
     var body: some View {
-        ZStack {
-            // Transparent background with subtle blur
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    dismiss()
-                }
-            
-            VStack(spacing: 0) {
-                Spacer()
-                
-                VStack(spacing: 16) {
+        VStack(spacing: 12) {
                     // Task Info Header Card
-                    VStack(spacing: 16) {
+                    VStack(spacing: 12) {
                         HStack(spacing: 16) {
                             Text(task.icon)
                                 .font(.system(size: 40))
@@ -95,7 +84,7 @@ struct TaskActionsModal: View {
                             }
                         }
                     }
-                    .padding(20)
+                    .padding(16)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(AppColors.card)
@@ -186,9 +175,7 @@ struct TaskActionsModal: View {
                     .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 34) // Add safe area padding for bottom
-            }
-        }
+                .padding(.bottom, 24) // Add safe area padding for bottom
         .fullScreenCover(isPresented: $showingTimer, onDismiss: {
             onStart()
             dismiss()
@@ -240,8 +227,8 @@ struct TaskActionButton: View {
                     .font(.caption)
                     .foregroundColor(.gray)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 18)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
             .background(Color.clear)
             .contentShape(Rectangle())
         }

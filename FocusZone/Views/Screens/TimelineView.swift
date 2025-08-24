@@ -207,6 +207,8 @@ struct TimelineView: View {
                         handleTaskDeletion(task, type: deletionType)
                     }
                 )
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             }
         }
         .alert("Enable Notifications", isPresented: $showNotificationAlert) {
