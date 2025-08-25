@@ -4,7 +4,7 @@ import SwiftData
 struct TaskTimer: View {
     @StateObject private var timerService = TaskTimerService()
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss: DismissAction
     let task: Task
 
     @State private var showCompletionAlert = false

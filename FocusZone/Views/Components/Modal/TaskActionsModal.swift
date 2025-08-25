@@ -18,6 +18,18 @@ struct TaskActionsModal: View {
         case futureInstances
     }
     
+    // Computed property to check if current time is within task's scheduled window
+    private var isCurrentTimeInTaskWindow: Bool {
+        let now = Date()
+        let taskStartTime = task.startTime
+        let taskEndTime = taskStartTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+        
+        // Show button only when current time is between task start and end time
+        return now >= taskStartTime && now <= taskEndTime
+    }
+    
+
+    
     var body: some View {
         VStack(spacing: 8) {
                     // Task Info Header Card
@@ -93,7 +105,7 @@ struct TaskActionsModal: View {
                     
                     // Action Buttons Card
                     VStack(spacing: 1) {
-                        if !task.isCompleted || timerService._minutesRemain(for: task) < 0 {
+                        if (!task.isCompleted || timerService._minutesRemain(for: task) < 0) && isCurrentTimeInTaskWindow {
                             TaskActionButton(
                                 title: "Launch timer",
                                 icon: "play.fill",
