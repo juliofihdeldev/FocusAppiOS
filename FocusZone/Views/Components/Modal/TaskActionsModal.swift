@@ -107,7 +107,7 @@ struct TaskActionsModal: View {
                     VStack(spacing: 1) {
                         if (!task.isCompleted || timerService._minutesRemain(for: task) < 0) && isCurrentTimeInTaskWindow {
                             TaskActionButton(
-                                title: "Launch timer",
+                                title: "Start Focus Session",
                                 icon: "play.fill",
                                 color: task.color,
                                 action: {
