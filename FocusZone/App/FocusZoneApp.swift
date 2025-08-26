@@ -26,7 +26,7 @@ struct FocusZoneApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SplashScreen()
+            MainAppView()
                 .environmentObject(themeManager)
                 .environmentObject(notificationService)
                 .environmentObject(cloudSyncManager)
