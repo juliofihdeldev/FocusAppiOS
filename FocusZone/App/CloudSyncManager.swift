@@ -42,6 +42,7 @@ final class CloudSyncManager: ObservableObject {
         case schemaVerificationFailed(String)
         case containerAccessFailed(String)
         case syncOperationFailed(String)
+        case recordConflict(String)
         
         var errorDescription: String? {
             switch self {
@@ -51,6 +52,8 @@ final class CloudSyncManager: ObservableObject {
                 return "Container access failed: \(message)"
             case .syncOperationFailed(let message):
                 return "Sync operation failed: \(message)"
+            case .recordConflict(let message):
+                return "Record conflict: \(message)"
             }
         }
     }
@@ -280,7 +283,7 @@ final class CloudSyncManager: ObservableObject {
     
     private func fetchLocalChanges(modelContext: ModelContext) async throws -> [Task] {
         // Fetch tasks that have been modified locally
-        var descriptor = FetchDescriptor<Task>()
+        let descriptor = FetchDescriptor<Task>()
         // For now, fetch all tasks and filter in memory
         // In a production app, you'd want to use proper predicates
         return try modelContext.fetch(descriptor)
@@ -296,13 +299,15 @@ final class CloudSyncManager: ObservableObject {
     }
     
     private func mergeChanges(localChanges: [Task], remoteChanges: [CKRecord], modelContext: ModelContext) async throws {
-        // Simple conflict resolution: remote wins for now
-        // In a production app, you'd want more sophisticated conflict resolution
+        // Enhanced conflict resolution with better handling of existing records
         
         for record in remoteChanges {
             if let existingTask = localChanges.first(where: { $0.id.uuidString == record.recordID.recordName }) {
-                // Update existing task with remote data
-                try await updateTaskFromRecord(existingTask, record: record)
+                // Update existing task with remote data if remote is newer
+                if let remoteUpdatedAt = record["updatedAt"] as? Date,
+                   remoteUpdatedAt > existingTask.updatedAt {
+                    try await updateTaskFromRecord(existingTask, record: record)
+                }
             } else {
                 // Create new task from remote data
                 try await createTaskFromRecord(record, modelContext: modelContext)
@@ -366,10 +371,34 @@ final class CloudSyncManager: ObservableObject {
     }
     
     private func uploadLocalChanges(_ localChanges: [Task], modelContext: ModelContext) async throws {
-        // Upload local changes to CloudKit
+        // Upload local changes to CloudKit using modify operation to handle conflicts
+        var recordsToSave: [CKRecord] = []
+        let recordIDsToDelete: [CKRecord.ID] = []
+        
         for task in localChanges {
-            let record = try await createRecordFromTask(task)
-            try await privateDatabase.save(record)
+            // Handle potential record conflicts
+            if let record = try await handleRecordConflict(task) {
+                recordsToSave.append(record)
+            }
+        }
+        
+        if !recordsToSave.isEmpty {
+            let modifyOperation = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
+            modifyOperation.savePolicy = .changedKeys
+            modifyOperation.qualityOfService = .userInitiated
+            
+            try await withCheckedThrowingContinuation { continuation in
+                modifyOperation.modifyRecordsResultBlock = { result in
+                    switch result {
+                    case .success:
+                        continuation.resume()
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+                
+                privateDatabase.add(modifyOperation)
+            }
         }
     }
     
@@ -386,6 +415,27 @@ final class CloudSyncManager: ObservableObject {
         record["updatedAt"] = task.updatedAt
         
         return record
+    }
+    
+    private func handleRecordConflict(_ task: Task) async throws -> CKRecord? {
+        // Try to fetch the existing record first
+        let recordID = CKRecord.ID(recordName: task.id.uuidString)
+        
+        do {
+            let existingRecord = try await privateDatabase.record(for: recordID)
+            // If record exists, update it with local changes
+            existingRecord["title"] = task.title
+            existingRecord["durationMinutes"] = task.durationMinutes
+            existingRecord["isCompleted"] = task.isCompleted
+            existingRecord["colorHex"] = task.color.toHex()
+            existingRecord["icon"] = task.icon
+            existingRecord["updatedAt"] = task.updatedAt
+            
+            return existingRecord
+        } catch {
+            // Record doesn't exist, create new one
+            return try await createRecordFromTask(task)
+        }
     }
     
     // MARK: - Manual Sync
