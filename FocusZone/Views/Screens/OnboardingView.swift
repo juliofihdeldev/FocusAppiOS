@@ -97,13 +97,13 @@ struct OnboardingView: View {
                 Spacer()
                 
                 // Bottom buttons
-                VStack(spacing: 12) {
+                VStack(spacing: 22) {
                     // Beautiful Slider Get Started Button
                     SliderGetStartedButton(
                         backgroundColor: Color.blue.opacity(0.8),
                         onComplete: completeOnboarding
                     )
-                    .padding(.horizontal, 12)
+                    .padding(.horizontal, 40)
                     
                     // Skip button
                     Button(action: completeOnboarding) {
@@ -166,8 +166,7 @@ struct SliderGetStartedButton: View {
             
             // Slider handle
             HStack {
-                Spacer()
-                
+            
                 ZStack {
                     Circle()
                         .fill(Color.white)
