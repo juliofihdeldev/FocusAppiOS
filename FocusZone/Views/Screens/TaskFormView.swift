@@ -18,8 +18,8 @@ struct TaskFormView: View {
     let taskToEdit: Task?
     
     @State private var taskTitle: String = ""
-    @State private var selectedDate: Date = Date()
-    @State private var startTime: Date = Date()
+    @State private var selectedDate: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+    @State private var startTime: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
     @State private var duration: Int = 15
     @State private var selectedColor: Color = .pink
     @State private var selectedTaskType: TaskType? = nil
@@ -77,7 +77,7 @@ struct TaskFormView: View {
                                 saveTask()
                             }) {
                                 Text(taskToEdit == nil ? "Create Task" : "Update Task")
-                                    .font(AppFonts.headline())
+                                    .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 16)
