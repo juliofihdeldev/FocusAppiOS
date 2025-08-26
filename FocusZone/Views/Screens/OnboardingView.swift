@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @StateObject private var onboardingManager = OnboardingManager.shared
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     @State private var currentPage = 0
     @State private var animateContent = false
         
@@ -18,13 +18,12 @@ struct OnboardingView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-
-                Image("landscape")
-                    .resizable()
-                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.6 as CGFloat)
-                    .opacity(0.3)
-                Spacer()
-        
+            
+            Image("landscape")
+                .resizable()
+                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.6 as CGFloat)
+                .opacity(0.5)
+            Spacer()
             
             VStack(spacing: 0) {
                 // Top section with logo and category
@@ -33,6 +32,7 @@ struct OnboardingView: View {
                     // Logo section
                     HStack {
                         ZStack {
+                        
                             Circle()
                                 .fill(
                                     LinearGradient(
@@ -45,16 +45,19 @@ struct OnboardingView: View {
                                     )
                                 )
                                 .frame(width: 50, height: 50)
+                                
                                 .shadow(color: .orange.opacity(0.3), radius: 10, x: 0, y: 5)
+                            
                             
                             Image(systemName: "brain.head.profile")
                                 .font(.system(size: 24, weight: .semibold))
                                 .foregroundColor(.white)
-                        }
+                            
+                        }.padding(.horizontal)
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text("FocusZEN+")
-                                .font(.system(size: 30, weight: .bold, design: .rounded))
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
                                 .foregroundColor(.orange)
                             
                             Text("PRODUCTIVITY")
@@ -70,26 +73,25 @@ struct OnboardingView: View {
                     
                     // Content section
                     VStack(spacing: 24) {
-                  
+                      
                         // Description
-                        Text("")
-                            .font(.system(size: 16, weight: .medium))
+                        Text("Discover the ultimate focus companion that helps you achieve more in less time.")
+                            .font(AppFonts.headline())
                             .foregroundColor(Color(red: 0.3, green: 0.4, blue: 0.6))
-                            .multilineTextAlignment(.center)
+                            .multilineTextAlignment(.leading)
                             .padding(.horizontal, 40)
-                            .lineLimit(3)
+                            .lineLimit(5)
                             .opacity(animateContent ? 1 : 0)
                             .offset(y: animateContent ? 0 : 20)
                         
                         // Feature highlights
-                        VStack(spacing: 16) {
-                            FeatureRow(icon: "brain.head.profile", title: "Manage your time effectively", color: .blue)
-                            FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Advanced insights & recommendations", color: .green)
-                            FeatureRow(icon: "timer", title: "Smart Timers", color: .orange)
-                            FeatureRow (icon: "arrow.triangle.2.circlepath", title: "Smart break suggestions", color: .pink)
-                            
-                            FeatureRow (icon: "folder.badge.plus", title: "Custom focus modes", color: .brown)
-                            
+                        VStack(spacing:26) {
+                            FeatureRow(icon: "brain.head.profile", title: "AI-Powered Focus Assistant", color: .blue)
+                            FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Progress Analytics & Insights", color: .green)
+                            FeatureRow(icon: "timer", title: "Smart Pomodoro Timers", color: .orange)
+                            FeatureRow(icon: "arrow.triangle.2.circlepath", title: "Intelligent Break Suggestions", color: .pink)
+                            FeatureRow(icon: "folder.badge.plus", title: "Customizable Focus Modes", color: .brown)
+                            FeatureRow(icon: "icloud.fill", title: "Cloud Sync & Backup", color: .purple)
                         }
                         .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : 20)
@@ -109,16 +111,23 @@ struct OnboardingView: View {
                         // Log In button
                         Button(action: completeOnboarding) {
                             Text("Skip")
-                            .font(AppFonts.headline())
+                                .font(AppFonts.headline())
+                            .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
+                        
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(radius: 1)
+                            )
                         }
                         .padding(.horizontal, 40)
                         
                         // Terms and Conditions
                         Button(action: {}) {
                             Text("Terms & Conditions")
-                                .font(AppFonts.body())
+                                .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
                         }
                         .padding(.bottom, 20)
@@ -138,7 +147,7 @@ struct OnboardingView: View {
         
     private func completeOnboarding() {
         withAnimation(.easeInOut(duration: 0.5)) {
-            onboardingManager.completeOnboarding()
+            hasSeenOnboarding = true
         }
     }
 }
@@ -163,7 +172,7 @@ struct FeatureRow: View {
             }
             
             Text(title)
-                .font(AppFonts.subheadline())
+                .font(AppFonts.headline())
                 .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
             
             Spacer()
@@ -268,9 +277,10 @@ struct SliderGetStartedButton: View {
             
             // Text overlay
             HStack {
+                Spacer()
                 Text(showCompletion ? "Welcome!" : "Slide to Get Started")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color.white)
+                    .foregroundColor(Color.black.opacity(0.7))
                     .opacity(showCompletion ? 1 : (dragOffset > 50 ? 0 : 1))
                     .animation(.easeInOut(duration: 0.3), value: showCompletion)
                 
