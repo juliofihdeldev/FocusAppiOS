@@ -53,7 +53,7 @@ struct OnboardingView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("FOCUS")
+                            Text("FocusZEN+")
                                 .font(.system(size: 30, weight: .bold, design: .rounded))
                                 .foregroundColor(.orange)
                             
@@ -83,10 +83,13 @@ struct OnboardingView: View {
                         
                         // Feature highlights
                         VStack(spacing: 16) {
-                            FeatureRow(icon: "brain.head.profile", title: "AI-Powered Focus", color: .blue)
-                            FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Progress Analytics", color: .green)
+                            FeatureRow(icon: "brain.head.profile", title: "Manage your time effectively", color: .blue)
+                            FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Advanced insights & recommendations", color: .green)
                             FeatureRow(icon: "timer", title: "Smart Timers", color: .orange)
-                        
+                            FeatureRow (icon: "arrow.triangle.2.circlepath", title: "Smart break suggestions", color: .pink)
+                            
+                            FeatureRow (icon: "folder.badge.plus", title: "Custom focus modes", color: .brown)
+                            
                         }
                         .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : 20)
@@ -160,12 +163,12 @@ struct FeatureRow: View {
             }
             
             Text(title)
-                .font(.system(size: 16, weight: .medium))
+                .font(AppFonts.subheadline())
                 .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
             
             Spacer()
         }
-        .padding(.horizontal, 40)
+        .padding(.horizontal, 20)
     }
 }
 
