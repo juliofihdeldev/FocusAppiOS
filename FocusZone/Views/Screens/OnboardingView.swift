@@ -3,133 +3,169 @@ import SwiftUI
 struct OnboardingView: View {
     @StateObject private var onboardingManager = OnboardingManager.shared
     @State private var currentPage = 0
+    @State private var animateContent = false
         
     var body: some View {
         ZStack {
+            // Beautiful gradient background inspired by the serene landscape
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color.purple.opacity(0.8),
-                    Color.blue.opacity(0.6),
-                    Color.black
+                    Color(red: 0.95, green: 0.97, blue: 1.0), // Light sky blue
+                    Color(red: 0.9, green: 0.95, blue: 1.0),  // Soft blue
+                    Color(red: 0.85, green: 0.9, blue: 0.98)  // Deeper blue
                 ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+                startPoint: .top,
+                endPoint: .bottom
             )
             .ignoresSafeArea()
+
+                Image("landscape")
+                    .resizable()
+                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.6 as CGFloat)
+                    .opacity(0.3)
+                Spacer()
+        
             
             VStack(spacing: 0) {
-                Spacer()
-                Image(systemName: "brain.head.profile")
-                    .font(.system(size: 60, weight: .light))
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                Circle()
-                                    .stroke(.white.opacity(0.3), lineWidth: 1)
-                            )
-                    )
-
-                
-                // Main content
-                VStack(spacing: 30) {
-                    // Title
-                    Text("FocusZen+")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("Focus on what really matters. Let Us help you stay on track.")
-                                            .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white.opacity(0.9))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-                        
-                
-                    // Features showcase
-                    VStack(spacing: 16) {
-                    
-                        LazyVGrid(columns: [
-                            GridItem(.flexible()),
-                            GridItem(.flexible()),
-                            GridItem(.flexible())
-                        ], spacing: 16) {
-                            FeatureCard(
-                                icon: "brain.head.profile",
-                                title: "AI Focus Assistant",
-                                description: "Smart task optimization",
-                                color: .blue
-                            )
+                // Top section with logo and category
+                VStack(spacing: 16) {
+                    Spacer()
+                    // Logo section
+                    HStack {
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.orange,
+                                            Color.orange.opacity(0.8)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 50, height: 50)
+                                .shadow(color: .orange.opacity(0.3), radius: 10, x: 0, y: 5)
                             
-                            FeatureCard(
-                                icon: "chart.line.uptrend.xyaxis",
-                                title: "Analytics & Insights",
-                                description: "Track your progress",
-                                color: .green
-                            )
-                            
-                            FeatureCard(
-                                icon: "timer",
-                                title: "Smart Timers",
-                                description: "Pomodoro & custom",
-                                color: .orange
-                            )
-                            
-                            FeatureCard(
-                                icon: "icloud.fill",
-                                title: "Cloud Sync",
-                                description: "Access anywhere",
-                                color: .purple
-                            )
-                            
-                            FeatureCard(
-                                icon: "bell.badge",
-                                title: "Smart Notifications",
-                                description: "Never miss a task",
-                                color: .red
-                            )
-                            
-                            FeatureCard(
-                                icon: "paintbrush.fill",
-                                title: "Custom Themes",
-                                description: "Personalize your app",
-                                color: .pink
-                            )
+                            Image(systemName: "brain.head.profile")
+                                .font(.system(size: 24, weight: .semibold))
+                                .foregroundColor(.white)
                         }
-                        .padding(.horizontal, 20)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("FOCUS")
+                                .font(.system(size: 30, weight: .bold, design: .rounded))
+                                .foregroundColor(.orange)
+                            
+                            Text("PRODUCTIVITY")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(.orange.opacity(0.8))
+                        }
+                        
+                        Spacer()
                     }
-                }
-                
-                Spacer()
-                
-                // Bottom buttons
-                VStack(spacing: 22) {
-                    // Beautiful Slider Get Started Button
-                    SliderGetStartedButton(
-                        backgroundColor: Color.blue.opacity(0.8),
-                        onComplete: completeOnboarding
-                    )
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, 24)
+                    .opacity(animateContent ? 1 : 0)
+                    .offset(y: animateContent ? 0 : -20)
                     
-                    // Skip button
-                    Button(action: completeOnboarding) {
-                        Text("Skip")
+                    // Content section
+                    VStack(spacing: 24) {
+                  
+                        // Description
+                        Text("")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(Color(red: 0.3, green: 0.4, blue: 0.6))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                            .lineLimit(3)
+                            .opacity(animateContent ? 1 : 0)
+                            .offset(y: animateContent ? 0 : 20)
+                        
+                        // Feature highlights
+                        VStack(spacing: 16) {
+                            FeatureRow(icon: "brain.head.profile", title: "AI-Powered Focus", color: .blue)
+                            FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Progress Analytics", color: .green)
+                            FeatureRow(icon: "timer", title: "Smart Timers", color: .orange)
+                        
+                        }
+                        .opacity(animateContent ? 1 : 0)
+                        .offset(y: animateContent ? 0 : 20)
+                        
+                        Spacer()
                     }
+                    
+                    // Bottom section
+                    VStack(spacing: 20) {
+                        // Beautiful Slider Get Started Button
+                        SliderGetStartedButton(
+                            backgroundColor: Color.green,
+                            onComplete: completeOnboarding
+                        )
+                        .padding(.horizontal, 40)
+                        
+                        // Log In button
+                        Button(action: completeOnboarding) {
+                            Text("Skip")
+                            .font(AppFonts.headline())
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                        }
+                        .padding(.horizontal, 40)
+                        
+                        // Terms and Conditions
+                        Button(action: {}) {
+                            Text("Terms & Conditions")
+                                .font(AppFonts.body())
+                                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
+                        }
+                        .padding(.bottom, 20)
+                    }
+                    .opacity(animateContent ? 1 : 0)
+                    .offset(y: animateContent ? 0 : 20)
                 }
-                .padding(.bottom, 40)
             }
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.8).delay(0.2)) {
+                    animateContent = true
+                }
+            }
+            .animation(.easeInOut(duration: 0.5), value: currentPage)
         }
-        .animation(.easeInOut(duration: 0.5), value: currentPage)
     }
         
     private func completeOnboarding() {
         withAnimation(.easeInOut(duration: 0.5)) {
             onboardingManager.completeOnboarding()
         }
+    }
+}
+
+
+// MARK: - Feature Row
+struct FeatureRow: View {
+    let icon: String
+    let title: String
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(color.opacity(0.1))
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(color)
+            }
+            
+            Text(title)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
+            
+            Spacer()
+        }
+        .padding(.horizontal, 40)
     }
 }
 
@@ -149,11 +185,11 @@ struct SliderGetStartedButton: View {
         ZStack {
             // Background track
             RoundedRectangle(cornerRadius: buttonHeight / 2)
-                .fill(Color.white.opacity(0.2))
+                .fill(Color.white.opacity(0.3))
                 .frame(height: buttonHeight)
                 .overlay(
                     RoundedRectangle(cornerRadius: buttonHeight / 2)
-                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
                 )
             
             // Progress track
@@ -243,55 +279,6 @@ struct SliderGetStartedButton: View {
         .frame(height: buttonHeight)
         .scaleEffect(isDragging ? 1.05 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isDragging)
-    }
-}
-
-// MARK: - Feature Card
-struct FeatureCard: View {
-    let icon: String
-    let title: String
-    let description: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill(color.opacity(0.2))
-                    .frame(width: 50, height: 50)
-                
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundColor(color)
-                    .fontWeight(.semibold)
-            }
-            
-            // Title
-            Text(title)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-            
-            // Description
-            Text(description)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundColor(.white.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-        }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(0.1))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                )
-        )
-        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
 }
 

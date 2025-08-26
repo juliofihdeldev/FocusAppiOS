@@ -66,7 +66,7 @@ struct PaywallView: View {
                         // Features showcase
                         VStack(spacing: 12) {
                             ForEach(Array(ProFeatures.proFeaturesList.enumerated()), id: \.offset) { index, feature in
-                                FeatureRow(
+                                FeatureRow_(
                                     icon: getFeatureIcon(for: index),
                                     title: feature,
                                     delay: Double(index) * 0.1,

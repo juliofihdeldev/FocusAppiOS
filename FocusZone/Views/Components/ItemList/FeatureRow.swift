@@ -1,13 +1,12 @@
 //
 //  FeatureRow.swift
 //  FocusZone
-//
 //  Created by Julio J Fils on 7/24/25.
 //
 
 import SwiftUI
 
-struct FeatureRow: View {
+struct FeatureRow_: View {
     let icon: String
     let title: String
     let delay: Double
@@ -65,7 +64,7 @@ struct FeatureRow: View {
 
 #Preview {
     VStack(spacing: 16) {
-        FeatureRow(
+        FeatureRow_(
             icon: "infinity.circle.fill",
             title: "Unlimited Tasks",
             delay: 0.0,
@@ -73,14 +72,14 @@ struct FeatureRow: View {
         
         )
         
-        FeatureRow(
+        FeatureRow_(
             icon: "chart.line.uptrend.xyaxis",
             title: "Advanced Analytics",
             delay: 0.1,
             description: "Get insights into your productivity."
         )
         
-        FeatureRow(
+        FeatureRow_(
             icon: "brain.head.profile",
             title: "AI Assistant",
             delay: 0.2,
