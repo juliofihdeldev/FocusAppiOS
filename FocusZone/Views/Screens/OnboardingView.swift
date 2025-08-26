@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @StateObject private var onboardingManager = OnboardingManager.shared
     @State private var currentPage = 0
         
     var body: some View {
@@ -39,7 +40,14 @@ struct OnboardingView: View {
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                 
+                    
+                    Text("Focus on what really matters. Let Us help you stay on track.")
+                                            .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                        
+                
                     // Features showcase
                     VStack(spacing: 16) {
                     
@@ -108,7 +116,7 @@ struct OnboardingView: View {
                     // Skip button
                     Button(action: completeOnboarding) {
                         Text("Skip")
-                            .font(AppFonts.headline())
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                     }
                 }
@@ -120,7 +128,7 @@ struct OnboardingView: View {
         
     private func completeOnboarding() {
         withAnimation(.easeInOut(duration: 0.5)) {
-            print("Onboarding completed!")
+            onboardingManager.completeOnboarding()
         }
     }
 }
@@ -135,7 +143,7 @@ struct SliderGetStartedButton: View {
     @State private var showCompletion = false
     
     private let buttonHeight: CGFloat = 60
-    private let maxDragDistance: CGFloat = 200
+    private let maxDragDistance: CGFloat = 250
     
     var body: some View {
         ZStack {
@@ -158,15 +166,15 @@ struct SliderGetStartedButton: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: max(60, dragOffset + buttonHeight / 2), height: buttonHeight)
-                    .animation(.easeInOut(duration: 0.3), value: dragOffset)
+                    .frame(width: max(70, dragOffset + buttonHeight / 2), height: buttonHeight)
                 
                 Spacer()
             }
             
             // Slider handle
             HStack {
-            
+                Spacer()
+                
                 ZStack {
                     Circle()
                         .fill(Color.white)
@@ -185,7 +193,7 @@ struct SliderGetStartedButton: View {
                             .fontWeight(.bold)
                     }
                 }
-                .offset(x: dragOffset)
+                .offset(x: dragOffset - 120)
                 .gesture(
                     DragGesture()
                         .onChanged { value in
@@ -196,7 +204,7 @@ struct SliderGetStartedButton: View {
                         .onEnded { value in
                             isDragging = false
                             
-                            if dragOffset >= maxDragDistance * 0.8 {
+                            if dragOffset >= maxDragDistance * 0.7 {
                                 // Complete the slide
                                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                                     dragOffset = maxDragDistance
@@ -222,11 +230,10 @@ struct SliderGetStartedButton: View {
             // Text overlay
             HStack {
                 Text(showCompletion ? "Welcome!" : "Slide to Get Started")
-                    .font(AppFonts.headline())
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(Color.white)
-                    .opacity(showCompletion ? 1 : (dragOffset > 180 ? 0 : 1))
+                    .opacity(showCompletion ? 1 : (dragOffset > 50 ? 0 : 1))
                     .animation(.easeInOut(duration: 0.3), value: showCompletion)
-                    .animation(.easeInOut(duration: 0.3), value: dragOffset)
                 
                 Spacer()
             }

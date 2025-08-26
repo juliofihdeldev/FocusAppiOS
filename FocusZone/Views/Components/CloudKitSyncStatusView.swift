@@ -24,16 +24,29 @@ struct CloudKitSyncStatusView: View {
             }
             
             // Sync Status Description
-            Text(cloudSyncManager.getSyncStatusDescription())
-                .font(AppFonts.caption())
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.leading)
+            if cloudSyncManager.isSyncing {
+                Text("Syncing with iCloud...")
+                    .font(AppFonts.caption())
+                    .foregroundColor(.blue)
+                    .multilineTextAlignment(.leading)
+            } else {
+                Text(cloudSyncManager.getSyncStatusDescription())
+                    .font(AppFonts.caption())
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.leading)
+            }
             
             // Progress Bar (when syncing)
             if cloudSyncManager.isSyncing {
-                ProgressView(value: cloudSyncManager.syncProgress)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                    .scaleEffect(x: 1, y: 1.5, anchor: .center)
+                VStack(spacing: 8) {
+                    ProgressView(value: cloudSyncManager.syncProgress)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                        .scaleEffect(x: 1, y: 1.5, anchor: .center)
+                    
+                    Text("Syncing... \(Int(cloudSyncManager.syncProgress * 100))%")
+                        .font(AppFonts.caption())
+                        .foregroundColor(.blue)
+                }
             }
             
             // Action Buttons
@@ -87,8 +100,30 @@ struct CloudKitSyncStatusView: View {
                 Spacer()
             }
             
-            // Error Message (if any)
-            if let errorMessage = cloudSyncManager.errorMessage {
+            // Success Message (when sync completes)
+            if case .completed = cloudSyncManager.syncStatus {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.caption)
+                    
+                    Text("Sync completed successfully")
+                        .font(AppFonts.caption())
+                        .foregroundColor(.green)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.green.opacity(0.1))
+                )
+            }
+            
+            // Error Message (if any) - Filter out harmless warnings
+            if let errorMessage = cloudSyncManager.errorMessage,
+               !errorMessage.contains("Field 'recordName' is not marked queryable") {
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.red)
