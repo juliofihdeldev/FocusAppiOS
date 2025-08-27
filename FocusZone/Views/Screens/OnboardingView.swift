@@ -21,7 +21,8 @@ struct OnboardingView: View {
             
             Image("landscape")
                 .resizable()
-                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.6 as CGFloat)
+                .frame(maxWidth: .infinity)
+                .frame(height: 400)
                 .opacity(0.5)
             Spacer()
             

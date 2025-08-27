@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct MainAppView: View {
-    @StateObject private var onboardingManager = OnboardingManager.shared
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     
     var body: some View {
         Group {
-            if onboardingManager.hasSeenOnboarding {
+            if hasSeenOnboarding {
                 SplashScreen()
             } else {
                 OnboardingView()
