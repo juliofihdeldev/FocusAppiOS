@@ -112,3 +112,9 @@
 "ready_to_focus" = "Ready to Focus?";
 "start_productivity_jney" = "Start your productivity journey today. Create tasks, set focus sessions, and watch your progress grow with our intelligent insights and recommendations.";
 "swipe_to_begin_journey" = "Swipe to begin your focus journey";
+
+// MARK: - Test Translation
+"welcome_message" = "Welcome to FocusZone!";
+"welcome_description" = "Your ultimate productivity companion. Get ready to transform your focus and achieve more.";
+"test_button_hello" = "Say Hello!";
+"test_button_goodbye" = "Say Goodbye!";

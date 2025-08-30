@@ -163,4 +163,10 @@ struct LocalizationKeys {
     static let readyToFocus = "ready_to_focus"
     static let startProductivityJourney = "start_productivity_jney"
     static let swipeToBeginJourney = "swipe_to_begin_journey"
+    
+    // MARK: - Test Translation
+    static let welcomeMessage = "welcome_message"
+    static let welcomeDescription = "welcome_description"
+    static let testButtonHello = "test_button_hello"
+    static let testButtonGoodbye = "test_button_goodbye"
 }

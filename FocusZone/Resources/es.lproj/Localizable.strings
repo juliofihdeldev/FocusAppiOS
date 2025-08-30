@@ -113,6 +113,12 @@
 "start_productivity_jney" = "Comienza tu viaje de productividad hoy. Crea tareas, establece sesiones de concentración y observa tu progreso crecer con nuestros insights inteligentes y recomendaciones.";
 "swipe_to_begin_journey" = "Desliza para comenzar tu viaje de concentración";
 
+// MARK: - Test Translation
+"welcome_message" = "¡Bienvenido a FocusZone!";
+"welcome_description" = "Tu compañero de productividad definitivo. Prepárate para transformar tu concentración y lograr más.";
+"test_button_hello" = "¡Decir Hola!";
+"test_button_goodbye" = "¡Decir Adiós!";
+
 // MARK: - Configuración
 "settings" = "Configuración";
 "appearance" = "Apariencia";
