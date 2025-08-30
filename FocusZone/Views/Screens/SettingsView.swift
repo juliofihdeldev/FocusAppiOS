@@ -10,13 +10,13 @@ struct SettingsView: View {
     @State private var showingContact = false
     @State private var enableFocusMode = true
     @State private var showPaywall = false
-    @State private var showLanguageSelector = false
+
     @State private var showingClearDataConfirmation = false
     @State private var showingClearDataAlert = false
     @State private var clearDataMessage = ""
     @StateObject private var focusManager = FocusModeManager()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
-    @StateObject private var localizationManager = LocalizationManager.shared
+
     @StateObject private var cloudSyncManager = CloudSyncManager()
     
     var body: some View {
@@ -30,7 +30,6 @@ struct SettingsView: View {
                     VStack(spacing: 20) {
                         subscriptionSection
 //                     TODO:   appearanceSection
-                      languageSection
                         notificationSection
                         dataSection
                         focusSection
@@ -58,9 +57,7 @@ struct SettingsView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
-        .sheet(isPresented: $showLanguageSelector) {
-            LanguageSelectorView()
-        }
+
         .confirmationDialog(
             "Clear All Data",
             isPresented: $showingClearDataConfirmation,
@@ -78,8 +75,7 @@ struct SettingsView: View {
         } message: {
             Text(clearDataMessage)
         }
-        .localized()
-        .rtlSupport()
+
     }
     
     // MARK: - App Header
@@ -88,7 +84,7 @@ struct SettingsView: View {
             HStack {
                 Spacer()
                 
-                Text(LocalizationKeys.settings.localized)
+                Text("Settings")
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textPrimary)
                     .fontWeight(.bold)
@@ -109,12 +105,12 @@ struct SettingsView: View {
                     )
                 
                 VStack(spacing: 4) {
-                    Text(LocalizationKeys.focus.localized)
+                    Text("FocusZone")
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                         .fontWeight(.semibold)
                     
-                    Text(LocalizationKeys.stayFocusedAchieveMore.localized)
+                    Text("Stay focused, achieve more")
                         .font(AppFonts.caption())
                         .foregroundColor(AppColors.secondary)
                 }
@@ -157,12 +153,12 @@ struct SettingsView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(LocalizationKeys.upgradeToPro.localized)
+                            Text("Upgrade to Pro")
                                 .font(AppFonts.headline())
                                 .fontWeight(.semibold)
                                 .foregroundColor(AppColors.textPrimary)
                             
-                            Text(LocalizationKeys.unlockAllFeatures.localized)
+                            Text("Unlock all features and boost your productivity")
                                 .font(AppFonts.body())
                                 .foregroundColor(AppColors.textSecondary)
                         }
@@ -199,7 +195,7 @@ struct SettingsView: View {
                 }
             } else {
                 // Pro user management options
-                SettingsSection(title: LocalizationKeys.subscription.localized, icon: "crown.fill") {
+                SettingsSection(title: "Subscription", icon: "crown.fill") {
                     VStack(spacing: 0) {
                         Button(action: {
                             _Concurrency.Task {
@@ -213,10 +209,10 @@ struct SettingsView: View {
                                     .frame(width: 24)
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(LocalizationKeys.restorePurchases.localized)
+                                    Text("Restore Purchases")
                                         .font(AppFonts.body())
                                         .foregroundColor(AppColors.textPrimary)
-                                    Text(LocalizationKeys.restoreSubscriptionDevice.localized)
+                                    Text("Restore your subscription from another device")
                                         .font(AppFonts.caption())
                                         .foregroundColor(AppColors.textSecondary)
                                 }
@@ -243,10 +239,10 @@ struct SettingsView: View {
                                     .frame(width: 24)
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(LocalizationKeys.manageSubscription.localized)
+                                    Text("Manage Subscription")
                                         .font(AppFonts.body())
                                         .foregroundColor(AppColors.textPrimary)
-                                    Text(LocalizationKeys.changeCancelSubscription.localized)
+                                    Text("Change or cancel your subscription")
                                         .font(AppFonts.caption())
                                         .foregroundColor(AppColors.textSecondary)
                                 }
@@ -264,11 +260,11 @@ struct SettingsView: View {
     
     // MARK: - Appearance Section
     private var appearanceSection: some View {
-        SettingsSection(title: LocalizationKeys.appearance.localized, icon: "paintbrush") {
+        SettingsSection(title: "Appearance", icon: "paintbrush") {
             VStack(spacing: 0) {
                 SettingsToggleRow(
-                    title: LocalizationKeys.darkMode.localized,
-                    subtitle: LocalizationKeys.switchLightDarkThemes.localized,
+                    title: "Dark Mode",
+                    subtitle: "Switch between light and dark themes",
                     icon: "moon.circle.fill",
                     isOn: $theme.isDarkMode
                 )
@@ -276,26 +272,16 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Language Section
-    private var languageSection: some View {
-        SettingsSection(title: LocalizationKeys.language.localized, icon: "globe") {
-            VStack(spacing: 0) {
-                LanguageSettingsRow(
-                    localizationManager: localizationManager,
-                    action: { showLanguageSelector = true }
-                )
-            }
-        }
-    }
+
     
     // Focus  Section
     private var focusSection: some View {
-        SettingsSection(title: LocalizationKeys.focus.localized, icon: "target") {
+        SettingsSection(title: "Focus", icon: "target") {
             VStack(spacing: 0) {
                 
                 SettingsToggleRow(
-                    title: LocalizationKeys.focusConcentration.localized,
-                    subtitle: LocalizationKeys.getNotifiedTasksStarting.localized,
+                    title: "Focus Concentration",
+                    subtitle: "Get notified when tasks are starting",
                     icon: "bell.circle.fill",
                     isOn: $enableFocusMode
                 )
@@ -307,11 +293,11 @@ struct SettingsView: View {
     
     // MARK: - Notifications Section
     private var notificationSection: some View {
-        SettingsSection(title: LocalizationKeys.notifications.localized, icon: "bell") {
+        SettingsSection(title: "Notifications", icon: "bell") {
             VStack(spacing: 0) {
                 SettingsToggleRow(
-                    title: LocalizationKeys.taskReminders.localized,
-                    subtitle: LocalizationKeys.getNotifiedTasksStarting.localized,
+                    title: "Task Reminders",
+                    subtitle: "Get notified when tasks are starting",
                     icon: "bell.circle.fill",
                     isOn: $notificationsEnabled
                 )
@@ -321,13 +307,13 @@ struct SettingsView: View {
     
     // MARK: - Data Section
     private var dataSection: some View {
-        SettingsSection(title: LocalizationKeys.data.localized, icon: "internaldrive") {
+        SettingsSection(title: "Data", icon: "internaldrive") {
             VStack(spacing: 0) {
      
                 
                 SettingsNavigationRow(
-                    title: LocalizationKeys.clearAllData.localized,
-                    subtitle: LocalizationKeys.resetAllTasksSettings.localized,
+                                    title: "Clear All Data",
+                subtitle: "Reset all tasks and settings",
                     icon: "trash.circle.fill",
                     isDestructive: true,
                     action: { showingClearDataConfirmation = true }
@@ -345,7 +331,7 @@ struct SettingsView: View {
     
     // MARK: - About Section
     private var aboutSection: some View {
-        SettingsSection(title: LocalizationKeys.about.localized, icon: "info.circle") {
+        SettingsSection(title: "About", icon: "info.circle") {
             VStack(spacing: 0) {
                 SettingsNavigationRow(
                     title: "Abous Us",
@@ -359,8 +345,8 @@ struct SettingsView: View {
                     .padding(.leading, 52)
                 
                 SettingsNavigationRow(
-                    title: LocalizationKeys.contactSupport.localized,
-                    subtitle: LocalizationKeys.getHelpSendFeedback.localized,
+                    title: "Contact Support",
+                    subtitle: "Get help and send feedback",
                     icon: "envelope.circle.fill",
                     action: { showingContact = true }
                 )
@@ -561,7 +547,7 @@ struct AboutSheet: View {
                             .font(.system(size: 60))
                             .foregroundColor(AppColors.accent)
                         
-                        Text(LocalizationKeys.focus.localized)
+                        Text("Focus")
                             .font(AppFonts.title())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.bold)
@@ -713,11 +699,11 @@ struct AboutSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle(LocalizationKeys.about.localized)
+            .navigationTitle("About")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(LocalizationKeys.done.localized) {
+                    Button("Done") {
                         dismiss()
                     }
                 }

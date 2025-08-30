@@ -66,7 +66,7 @@ struct OnboardingView: View {
                             Button(action: previousPage) {
                                 HStack {
                                     Image(systemName: "chevron.left")
-                                    Text(LocalizationKeys.previous.localized)
+                                    Text("Previous")
                                 }
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
@@ -84,7 +84,7 @@ struct OnboardingView: View {
                         if currentPage < totalPages - 1 {
                             Button(action: nextPage) {
                                 HStack {
-                                    Text(LocalizationKeys.next.localized)
+                                    Text("Next")
                                     Image(systemName: "chevron.right")
                                 }
                                 .font(.system(size: 16, weight: .medium))
@@ -104,7 +104,7 @@ struct OnboardingView: View {
                     
                     // Skip button (always visible)
                     Button(action: completeOnboarding) {
-                        Text(LocalizationKeys.skip.localized)
+                                                           Text("Skip")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(Color.white)
                     }
@@ -148,14 +148,14 @@ struct OnboardingScreen1: View {
     var body: some View {
         VStack(spacing: 30) {
             // Main title
-            Text(LocalizationKeys.transformYourProductivity.localized)
+                                   Text("Transform Your Productivity")
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
             
             // Description
-            Text(LocalizationKeys.discoverUltimateFocusCompanion.localized)
+                                   Text("Discover the ultimate focus companion that helps you accomplish more in less time. Our AI-powered app combines intelligent time management with personalized insights to boost your productivity and maintain work-life balance.")
                 .font(AppFonts.headline())
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
@@ -183,7 +183,7 @@ struct OnboardingScreen2: View {
     var body: some View {
         VStack(spacing: 25) {
             // Title
-            Text(LocalizationKeys.powerfulFeatures.localized)
+                                   Text("Powerful Features")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundColor(.white)                .padding(.top, 20)
             
@@ -211,13 +211,13 @@ struct OnboardingScreen3: View {
     var body: some View {
         VStack(spacing: 30) {
             // Title
-            Text(LocalizationKeys.readyToFocus.localized)
+                                   Text("Ready to Focus?")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .padding(.top, 20)
             
             // Description
-            Text(LocalizationKeys.startProductivityJourney.localized)
+                                   Text("Start your productivity journey today. Create tasks, set focus sessions, and watch your progress grow with our intelligent insights and recommendations.")
                 .font(AppFonts.headline())
                 .foregroundColor(.white)                .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
