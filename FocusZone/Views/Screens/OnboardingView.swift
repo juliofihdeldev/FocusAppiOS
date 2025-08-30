@@ -10,65 +10,22 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Beautiful gradient background inspired by the serene landscape
+            
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(red: 0.95, green: 0.97, blue: 1.0), // Light sky blue
-                    Color(red: 0.9, green: 0.95, blue: 1.0),  // Soft blue
-                    Color(red: 0.85, green: 0.9, blue: 0.98)  // Deeper blue
+                    Color.purple.opacity(0.8),
+                    Color.blue.opacity(0.6),
+                    Color.black
                 ]),
-                startPoint: .top,
-                endPoint: .bottom
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-            
-            Image("landscape")
-                .resizable()
-                .frame(maxWidth: .infinity)
-                .frame(height: 400)
-                .opacity(0.5)
             
             VStack(spacing: 0) {
                 // Top section with logo and category
                 VStack(spacing: 16) {
                     Spacer()
-                    
-                    // Logo section
-                    HStack {
-                        ZStack {
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.orange,
-                                            Color.orange.opacity(0.8)
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .frame(width: 50, height: 50)
-                                .shadow(color: .orange.opacity(0.3), radius: 10, x: 0, y: 5)
-                            
-                            Image(systemName: "brain.head.profile")
-                                .font(.system(size: 24, weight: .semibold))
-                                .foregroundColor(.white)
-                        }.padding(.horizontal)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("FocusZEN+")
-                                .font(.system(size: 20, weight: .bold, design: .rounded))
-                                .foregroundColor(.orange)
-                            
-                            Text("PRODUCTIVITY")
-                                .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(.orange.opacity(0.8))
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.horizontal, 24)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : -20)
                     
                     // Page content
                     TabView(selection: $currentPage) {
@@ -85,7 +42,7 @@ struct OnboardingView: View {
                             .tag(2)
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    .frame(height: 400)
+                    .frame(height: 500)
                     .opacity(animateContent ? 1 : 0)
                     .offset(y: animateContent ? 0 : 20)
                     
@@ -148,7 +105,7 @@ struct OnboardingView: View {
                     Button(action: completeOnboarding) {
                         Text("Skip")
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
+                            .foregroundColor(Color.white)
                     }
                     .padding(.top, 20)
                     .opacity(animateContent ? 1 : 0)
@@ -192,14 +149,14 @@ struct OnboardingScreen1: View {
             // Main title
             Text("Transform Your Productivity")
                 .font(.system(size: 32, weight: .bold, design: .rounded))
-                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
+                .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
             
             // Description
             Text("Discover the ultimate focus companion that helps you achieve more in less time. Our AI-powered app combines smart time management with personalized insights to boost your productivity and maintain work-life balance.")
-                .font(.system(size: 18, weight: .medium))
-                .foregroundColor(Color(red: 0.3, green: 0.4, blue: 0.6))
+                .font(AppFonts.headline())
+                .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
                 .lineLimit(6)
@@ -227,8 +184,7 @@ struct OnboardingScreen2: View {
             // Title
             Text("Powerful Features")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
-                .padding(.top, 20)
+                .foregroundColor(.white)                .padding(.top, 20)
             
             // Features grid
             LazyVGrid(columns: [
@@ -256,29 +212,23 @@ struct OnboardingScreen3: View {
             // Title
             Text("Ready to Focus?")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
+                .foregroundColor(.white)
                 .padding(.top, 20)
             
             // Description
             Text("Start your productivity journey today. Create tasks, set focus sessions, and watch your progress grow with our intelligent insights and recommendations.")
-                .font(.system(size: 18, weight: .medium))
-                .foregroundColor(Color(red: 0.3, green: 0.4, blue: 0.6))
-                .multilineTextAlignment(.center)
+                .font(AppFonts.headline())
+                .foregroundColor(.white)                .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
                 .lineLimit(5)
             
+            Spacer()
             // Beautiful Slider Get Started Button
             SliderGetStartedButton(
                 backgroundColor: Color.green,
                 onComplete: onComplete
             )
             .padding(.horizontal, 40)
-            
-            // Additional info
-            Text("Swipe to begin your focus journey")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4).opacity(0.7))
-                .padding(.top, 10)
         }
         .padding(.horizontal, 20)
     }
@@ -303,7 +253,7 @@ struct FeatureCard: View {
             }
             
             Text(title)
-                .font(.system(size: 14, weight: .medium))
+                .font(AppFonts.headline())
                 .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -351,7 +301,7 @@ struct SliderGetStartedButton: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: max(70, dragOffset + buttonHeight / 2), height: buttonHeight)
+                    .frame(width: max(60, dragOffset + buttonHeight / 2), height: buttonHeight)
                 
                 Spacer()
             }
