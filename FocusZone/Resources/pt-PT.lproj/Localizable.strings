@@ -1,0 +1,146 @@
+/*
+ * Portuguese Localization for FocusZen+ App
+ *
+ * This file contains all user-facing strings in Portuguese.
+ * Each string has a unique key that can be referenced in the code.
+ */
+
+"welcome_message" = "Bem-vindo ao Focus App";
+
+// MARK: - Common UI Elements
+"close" = "Fechar";
+"today" = "Hoje";
+"enable" = "Ativar";
+"later" = "Mais tarde";
+"active" = "Ativo";
+"now" = "AGORA";
+"live" = "AO VIVO";
+"next" = "PRÓXIMO";
+"tasks" = "tarefas";
+
+// MARK: - Task Management
+"create_task" = "Criar Tarefa";
+"update_task" = "Atualizar Tarefa";
+"no_tasks_today" = "Nenhuma tarefa para hoje";
+"add_first_task" = "Toque no botão + para criar sua primeira tarefa";
+"all_done" = "Tudo feito!";
+"great_work_today" = "Ótimo trabalho hoje";
+"no_tasks" = "Nenhuma Tarefa";
+"add_some_tasks" = "Adicione algumas tarefas";
+"focus" = "Foco";
+"today_focus" = "Foco de Hoje";
+
+// MARK: - Focus Modes
+"focus_mode" = "Modo Foco";
+"suggested_focus_mode" = "Sugestão: %@ para %@";
+
+// MARK: - Notifications
+"enable_notifications_title" = "Ativar Notificações";
+"enable_notifications_message" = "Ative as notificações para receber lembretes das suas tarefas e manter o foco!";
+"notifications_disabled" = "Notificações Desativadas";
+"enable_notifications_description" = "Ative para receber lembretes de tarefas";
+
+// MARK: - Pro Features
+"upgrade_to_pro" = "Atualizar para Pro";
+"pro" = "PRO";
+"free_trial_active" = "Teste gratuito ativo";
+"next_billing" = "Próxima cobrança: %@";
+"limited_features" = "Recursos limitados";
+"advanced_analytics_content" = "Conteúdo de Análise Avançada";
+
+// MARK: - Settings
+"settings" = "Configurações";
+"appearance" = "Aparência";
+"language" = "Idioma";
+"notifications" = "Notificações";
+"data" = "Dados";
+"about" = "Sobre";
+"dark_mode" = "Modo Escuro";
+"switch_light_dark_themes" = "Alternar entre temas claro e escuro";
+"task_reminders" = "Lembretes de Tarefas";
+"get_notified_tasks_starting" = "Receba notificações quando as tarefas começarem";
+"clear_all_data" = "Limpar Todos os Dados";
+"reset_all_tasks_settings" = "Redefinir todas as tarefas e configurações";
+"version" = "Versão";
+"contact_support" = "Contatar Suporte";
+"get_help_send_feedback" = "Obtenha ajuda ou envie feedback";
+"built_with_swiftui" = "Construído com SwiftUI";
+"focus_helps_stay_focused" = "Focus ajuda você a manter o foco";
+"stay_focused_achieve_more" = "Mantenha o foco, alcance mais";
+"focus_concentration" = "Concentração de Foco";
+"subscription" = "Assinatura";
+"restore_purchases" = "Restaurar Compras";
+"restore_subscription_device" = "Restaurar assinatura neste dispositivo";
+"manage_subscription" = "Gerenciar Assinatura";
+"change_cancel_subscription" = "Alterar ou cancelar assinatura";
+"unlock_all_features" = "Desbloquear todos os recursos";
+
+// MARK: - Settings Screen Specific
+"focus" = "Foco";
+"icloud_sync" = "Sincronização iCloud";
+"upgrade_to_pro" = "Atualizar para Pro";
+"unlock_all_features_boost_productivity" = "Desbloqueie todos os recursos e aumente sua produtividade";
+"restore_purchases" = "Restaurar Compras";
+"restore_subscription_another_device" = "Restaurar sua assinatura de outro dispositivo";
+"manage_subscription" = "Gerenciar Assinatura";
+"change_cancel_your_subscription" = "Alterar ou cancelar sua assinatura";
+"clear_all_data_confirmation" = "Limpar Todos os Dados";
+"clear_all_data_warning" = "Isso excluirá permanentemente todas as tarefas, configurações e dados do aplicativo. Esta ação não pode ser desfeita.";
+"cancel" = "Cancelar";
+"data_cleared" = "Dados Limpos";
+"ok" = "OK";
+"all_data_successfully_cleared" = "Todos os dados foram limpos com sucesso. O aplicativo será reiniciado para aplicar as alterações.";
+"error_clearing_data" = "Erro ao limpar dados: %@";
+"about_us" = "Sobre Nós";
+"version_1_0" = "Versão 1.0";
+"contact_support" = "Contatar Suporte";
+"get_help_send_feedback" = "Obtenha ajuda e envie feedback";
+
+// MARK: - About Sheet
+"about" = "Sobre";
+"done" = "Concluído";
+"about_focuszen_plus" = "Sobre FocusZen+";
+"focuszen_plus_description" = "FocusZen+ é seu companheiro de produtividade pessoal projetado para ajudá-lo a manter o foco, gerenciar tarefas com eficiência e alcançar seus objetivos através de gerenciamento inteligente de tempo e sessões de trabalho sem distrações.";
+"our_mission" = "Nossa Missão";
+"our_mission_description" = "Capacitar indivíduos a assumir o controle de seu tempo, eliminar distrações e criar progresso significativo em suas vidas pessoais e profissionais através de sessões de trabalho focadas e gerenciamento inteligente de tarefas.";
+"key_features" = "Recursos Principais";
+"focus_sessions" = "Sessões de Foco";
+"focus_sessions_description" = "Blocos de tempo dedicados para trabalho profundo";
+"ai_powered_insights" = "Insights Alimentados por IA";
+"ai_powered_insights_description" = "Sugestões inteligentes para melhor produtividade";
+"smart_notifications" = "Notificações Inteligentes";
+"smart_notifications_description" = "Lembretes inteligentes que não interrompem";
+"progress_tracking" = "Acompanhamento de Progresso";
+"progress_tracking_description" = "Insights visuais sobre sua produtividade";
+"customizable_focus_modes" = "Modos de Foco Personalizáveis";
+"customizable_focus_modes_description" = "Configurações adaptadas para diferentes tipos de trabalho";
+"built_with" = "Construído Com";
+"swiftui_ios_15" = "• SwiftUI & iOS 15+";
+"core_data_persistence" = "• Core Data para persistência";
+"widgetkit_home_screen" = "• WidgetKit para widgets da tela inicial";
+"localization_global_users" = "• Localização para usuários globais";
+"get_in_touch" = "Entre em Contato";
+"support_email" = "support@focuszenplus.app";
+"website_url" = "focuszenplus.app";
+"copyright_2024" = "© 2024 FocusZen+";
+"made_with_love_productivity" = "Feito com ❤️ para produtividade";
+
+// MARK: - Contact Sheet
+"contact_support" = "Contato & Suporte";
+"contact_support_description" = "Estamos aqui para ajudar! Entre em contato com nossa equipe de suporte ou envie-nos feedback.";
+"support_options" = "Opções de Suporte";
+"email_support" = "Suporte por Email";
+"get_help_via_email" = "Obtenha ajuda por email";
+"website" = "Site";
+"visit_website_help" = "Visite nosso site para obter ajuda";
+"faq_help_center" = "FAQ & Centro de Ajuda";
+"find_answers_common_questions" = "Encontre respostas para perguntas comuns";
+"send_feedback" = "Enviar Feedback";
+"rate_app" = "Avaliar o App";
+"share_experience_app_store" = "Compartilhe sua experiência na App Store";
+"feature_request" = "Solicitar Recurso";
+"suggest_new_features_improvements" = "Sugira novos recursos ou melhorias";
+"report_bug" = "Reportar Bug";
+"help_us_fix_issues" = "Ajude-nos a corrigir problemas que você encontrar";
+"response_time" = "Tempo de Resposta";
+"response_time_description" = "Geralmente respondemos em 24 horas durante dias úteis";

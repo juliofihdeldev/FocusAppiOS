@@ -1,7 +1,206 @@
-/* 
-  Localizable.strings
-  FocusZone
+/*
+ * French Localization for FocusZen+ App
+ *
+ * This file contains all user-facing strings in French.
+ * Each string has a unique key that can be referenced in the code.
+ */
 
-  Created by Julio J Fils on 8/30/25.
-  
-*/
+"welcome_message" = "Bienvenue dans l’application Focus";
+
+// MARK: - Common UI Elements
+"close" = "Fermer";
+"today" = "Aujourd’hui";
+"enable" = "Activer";
+"later" = "Plus tard";
+"active" = "Actif";
+"now" = "MAINTENANT";
+"live" = "EN DIRECT";
+"next" = "SUIVANT";
+"tasks" = "tâches";
+
+// MARK: - Task Management
+"create_task" = "Créer une tâche";
+"update_task" = "Modifier la tâche";
+"no_tasks_today" = "Aucune tâche pour aujourd’hui";
+"add_first_task" = "Appuyez sur le bouton + pour créer votre première tâche";
+"all_done" = "Tout est terminé !";
+"great_work_today" = "Beau travail aujourd’hui";
+"no_tasks" = "Aucune tâche";
+"add_some_tasks" = "Ajoutez des tâches";
+"focus" = "Concentration";
+"today_focus" = "Focus du jour";
+
+// MARK: - Focus Modes
+"focus_mode" = "Mode Concentration";
+"suggested_focus_mode" = "Suggestion : %@ pour %@";
+
+// MARK: - Notifications
+"enable_notifications_title" = "Activer les notifications";
+"enable_notifications_message" = "Activez les notifications pour recevoir des rappels et rester concentré !";
+"notifications_disabled" = "Notifications désactivées";
+"enable_notifications_description" = "Activez pour recevoir des rappels de tâches";
+
+// MARK: - Pro Features
+"upgrade_to_pro" = "Passer à Pro";
+"pro" = "PRO";
+"free_trial_active" = "Essai gratuit actif";
+"next_billing" = "Prochaine facturation : %@";
+"limited_features" = "Fonctionnalités limitées";
+"advanced_analytics_content" = "Analyses avancées";
+
+// MARK: - Settings
+"settings" = "Paramètres";
+"appearance" = "Apparence";
+"language" = "Langue";
+"notifications" = "Notifications";
+"data" = "Données";
+"about" = "À propos";
+"dark_mode" = "Mode sombre";
+"switch_light_dark_themes" = "Basculer entre le thème clair et sombre";
+"task_reminders" = "Rappels de tâches";
+"get_notified_tasks_starting" = "Recevez une notification lorsque les tâches commencent";
+"clear_all_data" = "Effacer toutes les données";
+"reset_all_tasks_settings" = "Réinitialiser toutes les tâches et paramètres";
+"version" = "Version";
+"contact_support" = "Contacter le support";
+"get_help_send_feedback" = "Obtenir de l'aide ou envoyer des commentaires";
+"built_with_swiftui" = "Conçu avec SwiftUI";
+"focus_helps_stay_focused" = "Focus vous aide à rester concentré";
+"stay_focused_achieve_more" = "Restez concentré, accomplissez davantage";
+"focus_concentration" = "Concentration";
+"subscription" = "Abonnement";
+"restore_purchases" = "Restaurer les achats";
+"restore_subscription_device" = "Restaurer l'abonnement sur cet appareil";
+"manage_subscription" = "Gérer l'abonnement";
+"change_cancel_subscription" = "Modifier ou annuler l'abonnement";
+"unlock_all_features" = "Débloquer toutes les fonctionnalités";
+
+// MARK: - Settings Screen Specific
+"focus" = "Concentration";
+"icloud_sync" = "Synchronisation iCloud";
+"upgrade_to_pro" = "Passer à Pro";
+"unlock_all_features_boost_productivity" = "Débloquez toutes les fonctionnalités et boostez votre productivité";
+"restore_purchases" = "Restaurer les achats";
+"restore_subscription_another_device" = "Restaurer votre abonnement depuis un autre appareil";
+"manage_subscription" = "Gérer l'abonnement";
+"change_cancel_your_subscription" = "Modifier ou annuler votre abonnement";
+"clear_all_data_confirmation" = "Effacer toutes les données";
+"clear_all_data_warning" = "Cela supprimera définitivement toutes les tâches, paramètres et données de l'application. Cette action ne peut pas être annulée.";
+"cancel" = "Annuler";
+"data_cleared" = "Données effacées";
+"ok" = "OK";
+"all_data_successfully_cleared" = "Toutes les données ont été effacées avec succès. L'application va maintenant redémarrer pour appliquer les changements.";
+"error_clearing_data" = "Erreur lors de l'effacement des données : %@";
+"about_us" = "À propos de nous";
+"version_1_0" = "Version 1.0";
+"contact_support" = "Contacter le support";
+"get_help_send_feedback" = "Obtenir de l'aide et envoyer des commentaires";
+
+// MARK: - About Sheet
+"about" = "À propos";
+"done" = "Terminé";
+"about_focuszen_plus" = "À propos de FocusZen+";
+"focuszen_plus_description" = "FocusZen+ est votre compagnon de productivité personnel conçu pour vous aider à rester concentré, gérer les tâches efficacement et atteindre vos objectifs grâce à une gestion intelligente du temps et des sessions de travail sans distraction.";
+"our_mission" = "Notre mission";
+"our_mission_description" = "Donner aux individus les moyens de prendre le contrôle de leur temps, d'éliminer les distractions et de créer des progrès significatifs dans leur vie personnelle et professionnelle grâce à des sessions de travail concentrées et une gestion intelligente des tâches.";
+"key_features" = "Fonctionnalités clés";
+"focus_sessions" = "Sessions de concentration";
+"focus_sessions_description" = "Blocs de temps dédiés au travail approfondi";
+"ai_powered_insights" = "Aperçus alimentés par l'IA";
+"ai_powered_insights_description" = "Suggestions intelligentes pour une meilleure productivité";
+"smart_notifications" = "Notifications intelligentes";
+"smart_notifications_description" = "Rappels intelligents qui n'interrompent pas";
+"progress_tracking" = "Suivi des progrès";
+"progress_tracking_description" = "Aperçus visuels de votre productivité";
+"customizable_focus_modes" = "Modes de concentration personnalisables";
+"customizable_focus_modes_description" = "Paramètres adaptés à différents types de travail";
+"built_with" = "Conçu avec";
+"swiftui_ios_15" = "• SwiftUI & iOS 15+";
+"core_data_persistence" = "• Core Data pour la persistance";
+"widgetkit_home_screen" = "• WidgetKit pour les widgets de l'écran d'accueil";
+"localization_global_users" = "• Localisation pour les utilisateurs mondiaux";
+"get_in_touch" = "Nous contacter";
+"support_email" = "support@focuszenplus.app";
+"website_url" = "focuszenplus.app";
+"copyright_2024" = "© 2024 FocusZen+";
+"made_with_love_productivity" = "Fait avec ❤️ pour la productivité";
+
+// MARK: - Contact Sheet
+"contact_support" = "Contact & Support";
+"contact_support_description" = "Nous sommes là pour vous aider ! Contactez notre équipe de support ou envoyez-nous vos commentaires.";
+"support_options" = "Options de support";
+"email_support" = "Support par email";
+"get_help_via_email" = "Obtenir de l'aide par email";
+"website" = "Site web";
+"visit_website_help" = "Visitez notre site web pour obtenir de l'aide";
+"faq_help_center" = "FAQ & Centre d'aide";
+"find_answers_common_questions" = "Trouvez des réponses aux questions courantes";
+"send_feedback" = "Envoyer des commentaires";
+"rate_app" = "Évaluer l'application";
+"share_experience_app_store" = "Partagez votre expérience sur l'App Store";
+"feature_request" = "Demande de fonctionnalité";
+"suggest_new_features_improvements" = "Suggérez de nouvelles fonctionnalités ou améliorations";
+"report_bug" = "Signaler un bug";
+"help_us_fix_issues" = "Aidez-nous à résoudre les problèmes que vous rencontrez";
+"response_time" = "Temps de réponse";
+"response_time_description" = "Nous répondons généralement dans les 24 heures pendant les jours ouvrables";
+
+// MARK: - Break Suggestions
+"long_task_stretch" = "Tâche longue - pause d’étirement recommandée";
+"quick_snack_time" = "Moment idéal pour une collation rapide";
+"movement_opportunity" = "Bonne occasion de bouger";
+"proper_rest_break" = "Il est temps de faire une vraie pause";
+"stay_hydrated" = "Restez hydraté pour une concentration optimale";
+"working_streak" = "Vous travaillez depuis %@ heures - il est temps de bouger !";
+"intense_work_rest" = "Session intense - le repos vous aidera à recharger";
+"mental_break_time" = "Moment parfait pour une pause mentale";
+"lunch_break" = "Faites le plein d’énergie avec une pause déjeuner";
+"fresh_air_break" = "Un peu d’air frais clarifiera votre esprit";
+"eye_break" = "Reposez vos yeux de l’écran";
+"social_connection" = "Connectez-vous aux autres pour améliorer votre humeur";
+
+// MARK: - Task Status
+"no_active_task" = "Aucune tâche active";
+"time_up" = "Le temps est écoulé !";
+
+// MARK: - Widget
+"configuration" = "Configuration";
+"widget_description" = "Ceci est un exemple de widget.";
+"favorite_emoji" = "Emoji préféré";
+"world" = "Monde";
+"focus_tracker" = "Suivi de concentration";
+"widget_description_long" = "Restez concentré avec vos tâches en cours et à venir en un coup d’œil.";
+"timer" = "Minuteur";
+"timer_on" = "Activé";
+"timer_off" = "Désactivé";
+"start_timer" = "Démarrer le minuteur";
+"timer_name_configuration" = "Configuration du nom du minuteur";
+"timer_name" = "Nom du minuteur";
+"start_timer_action" = "Démarrer un minuteur";
+"timer_is_running" = "Le minuteur est en cours";
+
+// MARK: - Task Types
+"work" = "Travail";
+"exercise" = "Exercice";
+"deep_work_session" = "Session de travail profond";
+"team_meeting" = "Réunion d’équipe";
+"morning_exercise" = "Exercice matinal";
+"code_review" = "Revue de code";
+
+// MARK: - Time and Duration
+"percentage_complete" = "%@% terminé";
+"time_remaining" = "Temps restant";
+"time_until_start" = "Temps avant le début";
+"formatted_time_range" = "Plage horaire";
+"formatted_start_time" = "Heure de début";
+
+// MARK: - Errors and Messages
+"failed_load_products" = "Échec du chargement des produits : %@";
+"product_not_available" = "Produit non disponible";
+"purchase_failed" = "Échec de l’achat : %@";
+"no_active_subscription" = "Aucun abonnement actif trouvé";
+"failed_restore_purchases" = "Échec de la restauration des achats : %@";
+
+
+// Welcome
+"welcome_message" = "Bienvenue dans l’application Focus";

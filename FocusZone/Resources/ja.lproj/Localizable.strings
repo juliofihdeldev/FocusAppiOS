@@ -1,0 +1,146 @@
+/*
+ * Japanese Localization for FocusZen+ App
+ *
+ * This file contains all user-facing strings in Japanese.
+ * Each string has a unique key that can be referenced in the code.
+ */
+
+"welcome_message" = "Focusアプリへようこそ";
+
+// MARK: - Common UI Elements
+"close" = "閉じる";
+"today" = "今日";
+"enable" = "有効にする";
+"later" = "後で";
+"active" = "アクティブ";
+"now" = "今";
+"live" = "ライブ";
+"next" = "次";
+"tasks" = "タスク";
+
+// MARK: - Task Management
+"create_task" = "タスクを作成";
+"update_task" = "タスクを更新";
+"no_tasks_today" = "今日のタスクはありません";
+"add_first_task" = "+ボタンをタップして最初のタスクを作成";
+"all_done" = "完了！";
+"great_work_today" = "今日もお疲れ様でした";
+"no_tasks" = "タスクなし";
+"add_some_tasks" = "タスクを追加してください";
+"focus" = "集中";
+"today_focus" = "今日の集中";
+
+// MARK: - Focus Modes
+"focus_mode" = "集中モード";
+"suggested_focus_mode" = "提案：%@で%@";
+
+// MARK: - Notifications
+"enable_notifications_title" = "通知を有効にする";
+"enable_notifications_message" = "タスクのリマインダーを受け取って集中を保つために通知を有効にしてください！";
+"notifications_disabled" = "通知が無効";
+"enable_notifications_description" = "タスクのリマインダーを受け取るために有効にする";
+
+// MARK: - Pro Features
+"upgrade_to_pro" = "Proにアップグレード";
+"pro" = "PRO";
+"free_trial_active" = "無料トライアル中";
+"next_billing" = "次回請求：%@";
+"limited_features" = "機能制限";
+"advanced_analytics_content" = "高度な分析コンテンツ";
+
+// MARK: - Settings
+"settings" = "設定";
+"appearance" = "外観";
+"language" = "言語";
+"notifications" = "通知";
+"data" = "データ";
+"about" = "について";
+"dark_mode" = "ダークモード";
+"switch_light_dark_themes" = "ライトテーマとダークテーマを切り替え";
+"task_reminders" = "タスクリマインダー";
+"get_notified_tasks_starting" = "タスクが開始する際に通知を受け取る";
+"clear_all_data" = "すべてのデータをクリア";
+"reset_all_tasks_settings" = "すべてのタスクと設定をリセット";
+"version" = "バージョン";
+"contact_support" = "サポートに連絡";
+"get_help_send_feedback" = "ヘルプを取得またはフィードバックを送信";
+"built_with_swiftui" = "SwiftUIで構築";
+"focus_helps_stay_focused" = "Focusは集中を保つのに役立ちます";
+"stay_focused_achieve_more" = "集中を保ち、より多くを達成";
+"focus_concentration" = "集中力";
+"subscription" = "サブスクリプション";
+"restore_purchases" = "購入を復元";
+"restore_subscription_device" = "このデバイスでサブスクリプションを復元";
+"manage_subscription" = "サブスクリプションを管理";
+"change_cancel_subscription" = "サブスクリプションを変更またはキャンセル";
+"unlock_all_features" = "すべての機能をアンロック";
+
+// MARK: - Settings Screen Specific
+"focus" = "集中";
+"icloud_sync" = "iCloud同期";
+"upgrade_to_pro" = "Proにアップグレード";
+"unlock_all_features_boost_productivity" = "すべての機能をアンロックして生産性を向上";
+"restore_purchases" = "購入を復元";
+"restore_subscription_another_device" = "別のデバイスからサブスクリプションを復元";
+"manage_subscription" = "サブスクリプションを管理";
+"change_cancel_your_subscription" = "サブスクリプションを変更またはキャンセル";
+"clear_all_data_confirmation" = "すべてのデータをクリア";
+"clear_all_data_warning" = "これにより、すべてのタスク、設定、アプリデータが永続的に削除されます。この操作は元に戻せません。";
+"cancel" = "キャンセル";
+"data_cleared" = "データがクリアされました";
+"ok" = "OK";
+"all_data_successfully_cleared" = "すべてのデータが正常にクリアされました。アプリは変更を適用するために再起動されます。";
+"error_clearing_data" = "データのクリア中にエラーが発生しました：%@";
+"about_us" = "私たちについて";
+"version_1_0" = "バージョン1.0";
+"contact_support" = "サポートに連絡";
+"get_help_send_feedback" = "ヘルプを取得してフィードバックを送信";
+
+// MARK: - About Sheet
+"about" = "について";
+"done" = "完了";
+"about_focuszen_plus" = "FocusZen+について";
+"focuszen_plus_description" = "FocusZen+は、インテリジェントな時間管理と集中を妨げない作業セッションを通じて、集中を保ち、タスクを効率的に管理し、目標を達成するのに役立つ個人向け生産性コンパニオンです。";
+"our_mission" = "私たちの使命";
+"our_mission_description" = "個人が時間をコントロールし、気を散らすものを排除し、集中した作業セッションとインテリジェントなタスク管理を通じて、個人生活と職業生活で意味のある進歩を創造する力を与えることです。";
+"key_features" = "主要機能";
+"focus_sessions" = "集中セッション";
+"focus_sessions_description" = "深い作業のための専用時間ブロック";
+"ai_powered_insights" = "AI駆動の洞察";
+"ai_powered_insights_description" = "より良い生産性のためのスマートな提案";
+"smart_notifications" = "スマート通知";
+"smart_notifications_description" = "中断しないインテリジェントなリマインダー";
+"progress_tracking" = "進捗追跡";
+"progress_tracking_description" = "生産性に関する視覚的な洞察";
+"customizable_focus_modes" = "カスタマイズ可能な集中モード";
+"customizable_focus_modes_description" = "異なる作業タイプに合わせた設定";
+"built_with" = "構築に使用";
+"swiftui_ios_15" = "• SwiftUI & iOS 15+";
+"core_data_persistence" = "• 永続化のためのCore Data";
+"widgetkit_home_screen" = "• ホーム画面ウィジェット用のWidgetKit";
+"localization_global_users" = "• グローバルユーザー向けのローカライゼーション";
+"get_in_touch" = "お問い合わせ";
+"support_email" = "support@focuszenplus.app";
+"website_url" = "focuszenplus.app";
+"copyright_2024" = "© 2024 FocusZen+";
+"made_with_love_productivity" = "生産性のために❤️で作られました";
+
+// MARK: - Contact Sheet
+"contact_support" = "お問い合わせ & サポート";
+"contact_support_description" = "お手伝いします！サポートチームにお問い合わせいただくか、フィードバックをお送りください。";
+"support_options" = "サポートオプション";
+"email_support" = "メールサポート";
+"get_help_via_email" = "メールでヘルプを取得";
+"website" = "ウェブサイト";
+"visit_website_help" = "ヘルプのためにウェブサイトをご覧ください";
+"faq_help_center" = "FAQ & ヘルプセンター";
+"find_answers_common_questions" = "よくある質問の答えを見つける";
+"send_feedback" = "フィードバックを送信";
+"rate_app" = "アプリを評価";
+"share_experience_app_store" = "App Storeで体験を共有";
+"feature_request" = "機能リクエスト";
+"suggest_new_features_improvements" = "新しい機能や改善を提案";
+"report_bug" = "バグを報告";
+"help_us_fix_issues" = "遭遇した問題の修正を支援";
+"response_time" = "応答時間";
+"response_time_description" = "通常、営業日中の24時間以内に応答いたします";
