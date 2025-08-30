@@ -56,5 +56,14 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>fr</string>
+		<string>es</string>
+		<string>it</string>
+		<string>pt-PT</string>
+		<string>ja</string>
+	</array>
 </dict>
 </plist>

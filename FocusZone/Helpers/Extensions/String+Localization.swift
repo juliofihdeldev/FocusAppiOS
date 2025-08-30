@@ -153,4 +153,14 @@ struct LocalizationKeys {
     static let purchaseFailed = "purchase_failed"
     static let noActiveSubscription = "no_active_subscription"
     static let failedRestorePurchases = "failed_restore_purchases"
+    
+    // MARK: - Onboarding
+    static let previous = "previous"
+    static let skip = "skip"
+    static let transformYourProductivity = "transform_your_productivity"
+    static let discoverUltimateFocusCompanion = "discover_ultimate_focus_companion"
+    static let powerfulFeatures = "powerful_features"
+    static let readyToFocus = "ready_to_focus"
+    static let startProductivityJourney = "start_productivity_jney"
+    static let swipeToBeginJourney = "swipe_to_begin_journey"
 }

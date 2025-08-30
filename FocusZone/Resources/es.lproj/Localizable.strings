@@ -1,103 +1,229 @@
 /* 
- * English Localization for FocusZen+ App
+ * Localización en español para la aplicación FocusZen+
  * 
- * This file contains all user-facing strings in English.
- * Each string has a unique key that can be referenced in the code.
+ * Este archivo contiene todas las cadenas visibles para el usuario en español.
+ * Cada cadena tiene una clave única que puede ser referenciada en el código.
  */
 
-// MARK: - Common UI Elements
-"close" = "Close";
-"today" = "Today";
-"enable" = "Enable";
-"later" = "Later";
-"active" = "Active";
-"now" = "NOW";
-"live" = "LIVE";
-"next" = "NEXT";
-"tasks" = "tasks";
+// MARK: - Elementos de interfaz comunes
+"close" = "Cerrar";
+"today" = "Hoy";
+"enable" = "Activar";
+"later" = "Más tarde";
+"active" = "Activo";
+"now" = "AHORA";
+"live" = "EN VIVO";
+"next" = "SIGUIENTE";
+"tasks" = "tareas";
 
-// MARK: - Task Management
-"create_task" = "Create Task";
-"update_task" = "Update Task";
-"no_tasks_today" = "No tasks for today";
-"add_first_task" = "Tap the + button to create your first task";
-"all_done" = "All Done!";
-"great_work_today" = "Great work today";
-"no_tasks" = "No Tasks";
-"add_some_tasks" = "Add some tasks";
-"focus" = "Focus";
-"today_focus" = "Today's Focus";
+// MARK: - Gestión de tareas
+"create_task" = "Crear tarea";
+"update_task" = "Actualizar tarea";
+"no_tasks_today" = "No hay tareas para hoy";
+"add_first_task" = "Toca el botón + para crear tu primera tarea";
+"all_done" = "¡Todo hecho!";
+"great_work_today" = "¡Excelente trabajo hoy!";
+"no_tasks" = "Sin tareas";
+"add_some_tasks" = "Agrega algunas tareas";
+"focus" = "Concentración";
+"today_focus" = "Concentración de hoy";
 
-// MARK: - Focus Modes
-"focus_mode" = "Focus Mode";
-"suggested_focus_mode" = "Suggested: %@ for %@";
+// MARK: - Modos de concentración
+"focus_mode" = "Modo de concentración";
+"suggested_focus_mode" = "Sugerido: %@ para %@";
 
-// MARK: - Notifications
-"enable_notifications_title" = "Enable Notifications";
-"enable_notifications_message" = "Enable notifications to get reminders for your tasks and stay focused!";
-"notifications_disabled" = "Notifications Disabled";
-"enable_notifications_description" = "Enable to get task reminders";
+// MARK: - Notificaciones
+"enable_notifications_title" = "Activar notificaciones";
+"enable_notifications_message" = "¡Activa las notificaciones para recibir recordatorios de tus tareas y mantenerte concentrado!";
+"notifications_disabled" = "Notificaciones desactivadas";
+"enable_notifications_description" = "Activa para recibir recordatorios de tareas";
 
-// MARK: - Pro Features
-"upgrade_to_pro" = "Upgrade to Pro";
+// MARK: - Funcionalidades Pro
+"upgrade_to_pro" = "Actualizar a Pro";
 "pro" = "PRO";
-"free_trial_active" = "Free trial active";
-"next_billing" = "Next billing: %@";
-"limited_features" = "Limited features";
-"advanced_analytics_content" = "Advanced Analytics Content";
+"free_trial_active" = "Prueba gratuita activa";
+"next_billing" = "Próxima facturación: %@";
+"limited_features" = "Funcionalidades limitadas";
+"advanced_analytics_content" = "Contenido de análisis avanzado";
 
-// MARK: - Break Suggestions
-"long_task_stretch" = "Long task - stretch break recommended";
-"quick_snack_time" = "Perfect time for a quick snack";
-"movement_opportunity" = "Good opportunity for movement";
-"proper_rest_break" = "Time for a proper rest break";
-"stay_hydrated" = "Stay hydrated for optimal focus";
-"working_streak" = "You've been working for %@ hours - time to move!";
-"intense_work_rest" = "Intense work session - rest will help you recharge";
-"mental_break_time" = "Perfect time for a mental break";
-"lunch_break" = "Fuel up with a healthy lunch break";
-"fresh_air_break" = "Fresh air will clear your mind and boost alertness";
-"eye_break" = "Give your eyes a break from the screen";
-"social_connection" = "Connect with others to boost your mood";
+// MARK: - Sugerencias de descanso
+"long_task_stretch" = "Tarea larga - descanso de estiramiento recomendado";
+"quick_snack_time" = "Momento perfecto para un refrigerio rápido";
+"movement_opportunity" = "Buena oportunidad para moverse";
+"proper_rest_break" = "Tiempo para un verdadero descanso";
+"stay_hydrated" = "Mantente hidratado para una concentración óptima";
+"working_streak" = "Has estado trabajando por %@ horas - ¡es hora de moverse!";
+"intense_work_rest" = "Sesión de trabajo intenso - el descanso te ayudará a recargar";
+"mental_break_time" = "Momento perfecto para un descanso mental";
+"lunch_break" = "Recárgate con un descanso para almorzar saludable";
+"fresh_air_break" = "El aire fresco aclarará tu mente y aumentará tu alerta";
+"eye_break" = "Dale un descanso a tus ojos de la pantalla";
+"social_connection" = "Conéctate con otros para mejorar tu estado de ánimo";
 
-// MARK: - Task Status
-"no_active_task" = "No active task";
-"time_up" = "Time's up!";
+// MARK: - Estado de las tareas
+"no_active_task" = "No hay tarea activa";
+"time_up" = "¡Se acabó el tiempo!";
 
 // MARK: - Widget
-"configuration" = "Configuration";
-"widget_description" = "This is an example widget.";
-"favorite_emoji" = "Favorite Emoji";
-"world" = "World";
-"focus_tracker" = "Focus Tracker";
-"widget_description_long" = "Stay focused with your current and upcoming tasks at a glance.";
-"timer" = "Timer";
-"timer_on" = "On";
-"timer_off" = "Off";
-"start_timer" = "Start Timer";
-"timer_name_configuration" = "Timer Name Configuration";
-"timer_name" = "Timer Name";
-"start_timer_action" = "Start a timer";
-"timer_is_running" = "Timer is running";
+"configuration" = "Configuración";
+"widget_description" = "Este es un widget de ejemplo.";
+"favorite_emoji" = "Emoji favorito";
+"world" = "Mundo";
+"focus_tracker" = "Rastreador de concentración";
+"widget_description_long" = "Mantente concentrado con tus tareas actuales y próximas de un vistazo.";
+"timer" = "Temporizador";
+"timer_on" = "Activado";
+"timer_off" = "Desactivado";
+"start_timer" = "Iniciar temporizador";
+"timer_name_configuration" = "Configuración del nombre del temporizador";
+"timer_name" = "Nombre del temporizador";
+"start_timer_action" = "Iniciar un temporizador";
+"timer_is_running" = "El temporizador está funcionando";
 
-// MARK: - Task Types
-"work" = "Work";
-"exercise" = "Exercise";
-"deep_work_session" = "Deep Work Session";
-"team_meeting" = "Team Meeting";
-"morning_exercise" = "Morning Exercise";
-"code_review" = "Code Review";
+// MARK: - Tipos de tareas
+"work" = "Trabajo";
+"exercise" = "Ejercicio";
+"deep_work_session" = "Sesión de trabajo profundo";
+"team_meeting" = "Reunión de equipo";
+"morning_exercise" = "Ejercicio matutino";
+"code_review" = "Revisión de código";
 
-// MARK: - Time and Duration
-"percentage_complete" = "%@% complete";
-"time_remaining" = "Time remaining";
-"time_until_start" = "Time until start";
-"formatted_time_range" = "Time range";
-"formatted_start_time" = "Start time";
+// MARK: - Tiempo y duración
+"percentage_complete" = "%@% completo";
+"time_remaining" = "Tiempo restante";
+"time_until_start" = "Tiempo hasta el inicio";
+"formatted_time_range" = "Rango de tiempo";
+"formatted_start_time" = "Hora de inicio";
 
-// MARK: - Errors and Messages
-"failed_load_products" = "Failed to load products: %@";
-"product_not_available" = "Product not available";
-"purchase_failed" = "Purchase failed: %@";
-"no_active_subscription" = "No active subscription found";
-"failed_restore_purchases" = "Failed to restore purchases: %@";
+// MARK: - Errores y mensajes
+"failed_load_products" = "Error al cargar productos: %@";
+"product_not_available" = "Producto no disponible";
+"purchase_failed" = "Error en la compra: %@";
+"no_active_subscription" = "No se encontró suscripción activa";
+"failed_restore_purchases" = "Error al restaurar compras: %@";
+
+// MARK: - Onboarding
+"previous" = "Anterior";
+"next" = "Siguiente";
+"skip" = "Saltar";
+"transform_your_productivity" = "Transforma tu productividad";
+"discover_ultimate_focus_companion" = "Descubre el compañero de concentración definitivo que te ayuda a lograr más en menos tiempo. Nuestra aplicación impulsada por IA combina la gestión inteligente del tiempo con insights personalizados para impulsar tu productividad y mantener el equilibrio trabajo-vida.";
+"powerful_features" = "Funcionalidades poderosas";
+"ready_to_focus" = "¿Listo para concentrarte?";
+"start_productivity_jney" = "Comienza tu viaje de productividad hoy. Crea tareas, establece sesiones de concentración y observa tu progreso crecer con nuestros insights inteligentes y recomendaciones.";
+"swipe_to_begin_journey" = "Desliza para comenzar tu viaje de concentración";
+
+// MARK: - Configuración
+"settings" = "Configuración";
+"appearance" = "Apariencia";
+"language" = "Idioma";
+"notifications" = "Notificaciones";
+"data" = "Datos";
+"about" = "Acerca de";
+"dark_mode" = "Modo oscuro";
+"switch_light_dark_themes" = "Cambiar entre temas claros y oscuros";
+"task_reminders" = "Recordatorios de tareas";
+"get_notified_tasks_starting" = "Recibe notificaciones cuando tus tareas comiencen";
+"clear_all_data" = "Borrar todos los datos";
+"reset_all_tasks_settings" = "Restablecer todas las configuraciones de tareas";
+"version" = "Versión";
+"contact_support" = "Contactar soporte";
+"get_help_send_feedback" = "Obtener ayuda y enviar comentarios";
+"built_with_swiftui" = "Construido con SwiftUI";
+"focus_helps_stay_focused" = "La concentración ayuda a mantenerse enfocado";
+"stay_focused_achieve_more" = "Mantente concentrado, logra más";
+
+// MARK: - Suscripción
+"subscription" = "Suscripción";
+"restore_purchases" = "Restaurar compras";
+"restore_subscription_device" = "Restaurar suscripción en este dispositivo";
+"manage_subscription" = "Gestionar suscripción";
+"change_cancel_subscription" = "Cambiar o cancelar suscripción";
+"unlock_all_features" = "Desbloquear todas las funcionalidades";
+
+// MARK: - Gestión de tareas
+"create_task" = "Crear tarea";
+"update_task" = "Actualizar tarea";
+"no_tasks_today" = "No hay tareas para hoy";
+"add_first_task" = "Toca el botón + para crear tu primera tarea";
+"all_done" = "¡Todo hecho!";
+"great_work_today" = "¡Excelente trabajo hoy!";
+"no_tasks" = "Sin tareas";
+"add_some_tasks" = "Agrega algunas tareas";
+"focus" = "Concentración";
+"today_focus" = "Concentración de hoy";
+"focus_concentration" = "Concentración";
+
+// MARK: - Modos de concentración
+"focus_mode" = "Modo de concentración";
+"suggested_focus_mode" = "Sugerido: %@ para %@";
+
+// MARK: - Notificaciones
+"enable_notifications_title" = "Activar notificaciones";
+"enable_notifications_message" = "¡Activa las notificaciones para recibir recordatorios de tus tareas y mantenerte concentrado!";
+"notifications_disabled" = "Notificaciones desactivadas";
+"enable_notifications_description" = "Activa para recibir recordatorios de tareas";
+
+// MARK: - Funcionalidades Pro
+"upgrade_to_pro" = "Actualizar a Pro";
+"pro" = "PRO";
+"free_trial_active" = "Prueba gratuita activa";
+"next_billing" = "Próxima facturación: %@";
+"limited_features" = "Funcionalidades limitadas";
+"advanced_analytics_content" = "Contenido de análisis avanzado";
+
+// MARK: - Sugerencias de descanso
+"long_task_stretch" = "Tarea larga - descanso de estiramiento recomendado";
+"quick_snack_time" = "Momento perfecto para un refrigerio rápido";
+"movement_opportunity" = "Buena oportunidad para moverse";
+"proper_rest_break" = "Tiempo para un verdadero descanso";
+"stay_hydrated" = "Mantente hidratado para una concentración óptima";
+"working_streak" = "Has estado trabajando por %@ horas - ¡es hora de moverse!";
+"intense_work_rest" = "Sesión de trabajo intenso - el descanso te ayudará a recargar";
+"mental_break_time" = "Momento perfecto para un descanso mental";
+"lunch_break" = "Recárgate con un descanso para almorzar saludable";
+"fresh_air_break" = "El aire fresco aclarará tu mente y aumentará tu alerta";
+"eye_break" = "Dale un descanso a tus ojos de la pantalla";
+"social_connection" = "Conéctate con otros para mejorar tu estado de ánimo";
+
+// MARK: - Estado de las tareas
+"no_active_task" = "No hay tarea activa";
+"time_up" = "¡Se acabó el tiempo!";
+
+// MARK: - Widget
+"configuration" = "Configuración";
+"widget_description" = "Este es un widget de ejemplo.";
+"favorite_emoji" = "Emoji favorito";
+"world" = "Mundo";
+"focus_tracker" = "Rastreador de concentración";
+"widget_description_long" = "Mantente concentrado con tus tareas actuales y próximas de un vistazo.";
+"timer" = "Temporizador";
+"timer_on" = "Activado";
+"timer_off" = "Desactivado";
+"start_timer" = "Iniciar temporizador";
+"timer_name_configuration" = "Configuración del nombre del temporizador";
+"timer_name" = "Nombre del temporizador";
+"start_timer_action" = "Iniciar un temporizador";
+"timer_is_running" = "El temporizador está funcionando";
+
+// MARK: - Tipos de tareas
+"work" = "Trabajo";
+"exercise" = "Ejercicio";
+"deep_work_session" = "Sesión de trabajo profundo";
+"team_meeting" = "Reunión de equipo";
+"morning_exercise" = "Ejercicio matutino";
+"code_review" = "Revisión de código";
+
+// MARK: - Tiempo y duración
+"percentage_complete" = "%@% completo";
+"time_remaining" = "Tiempo restante";
+"time_until_start" = "Tiempo hasta el inicio";
+"formatted_time_range" = "Rango de tiempo";
+"formatted_start_time" = "Hora de inicio";
+
+// MARK: - Errores y mensajes
+"failed_load_products" = "Error al cargar productos: %@";
+"product_not_available" = "Producto no disponible";
+"purchase_failed" = "Error en la compra: %@";
+"no_active_subscription" = "No se encontró suscripción activa";
+"failed_restore_purchases" = "Error al restaurar compras: %@";

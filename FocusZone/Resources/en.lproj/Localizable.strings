@@ -101,3 +101,14 @@
 "purchase_failed" = "Purchase failed: %@";
 "no_active_subscription" = "No active subscription found";
 "failed_restore_purchases" = "Failed to restore purchases: %@";
+
+// MARK: - Onboarding
+"previous" = "Previous";
+"next" = "Next";
+"skip" = "Skip";
+"transform_your_productivity" = "Transform Your Productivity";
+"discover_ultimate_focus_companion" = "Discover the ultimate focus companion that helps you achieve more in less time. Our AI-powered app combines smart time management with personalized insights to boost your productivity and maintain work-life balance.";
+"powerful_features" = "Powerful Features";
+"ready_to_focus" = "Ready to Focus?";
+"start_productivity_jney" = "Start your productivity journey today. Create tasks, set focus sessions, and watch your progress grow with our intelligent insights and recommendations.";
+"swipe_to_begin_journey" = "Swipe to begin your focus journey";
