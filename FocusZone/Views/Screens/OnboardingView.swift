@@ -61,7 +61,8 @@ struct OnboardingView: View {
                     // Navigation buttons
                     HStack(spacing: 20) {
                         // Previous button (hidden on first page)
-                        if currentPage > 0 {
+                        if currentPage > 0 &&
+                            currentPage < totalPages - 1  {
                             Button(action: previousPage) {
                                 HStack {
                                     Image(systemName: "chevron.left")
