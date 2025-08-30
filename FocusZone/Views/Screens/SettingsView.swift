@@ -30,7 +30,7 @@ struct SettingsView: View {
                     VStack(spacing: 20) {
                         subscriptionSection
 //                     TODO:   appearanceSection
-//                     TODO:   languageSection
+                      languageSection
                         notificationSection
                         dataSection
                         focusSection
