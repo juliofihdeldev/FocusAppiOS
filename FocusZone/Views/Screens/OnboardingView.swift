@@ -222,7 +222,17 @@ struct OnboardingScreen3: View {
                 .foregroundColor(.white)                .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
                 .lineLimit(5)
-            
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(Color.orange.opacity(0.1))
+                    .frame(width: 120, height: 120)
+                
+                Image(systemName: "brain.head.profile")
+                    .font(.system(size: 50, weight: .semibold))
+                    .foregroundColor(.orange)
+            }
+            .padding(.top, 20)
             Spacer()
             // Beautiful Slider Get Started Button
             SliderGetStartedButton(
