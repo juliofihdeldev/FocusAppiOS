@@ -201,6 +201,15 @@
 "no_active_subscription" = "Aucun abonnement actif trouvé";
 "failed_restore_purchases" = "Échec de la restauration des achats : %@";
 
+// MARK: - Language Selection
+"language" = "Langue";
+"language_selection" = "Sélection de la langue";
+"system_default" = "Par défaut du système";
+"language_change_restart_required" = "Le changement de langue nécessite un redémarrage";
+"language_change_restart_message" = "L'application doit redémarrer pour appliquer le changement de langue. Voulez-vous redémarrer maintenant ou plus tard ?";
+"restart_now" = "Redémarrer maintenant";
+"restart_later" = "Redémarrer plus tard";
+
 
 // Welcome
 "welcome_message" = "Bienvenue dans l’application Focus";

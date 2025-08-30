@@ -144,3 +144,12 @@
 "help_us_fix_issues" = "Aiutaci a risolvere i problemi che incontri";
 "response_time" = "Tempo di Risposta";
 "response_time_description" = "Di solito rispondiamo entro 24 ore durante i giorni lavorativi";
+
+// MARK: - Language Selection
+"language" = "Lingua";
+"language_selection" = "Selezione Lingua";
+"system_default" = "Predefinito di sistema";
+"language_change_restart_required" = "Cambio Lingua Richiede Riavvio";
+"language_change_restart_message" = "L'app deve essere riavviata per applicare il cambio di lingua. Vuoi riavviare ora o più tardi?";
+"restart_now" = "Riavvia Ora";
+"restart_later" = "Riavvia Più Tardi";

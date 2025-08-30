@@ -144,3 +144,12 @@
 "help_us_fix_issues" = "遭遇した問題の修正を支援";
 "response_time" = "応答時間";
 "response_time_description" = "通常、営業日中の24時間以内に応答いたします";
+
+// MARK: - Language Selection
+"language" = "言語";
+"language_selection" = "言語選択";
+"system_default" = "システムデフォルト";
+"language_change_restart_required" = "言語変更には再起動が必要です";
+"language_change_restart_message" = "言語変更を適用するにはアプリを再起動する必要があります。今すぐ再起動しますか、それとも後でしますか？";
+"restart_now" = "今すぐ再起動";
+"restart_later" = "後で再起動";

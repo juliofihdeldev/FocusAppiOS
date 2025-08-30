@@ -18,6 +18,8 @@ struct SettingsView: View {
     @StateObject private var subscriptionManager = SubscriptionManager.shared
 
     @StateObject private var cloudSyncManager = CloudSyncManager()
+    @StateObject private var languageManager = LanguageManager.shared
+    @State private var showingLanguageSelection = false
     
     var body: some View {
         NavigationView {
@@ -29,7 +31,7 @@ struct SettingsView: View {
                     // Settings Sections
                     VStack(spacing: 20) {
                         subscriptionSection
-//                     TODO:   appearanceSection
+                        appearanceSection
                         notificationSection
                         dataSection
                         focusSection
@@ -56,6 +58,9 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+        }
+        .sheet(isPresented: $showingLanguageSelection) {
+            LanguageSelectionSheet(languageManager: languageManager)
         }
 
         .confirmationDialog(
@@ -260,13 +265,23 @@ struct SettingsView: View {
     
     // MARK: - Appearance Section
     private var appearanceSection: some View {
-        SettingsSection(title: "Appearance", icon: "paintbrush") {
+        SettingsSection(title: NSLocalizedString("appearance", comment: "Appearance section title"), icon: "paintbrush") {
             VStack(spacing: 0) {
                 SettingsToggleRow(
-                    title: "Dark Mode",
-                    subtitle: "Switch between light and dark themes",
+                    title: NSLocalizedString("dark_mode", comment: "Dark mode toggle title"),
+                    subtitle: NSLocalizedString("switch_light_dark_themes", comment: "Dark mode toggle description"),
                     icon: "moon.circle.fill",
                     isOn: $theme.isDarkMode
+                )
+                
+                Divider()
+                    .padding(.leading, 52)
+                
+                SettingsNavigationRow(
+                    title: NSLocalizedString("language", comment: "Language selection button title"),
+                    subtitle: "\(languageManager.getCurrentLanguageFlag()) \(languageManager.getCurrentLanguageDisplayName())",
+                    icon: "globe",
+                    action: { showingLanguageSelection = true }
                 )
             }
         }
@@ -980,4 +995,89 @@ struct ContactOptionRow: View {
 #Preview {
     SettingsView()
         .environmentObject(ThemeManager())
+}
+
+// MARK: - Language Selection Sheet
+struct LanguageSelectionSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var languageManager: LanguageManager
+    @State private var selectedLanguage: String
+    @State private var showingRestartAlert = false
+    
+    init(languageManager: LanguageManager) {
+        self.languageManager = languageManager
+        self._selectedLanguage = State(initialValue: languageManager.currentLanguage)
+    }
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(languageManager.supportedLanguages, id: \.0) { language in
+                    Button(action: {
+                        selectedLanguage = language.0
+                    }) {
+                        HStack(spacing: 16) {
+                            Text(language.2)
+                                .font(.title2)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(language.1)
+                                    .font(AppFonts.body())
+                                    .foregroundColor(AppColors.textPrimary)
+                                    .fontWeight(.medium)
+                                
+                                if language.0 == "en" {
+                                    Text(NSLocalizedString("system_default", comment: "System default language description"))
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if selectedLanguage == language.0 {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(AppColors.accent)
+                                    .font(.title2)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .navigationTitle(NSLocalizedString("language", comment: "Language selection navigation title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(NSLocalizedString("cancel", comment: "Cancel button title")) {
+                        dismiss()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(NSLocalizedString("done", comment: "Done button title")) {
+                        if selectedLanguage != languageManager.currentLanguage {
+                            languageManager.currentLanguage = selectedLanguage
+                            showingRestartAlert = true
+                        } else {
+                            dismiss()
+                        }
+                    }
+                    .disabled(selectedLanguage == languageManager.currentLanguage)
+                }
+            }
+        }
+        .alert(NSLocalizedString("language_change_restart_required", comment: "Language change restart alert title"), isPresented: $showingRestartAlert) {
+            Button(NSLocalizedString("restart_now", comment: "Restart now button"), role: .destructive) {
+                // Restart the app
+                exit(0)
+            }
+            Button(NSLocalizedString("restart_later", comment: "Restart later button"), role: .cancel) {
+                dismiss()
+            }
+        } message: {
+            Text(NSLocalizedString("language_change_restart_message", comment: "Language change restart message"))
+        }
+    }
 }

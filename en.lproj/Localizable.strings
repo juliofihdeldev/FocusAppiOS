@@ -201,6 +201,15 @@
 "no_active_subscription" = "No active subscription found";
 "failed_restore_purchases" = "Failed to restore purchases: %@";
 
+// MARK: - Language Selection
+"language" = "Language";
+"language_selection" = "Language Selection";
+"system_default" = "System default";
+"language_change_restart_required" = "Language Change Requires Restart";
+"language_change_restart_message" = "The app needs to restart to apply the language change. Would you like to restart now or later?";
+"restart_now" = "Restart Now";
+"restart_later" = "Restart Later";
+
 
 // Welcome
 

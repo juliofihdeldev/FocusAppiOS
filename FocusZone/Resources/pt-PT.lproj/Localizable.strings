@@ -144,3 +144,12 @@
 "help_us_fix_issues" = "Ajude-nos a corrigir problemas que você encontrar";
 "response_time" = "Tempo de Resposta";
 "response_time_description" = "Geralmente respondemos em 24 horas durante dias úteis";
+
+// MARK: - Language Selection
+"language" = "Idioma";
+"language_selection" = "Seleção de Idioma";
+"system_default" = "Padrão do sistema";
+"language_change_restart_required" = "Mudança de Idioma Requer Reinicialização";
+"language_change_restart_message" = "O aplicativo precisa ser reiniciado para aplicar a mudança de idioma. Deseja reiniciar agora ou mais tarde?";
+"restart_now" = "Reiniciar Agora";
+"restart_later" = "Reiniciar Mais Tarde";

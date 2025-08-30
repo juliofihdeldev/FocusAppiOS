@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the localization implementation for the FocusZone app's Settings screen. The implementation provides full localization support for 5 languages: English, French, Portuguese, Italian, and Japanese.
+This document summarizes the localization implementation for the FocusZone app's Settings screen. The implementation provides full localization support for 5 languages: English, French, Portuguese, Italian, and Japanese. **NEW: Users can now select their preferred language directly from the Settings screen.**
 
 ## What Was Implemented
 
@@ -23,6 +23,9 @@ This document summarizes the localization implementation for the FocusZone app's
 -   App tagline ("Stay focused, achieve more")
 -   Upgrade to Pro section
 -   Subscription management options
+-   **Appearance section (NEW)**
+    -   Dark Mode toggle
+    -   **Language selection (NEW)**
 -   Focus section
 -   Notifications section
 -   Data section
@@ -47,11 +50,19 @@ This document summarizes the localization implementation for the FocusZone app's
 -   Feedback options (Rate App, Feature Request, Report Bug)
 -   Response time information
 
+#### **Language Selection Sheet (NEW)**
+
+-   Language picker with flags and names
+-   Current language indicator
+-   System default option for English
+-   Restart prompt for language changes
+
 #### Confirmation Dialogs & Alerts
 
 -   Clear All Data confirmation dialog
 -   Data cleared success alert
 -   Error messages for data clearing
+-   **Language change restart alert (NEW)**
 
 ### 3. Localization Keys Added
 
@@ -71,6 +82,19 @@ This document summarizes the localization implementation for the FocusZone app's
 -   `notifications` - Notifications section title
 -   `data` - Data section title
 -   `about` - About section title
+
+#### **Appearance & Language (NEW)**
+
+-   `appearance` - Appearance section title
+-   `dark_mode` - Dark mode toggle title
+-   `switch_light_dark_themes` - Dark mode toggle description
+-   `language` - Language selection button title
+-   `language_selection` - Language selection navigation title
+-   `system_default` - System default language description
+-   `language_change_restart_required` - Language change restart alert title
+-   `language_change_restart_message` - Language change restart message
+-   `restart_now` - Restart now button
+-   `restart_later` - Restart later button
 
 #### Data Management
 
@@ -132,6 +156,9 @@ This document summarizes the localization implementation for the FocusZone app's
 -   Updated `SettingsView.swift` to use `NSLocalizedString()` for all user-facing text
 -   Replaced hardcoded strings with localization keys
 -   Added proper comments for each localized string
+-   **NEW: Added `LanguageManager.swift` service for language management**
+-   **NEW: Added language selection UI in Appearance section**
+-   **NEW: Added `LanguageSelectionSheet` for language picker**
 
 ### 2. Language Support
 
@@ -147,6 +174,14 @@ This document summarizes the localization implementation for the FocusZone app's
 -   `Localizable.strings` files contain key-value pairs
 -   `Localizable.xcstrings` provides centralized key management
 -   Consistent naming convention for all localization keys
+
+### 4. **Language Management (NEW)**
+
+-   **LanguageManager**: Singleton service for language selection and persistence
+-   **UserDefaults Integration**: Saves selected language preference
+-   **System Language Detection**: Automatically detects and uses system language if supported
+-   **App Restart Handling**: Manages app restart requirement for language changes
+-   **Flag Icons**: Visual language selection with country flags
 
 ## Usage
 
@@ -165,6 +200,15 @@ To add new localized strings:
 -   Keys are descriptive and follow a consistent pattern
 -   Context is provided in comments where needed
 
+### **For Users (NEW)**
+
+Users can now change the app language directly:
+
+1. Go to Settings → Appearance
+2. Tap on Language
+3. Select desired language from the list
+4. Choose to restart now or later when prompted
+
 ## Benefits
 
 1. **Global Reach**: Support for 5 major languages
@@ -172,13 +216,18 @@ To add new localized strings:
 3. **Maintainability**: Centralized string management
 4. **Scalability**: Easy to add new languages and strings
 5. **Consistency**: Uniform localization approach across the app
+6. \***\*User Control**: Users can select their preferred language independently of system settings
+7. \***\*Immediate Feedback**: Visual language selection with flags and names
+8. \***\*Persistent Preferences**: Language choice is saved and remembered
 
 ## Future Enhancements
 
 1. **Additional Languages**: Easy to add more languages by creating new `.lproj` directories
-2. **Dynamic Language Switching**: Could implement runtime language switching
+2. **Dynamic Language Switching**: Could implement runtime language switching without restart
 3. **RTL Support**: Ready for right-to-left language support
 4. **Contextual Localization**: Could add context-specific translations
+5. \***\*Language Auto-Detection**: Could enhance system language detection
+6. \***\*Regional Variants**: Could add regional language variants (e.g., pt-BR, en-GB)
 
 ## Testing
 
@@ -190,6 +239,11 @@ To test localization:
 4. Verify all text appears in the selected language
 5. Test About and Contact sheets
 6. Verify confirmation dialogs and alerts
+7. **NEW: Test language selection feature**
+    - Go to Settings → Appearance → Language
+    - Select different languages
+    - Verify language changes after restart
+    - Check that preferences are saved
 
 ## Notes
 
@@ -198,3 +252,6 @@ To test localization:
 -   Error messages support format strings for dynamic content
 -   Navigation titles and button text are properly localized
 -   The app maintains its functionality while providing localized text
+-   **NEW: Language selection requires app restart for full effect**
+-   **NEW: Language preferences are persisted across app launches**
+-   **NEW: System language is automatically detected and used if supported**
