@@ -8,8 +8,8 @@ This document summarizes the localization implementation for the FocusZone app's
 
 ### 1. Localization Files Created/Updated
 
--   **English**: `en.lproj/Localizable.strings` - Updated with new Settings screen keys
--   **French**: `fr.lproj/Localizable.strings` - Updated with new Settings screen keys
+-   **English**: `FocusZone/Resources/en.lproj/Localizable.strings` - Updated with new Settings screen keys
+-   **French**: `FocusZone/Resources/fr.lproj/Localizable.strings` - Updated with new Settings screen keys
 -   **Portuguese**: `FocusZone/Resources/pt-PT.lproj/Localizable.strings` - Created new
 -   **Italian**: `FocusZone/Resources/it.lproj/Localizable.strings` - Created new
 -   **Japanese**: `FocusZone/Resources/ja.lproj/Localizable.strings` - Created new
@@ -189,7 +189,7 @@ This document summarizes the localization implementation for the FocusZone app's
 
 To add new localized strings:
 
-1. Add the key to `en.lproj/Localizable.strings`
+1. Add the key to `FocusZone/Resources/en.lproj/Localizable.strings`
 2. Add translations to other language files
 3. Update `Localizable.xcstrings` if needed
 4. Use `NSLocalizedString("key", comment: "Description")` in code
@@ -222,7 +222,7 @@ Users can now change the app language directly:
 
 ## Future Enhancements
 
-1. **Additional Languages**: Easy to add more languages by creating new `.lproj` directories
+1. **Additional Languages**: Easy to add more languages by creating new `.lproj` directories in `FocusZone/Resources/`
 2. **Dynamic Language Switching**: Could implement runtime language switching without restart
 3. **RTL Support**: Ready for right-to-left language support
 4. **Contextual Localization**: Could add context-specific translations

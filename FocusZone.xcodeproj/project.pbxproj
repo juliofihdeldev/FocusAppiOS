@@ -47,11 +47,11 @@
 
 /* Begin PBXFileReference section */
 		431164BB2E3671A1006A9907 /* FocusZoneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusZoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		434310BB2E635748007D27F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		434310BD2E63574C007D27F6 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		434310C32E6377E3007D27F6 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
-		434310C42E6377E4007D27F6 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		434310C52E6377E6007D27F6 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		434310BB2E635748007D27F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = FocusZone/Resources/en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		434310BD2E63574C007D27F6 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = FocusZone/Resources/fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		434310C32E6377E3007D27F6 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = FocusZone/Resources/it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		434310C42E6377E4007D27F6 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = FocusZone/Resources/ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		434310C52E6377E6007D27F6 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = FocusZone/Resources/pt-PT.lproj/Localizable.strings; sourceTree = "<group>"; };
 		437BF8D42E2D4F0200544334 /* FocusZoneWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FocusZoneWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		437BF8D62E2D4F0200544334 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		437BF8D82E2D4F0200544334 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
