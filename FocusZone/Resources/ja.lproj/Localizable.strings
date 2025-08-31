@@ -195,4 +195,92 @@
 "repeat_weekdays" = "平日";
 "repeat_weekends" = "週末";
 "repeat_weekly" = "毎週";
-"repeat_monthly" = "毎月";
+"repeat_monthly" = "月次";
+
+// MARK: - OnboardingView
+"previous" = "前へ";
+"next" = "次へ";
+"skip" = "スキップ";
+"transform_your_productivity" = "生産性を変革しよう";
+"onboarding_description_1" = "より短時間でより多くのことを達成するのに役立つ究極の集中コンパニオンを発見しましょう。AI搭載のアプリは、インテリジェントな時間管理とパーソナライズされた洞察を組み合わせて、生産性を向上させ、ワークライフバランスを維持します。";
+"powerful_features" = "強力な機能";
+"ai_assistant" = "AIアシスタント";
+"analytics" = "分析";
+"smart_timers" = "スマートタイマー";
+"break_suggestions" = "休憩提案";
+"focus_modes" = "集中モード";
+"cloud_sync" = "クラウド同期";
+"ready_to_focus" = "集中する準備はできましたか？";
+"onboarding_description_3" = "今日から生産性の旅を始めましょう。タスクを作成し、集中セッションを設定し、インテリジェントな洞察と推奨事項で進歩を見守りましょう。";
+"slide_to_get_started" = "スライドして開始";
+"welcome" = "ようこそ！";
+
+// MARK: - TimelineView
+"no_tasks_for_today" = "今日のタスクはありません";
+"tap_plus_to_create_first_task" = "+ボタンをタップして最初のタスクを作成";
+"enable_notifications" = "通知を有効にする";
+"enable" = "有効にする";
+"later" = "後で";
+"enable_notifications_message" = "タスクのリマインダーを受け取り、集中し続けるために通知を有効にしてください！";
+"notifications_disabled_banner" = "通知が無効";
+"enable_to_get_task_reminders" = "タスクリマインダーを受け取るために有効にする";
+
+// MARK: - WeekDateNavigator
+"today" = "今日";
+
+// MARK: - DatePickerSheet
+"select_date" = "日付を選択";
+"quick_select" = "クイック選択";
+"tomorrow" = "明日";
+"next_week" = "来週";
+"cancel" = "キャンセル";
+"done" = "完了";
+
+// MARK: - TaskCard
+"starts_in" = "開始まで";
+"remaining" = "残り";
+"overdue" = "期限切れ";
+"hrs" = "時間";
+"min" = "分";
+"s" = "秒";
+
+// MARK: - BreakSuggestionCard
+"dismiss" = "却下";
+"not_interested" = "興味なし";
+"add_break" = "休憩を追加";
+"minutes" = "分";
+"swipe" = "スワイプ";
+"plan_a_break" = "%@で%@を計画しますか？";
+
+// MARK: - TaskActionsModal
+"repeating_task_instance" = "繰り返しタスクのインスタンス";
+"repeating_task_series" = "繰り返しタスクシリーズ";
+"progress" = "進捗";
+"start_focus_session" = "集中セッションを開始";
+"mark_complete" = "完了としてマーク";
+"edit_task" = "タスクを編集";
+"duplicate_task" = "タスクを複製";
+"delete_task" = "タスクを削除";
+
+// MARK: - TaskDeletionModal
+"part_of_repeating_series" = "繰り返しシリーズの一部";
+"what_would_you_like_to_delete" = "何を削除したいですか？";
+"delete_this_instance" = "このインスタンスを削除";
+"remove_only_this_occurrence" = "この発生のみを削除";
+"delete_all_instances" = "すべてのインスタンスを削除";
+"remove_the_entire_repeating_series" = "繰り返しシリーズ全体を削除";
+"delete_future_instances" = "将来のインスタンスを削除";
+"keep_past_remove_upcoming_occurrences" = "過去を保持し、今後の発生を削除";
+"delete_entire_series" = "シリーズ全体を削除";
+"remove_this_task_and_all_its_instances" = "このタスクとそのすべてのインスタンスを削除";
+"keep_completed_instances_remove_future_ones" = "完了したインスタンスを保持し、将来のものを削除";
+"this_action_cannot_be_undone" = "このアクションは元に戻せません";
+"delete_task_navigation_title" = "タスクを削除";
+
+// MARK: - Additional Keys
+"now" = "今";
+"m" = "分";
+"h" = "時間";
+"remaining" = "%@残り";
+"overdue" = "%@期限切れ";
+"starts_in" = "開始まで%@";

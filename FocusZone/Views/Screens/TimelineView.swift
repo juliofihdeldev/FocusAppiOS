@@ -44,11 +44,11 @@ struct TimelineView: View {
                                             .font(.system(size: 48))
                                             .foregroundColor(AppColors.textSecondary)
                                         
-                                        Text("No tasks for today")
+                                        Text(NSLocalizedString("no_tasks_for_today", comment: "No tasks message"))
                                             .font(AppFonts.headline())
                                             .foregroundColor(AppColors.textSecondary)
                                         
-                                        Text("Tap the + button to create your first task")
+                                        Text(NSLocalizedString("tap_plus_to_create_first_task", comment: "Instruction to create first task"))
                                             .font(AppFonts.body())
                                             .foregroundColor(AppColors.textSecondary)
                                             .multilineTextAlignment(.center)
@@ -201,15 +201,15 @@ struct TimelineView: View {
                 .presentationDragIndicator(.visible)
             }
         }
-        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
-            Button("Enable") {
+        .alert(NSLocalizedString("enable_notifications", comment: "Enable notifications alert title"), isPresented: $showNotificationAlert) {
+            Button(NSLocalizedString("enable", comment: "Enable button text")) {
                 _Concurrency.Task {
                     await viewModel.requestNotificationPermission()
                 }
             }
-            Button("Later", role: .cancel) { }
+            Button(NSLocalizedString("later", comment: "Later button text"), role: .cancel) { }
         } message: {
-            Text("Enable notifications to get reminders for your tasks and stay focused!")
+            Text(NSLocalizedString("enable_notifications_message", comment: "Enable notifications message"))
         }
     }
     
@@ -220,19 +220,19 @@ struct TimelineView: View {
                 .font(.title2)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Notifications Disabled")
+                Text(NSLocalizedString("notifications_disabled_banner", comment: "Notifications disabled banner title"))
                     .font(AppFonts.subheadline())
                     .fontWeight(.semibold)
                     .foregroundColor(AppColors.textPrimary)
                 
-                Text("Enable to get task reminders")
+                Text(NSLocalizedString("enable_to_get_task_reminders", comment: "Enable to get task reminders"))
                     .font(AppFonts.caption())
                     .foregroundColor(AppColors.textSecondary)
             }
             
             Spacer()
             
-            Button("Enable") {
+            Button(NSLocalizedString("enable", comment: "Enable button text")) {
                 showNotificationAlert = true
             }
             .font(AppFonts.caption())

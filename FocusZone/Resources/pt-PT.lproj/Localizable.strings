@@ -196,3 +196,91 @@
 "repeat_weekends" = "Fins de semana";
 "repeat_weekly" = "Semanal";
 "repeat_monthly" = "Mensal";
+
+// MARK: - OnboardingView
+"previous" = "Anterior";
+"next" = "Seguinte";
+"skip" = "Saltar";
+"transform_your_productivity" = "Transforme a Sua Produtividade";
+"onboarding_description_1" = "Descubra o companheiro de foco definitivo que o ajuda a realizar mais em menos tempo. A nossa aplicação alimentada por IA combina gestão inteligente do tempo com insights personalizados para aumentar a sua produtividade e manter o equilíbrio trabalho-vida.";
+"powerful_features" = "Funcionalidades Poderosas";
+"ai_assistant" = "Assistente IA";
+"analytics" = "Análises";
+"smart_timers" = "Temporizadores Inteligentes";
+"break_suggestions" = "Sugestões de Pausa";
+"focus_modes" = "Modos de Foco";
+"cloud_sync" = "Sincronização na Nuvem";
+"ready_to_focus" = "Pronto para Focar?";
+"onboarding_description_3" = "Comece a sua jornada de produtividade hoje. Crie tarefas, defina sessões de foco e veja os seus progressos crescerem com os nossos insights e recomendações inteligentes.";
+"slide_to_get_started" = "Deslize para Começar";
+"welcome" = "Bem-vindo!";
+
+// MARK: - TimelineView
+"no_tasks_for_today" = "Nenhuma tarefa para hoje";
+"tap_plus_to_create_first_task" = "Toque no botão + para criar a sua primeira tarefa";
+"enable_notifications" = "Ativar Notificações";
+"enable" = "Ativar";
+"later" = "Mais tarde";
+"enable_notifications_message" = "Ative as notificações para receber lembretes das suas tarefas e manter-se focado!";
+"notifications_disabled_banner" = "Notificações Desativadas";
+"enable_to_get_task_reminders" = "Ative para receber lembretes de tarefas";
+
+// MARK: - WeekDateNavigator
+"today" = "Hoje";
+
+// MARK: - DatePickerSheet
+"select_date" = "Selecionar Data";
+"quick_select" = "Seleção Rápida";
+"tomorrow" = "Amanhã";
+"next_week" = "Próxima Semana";
+"cancel" = "Cancelar";
+"done" = "Concluído";
+
+// MARK: - TaskCard
+"starts_in" = "Começa em";
+"remaining" = "restante";
+"overdue" = "em atraso";
+"hrs" = "h";
+"min" = "min";
+"s" = "s";
+
+// MARK: - BreakSuggestionCard
+"dismiss" = "Dispensar";
+"not_interested" = "Não interessado";
+"add_break" = "Adicionar Pausa";
+"minutes" = "minutos";
+"swipe" = "deslize";
+"plan_a_break" = "Planear uma %@ em %@ ?";
+
+// MARK: - TaskActionsModal
+"repeating_task_instance" = "Instância de tarefa repetitiva";
+"repeating_task_series" = "Série de tarefas repetitivas";
+"progress" = "Progresso";
+"start_focus_session" = "Iniciar Sessão de Foco";
+"mark_complete" = "Marcar como Concluído";
+"edit_task" = "Editar Tarefa";
+"duplicate_task" = "Duplicar Tarefa";
+"delete_task" = "Eliminar Tarefa";
+
+// MARK: - TaskDeletionModal
+"part_of_repeating_series" = "Parte de uma série repetitiva";
+"what_would_you_like_to_delete" = "O que gostaria de eliminar?";
+"delete_this_instance" = "Eliminar Esta Instância";
+"remove_only_this_occurrence" = "Remover apenas esta ocorrência";
+"delete_all_instances" = "Eliminar Todas as Instâncias";
+"remove_the_entire_repeating_series" = "Remover toda a série repetitiva";
+"delete_future_instances" = "Eliminar Instâncias Futuras";
+"keep_past_remove_upcoming_occurrences" = "Manter o passado, remover ocorrências futuras";
+"delete_entire_series" = "Eliminar Toda a Série";
+"remove_this_task_and_all_its_instances" = "Remover esta tarefa e todas as suas instâncias";
+"keep_completed_instances_remove_future_ones" = "Manter instâncias concluídas, remover futuras";
+"this_action_cannot_be_undone" = "Esta ação não pode ser desfeita";
+"delete_task_navigation_title" = "Eliminar Tarefa";
+
+// MARK: - Additional Keys
+"now" = "agora";
+"m" = "min";
+"h" = "h";
+"remaining" = "%@ restante";
+"overdue" = "%@ em atraso";
+"starts_in" = "Começa em %@";

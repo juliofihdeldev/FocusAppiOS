@@ -66,7 +66,7 @@ struct OnboardingView: View {
                             Button(action: previousPage) {
                                 HStack {
                                     Image(systemName: "chevron.left")
-                                    Text("Previous")
+                                    Text(NSLocalizedString("previous", comment: "Previous button text"))
                                 }
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.4))
@@ -84,7 +84,7 @@ struct OnboardingView: View {
                         if currentPage < totalPages - 1 {
                             Button(action: nextPage) {
                                 HStack {
-                                    Text("Next")
+                                    Text(NSLocalizedString("next", comment: "Next button text"))
                                     Image(systemName: "chevron.right")
                                 }
                                 .font(.system(size: 16, weight: .medium))
@@ -104,7 +104,7 @@ struct OnboardingView: View {
                     
                     // Skip button (always visible)
                     Button(action: completeOnboarding) {
-                                                           Text("Skip")
+                                                           Text(NSLocalizedString("skip", comment: "Skip button text"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(Color.white)
                     }
@@ -148,14 +148,14 @@ struct OnboardingScreen1: View {
     var body: some View {
         VStack(spacing: 30) {
             // Main title
-                                   Text("Transform Your Productivity")
+                                   Text(NSLocalizedString("transform_your_productivity", comment: "Onboarding main title"))
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
             
             // Description
-                                   Text("Discover the ultimate focus companion that helps you accomplish more in less time. Our AI-powered app combines intelligent time management with personalized insights to boost your productivity and maintain work-life balance.")
+                                   Text(NSLocalizedString("onboarding_description_1", comment: "Onboarding description text"))
                 .font(AppFonts.headline())
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
@@ -183,7 +183,7 @@ struct OnboardingScreen2: View {
     var body: some View {
         VStack(spacing: 25) {
             // Title
-                                   Text("Powerful Features")
+                                   Text(NSLocalizedString("powerful_features", comment: "Powerful features title"))
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundColor(.white)                .padding(.top, 20)
             
@@ -192,12 +192,12 @@ struct OnboardingScreen2: View {
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: 20) {
-                FeatureCard(icon: "brain.head.profile", title: "AI Assistant", color: .blue)
-                FeatureCard(icon: "chart.line.uptrend.xyaxis", title: "Analytics", color: .green)
-                FeatureCard(icon: "timer", title: "Smart Timers", color: .orange)
-                FeatureCard(icon: "arrow.triangle.2.circlepath", title: "Break Suggestions", color: .pink)
-                FeatureCard(icon: "folder.badge.plus", title: "Focus Modes", color: .brown)
-                FeatureCard(icon: "icloud.fill", title: "Cloud Sync", color: .purple)
+                FeatureCard(icon: "brain.head.profile", title: NSLocalizedString("ai_assistant", comment: "AI Assistant feature"), color: .blue)
+                FeatureCard(icon: "chart.line.uptrend.xyaxis", title: NSLocalizedString("analytics", comment: "Analytics feature"), color: .green)
+                FeatureCard(icon: "timer", title: NSLocalizedString("smart_timers", comment: "Smart Timers feature"), color: .orange)
+                FeatureCard(icon: "arrow.triangle.2.circlepath", title: NSLocalizedString("break_suggestions", comment: "Break Suggestions feature"), color: .pink)
+                FeatureCard(icon: "folder.badge.plus", title: NSLocalizedString("focus_modes", comment: "Focus Modes feature"), color: .brown)
+                FeatureCard(icon: "icloud.fill", title: NSLocalizedString("cloud_sync", comment: "Cloud Sync feature"), color: .purple)
             }
             .padding(.horizontal, 20)
         }
@@ -211,13 +211,13 @@ struct OnboardingScreen3: View {
     var body: some View {
         VStack(spacing: 30) {
             // Title
-                                   Text("Ready to Focus?")
+                                   Text(NSLocalizedString("ready_to_focus", comment: "Ready to focus title"))
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .padding(.top, 20)
             
             // Description
-                                   Text("Start your productivity journey today. Create tasks, set focus sessions, and watch your progress grow with our intelligent insights and recommendations.")
+                                   Text(NSLocalizedString("onboarding_description_3", comment: "Onboarding final description"))
                 .font(AppFonts.headline())
                 .foregroundColor(.white)                .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
@@ -376,7 +376,7 @@ struct SliderGetStartedButton: View {
             // Text overlay
             HStack {
                 Spacer()
-                Text(showCompletion ? "Welcome!" : "Slide to Get Started")
+                Text(showCompletion ? NSLocalizedString("welcome", comment: "Welcome message") : NSLocalizedString("slide_to_get_started", comment: "Slide to get started instruction"))
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(Color.black.opacity(0.7))
                     .opacity(showCompletion ? 1 : (dragOffset > 50 ? 0 : 1))

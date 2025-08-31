@@ -24,11 +24,11 @@ struct TaskDeletionModal: View {
                                 .foregroundColor(AppColors.textPrimary)
                             
                             if task.isGeneratedFromRepeat || task.isChildTask {
-                                Text("Part of repeating series")
+                                Text(NSLocalizedString("part_of_repeating_series", comment: "Part of repeating series label"))
                                     .font(AppFonts.caption())
                                     .foregroundColor(.orange)
                             } else if task.isParentTask {
-                                Text("Repeating task series")
+                                Text(NSLocalizedString("repeating_task_series", comment: "Repeating task series label"))
                                     .font(AppFonts.caption())
                                     .foregroundColor(.blue)
                             }
@@ -39,7 +39,7 @@ struct TaskDeletionModal: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
                     
-                    Text("What would you like to delete?")
+                    Text(NSLocalizedString("what_would_you_like_to_delete", comment: "What would you like to delete question"))
                         .font(AppFonts.subheadline())
                         .foregroundColor(.gray)
                         .padding(.horizontal, 20)
@@ -50,8 +50,8 @@ struct TaskDeletionModal: View {
                     if task.isGeneratedFromRepeat || task.isChildTask {
                         // Options for repeating task instances
                         DeletionOptionButton(
-                            title: "Delete This Instance",
-                            subtitle: "Remove only this occurrence",
+                            title: NSLocalizedString("delete_this_instance", comment: "Delete this instance button"),
+                            subtitle: NSLocalizedString("remove_only_this_occurrence", comment: "Remove only this occurrence subtitle"),
                             icon: "calendar.badge.minus",
                             color: .orange,
                             action: {
@@ -61,8 +61,8 @@ struct TaskDeletionModal: View {
                         )
                         
                         DeletionOptionButton(
-                            title: "Delete All Instances",
-                            subtitle: "Remove the entire repeating series",
+                            title: NSLocalizedString("delete_all_instances", comment: "Delete all instances button"),
+                            subtitle: NSLocalizedString("remove_the_entire_repeating_series", comment: "Remove the entire repeating series subtitle"),
                             icon: "calendar.badge.exclamationmark",
                             color: .red,
                             action: {
@@ -72,8 +72,8 @@ struct TaskDeletionModal: View {
                         )
                         
                         DeletionOptionButton(
-                            title: "Delete Future Instances",
-                            subtitle: "Keep past, remove upcoming occurrences",
+                            title: NSLocalizedString("delete_future_instances", comment: "Delete future instances button"),
+                            subtitle: NSLocalizedString("keep_past_remove_upcoming_occurrences", comment: "Keep past, remove upcoming occurrences subtitle"),
                             icon: "calendar.badge.clock",
                             color: .purple,
                             action: {
@@ -84,8 +84,8 @@ struct TaskDeletionModal: View {
                     } else if task.isParentTask {
                         // Options for parent tasks
                         DeletionOptionButton(
-                            title: "Delete Entire Series",
-                            subtitle: "Remove this task and all its instances",
+                            title: NSLocalizedString("delete_entire_series", comment: "Delete entire series button"),
+                            subtitle: NSLocalizedString("remove_this_task_and_all_its_instances", comment: "Remove this task and all its instances subtitle"),
                             icon: "trash.circle.fill",
                             color: .red,
                             action: {
@@ -95,8 +95,8 @@ struct TaskDeletionModal: View {
                         )
                         
                         DeletionOptionButton(
-                            title: "Delete Future Instances Only",
-                            subtitle: "Keep completed instances, remove future ones",
+                            title: NSLocalizedString("delete_future_instances", comment: "Delete future instances button"),
+                            subtitle: NSLocalizedString("keep_completed_instances_remove_future_ones", comment: "Keep completed instances, remove future ones subtitle"),
                             icon: "calendar.badge.clock",
                             color: .purple,
                             action: {
@@ -107,8 +107,8 @@ struct TaskDeletionModal: View {
                     } else {
                         // Simple task deletion
                         DeletionOptionButton(
-                            title: "Delete Task",
-                            subtitle: "This action cannot be undone",
+                            title: NSLocalizedString("delete_task", comment: "Delete task button"),
+                            subtitle: NSLocalizedString("this_action_cannot_be_undone", comment: "This action cannot be undone warning"),
                             icon: "trash.circle.fill",
                             color: .red,
                             action: {
@@ -124,12 +124,12 @@ struct TaskDeletionModal: View {
                 Spacer()
             }
             .background(AppColors.background)
-            .navigationTitle("Delete Task")
+            .navigationTitle(NSLocalizedString("delete_task_navigation_title", comment: "Delete task navigation title"))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
+                    Button(NSLocalizedString("cancel", comment: "Cancel button")) {
                         onCancel()
                         dismiss()
                     }

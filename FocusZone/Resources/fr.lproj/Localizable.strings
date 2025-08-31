@@ -251,8 +251,92 @@
 "repeat_weekdays" = "Jours ouvrables";
 "repeat_weekends" = "Week-ends";
 "repeat_weekly" = "Hebdomadaire";
-"repeat_monthly" = "Mensuelle";
+"repeat_monthly" = "Mensuel";
 
+// MARK: - OnboardingView
+"previous" = "Précédent";
+"next" = "Suivant";
+"skip" = "Passer";
+"transform_your_productivity" = "Transformez Votre Productivité";
+"onboarding_description_1" = "Découvrez le compagnon de concentration ultime qui vous aide à accomplir plus en moins de temps. Notre application alimentée par l'IA combine la gestion intelligente du temps avec des insights personnalisés pour stimuler votre productivité et maintenir l'équilibre travail-vie.";
+"powerful_features" = "Fonctionnalités Puissantes";
+"ai_assistant" = "Assistant IA";
+"analytics" = "Analyses";
+"smart_timers" = "Minuteurs Intelligents";
+"break_suggestions" = "Suggestions de Pause";
+"focus_modes" = "Modes de Concentration";
+"cloud_sync" = "Synchronisation Cloud";
+"ready_to_focus" = "Prêt à Vous Concentrer ?";
+"onboarding_description_3" = "Commencez votre parcours de productivité aujourd'hui. Créez des tâches, définissez des sessions de concentration et regardez vos progrès grandir avec nos insights et recommandations intelligents.";
+"slide_to_get_started" = "Glissez pour Commencer";
+"welcome" = "Bienvenue !";
 
-// Welcome
-"welcome_message" = "Bienvenue dans l’application Focus";
+// MARK: - TimelineView
+"no_tasks_for_today" = "Aucune tâche pour aujourd'hui";
+"tap_plus_to_create_first_task" = "Appuyez sur le bouton + pour créer votre première tâche";
+"enable_notifications" = "Activer les Notifications";
+"enable" = "Activer";
+"later" = "Plus tard";
+"enable_notifications_message" = "Activez les notifications pour recevoir des rappels pour vos tâches et rester concentré !";
+"notifications_disabled_banner" = "Notifications Désactivées";
+"enable_to_get_task_reminders" = "Activez pour recevoir des rappels de tâches";
+
+// MARK: - WeekDateNavigator
+"today" = "Aujourd'hui";
+
+// MARK: - DatePickerSheet
+"select_date" = "Sélectionner la Date";
+"quick_select" = "Sélection Rapide";
+"tomorrow" = "Demain";
+"next_week" = "Semaine Prochaine";
+"cancel" = "Annuler";
+"done" = "Terminé";
+
+// MARK: - TaskCard
+"starts_in" = "Commence dans";
+"remaining" = "restant";
+"overdue" = "en retard";
+"hrs" = "h";
+"min" = "min";
+"s" = "s";
+
+// MARK: - BreakSuggestionCard
+"dismiss" = "Rejeter";
+"not_interested" = "Pas intéressé";
+"add_break" = "Ajouter une Pause";
+"minutes" = "minutes";
+"swipe" = "glissez";
+"plan_a_break" = "Planifier une %@ dans %@ ?";
+
+// MARK: - TaskActionsModal
+"repeating_task_instance" = "Instance de tâche répétitive";
+"repeating_task_series" = "Série de tâches répétitives";
+"progress" = "Progrès";
+"start_focus_session" = "Démarrer la Session de Concentration";
+"mark_complete" = "Marquer comme Terminé";
+"edit_task" = "Modifier la Tâche";
+"duplicate_task" = "Dupliquer la Tâche";
+"delete_task" = "Supprimer la Tâche";
+
+// MARK: - TaskDeletionModal
+"part_of_repeating_series" = "Partie d'une série répétitive";
+"what_would_you_like_to_delete" = "Que souhaitez-vous supprimer ?";
+"delete_this_instance" = "Supprimer Cette Instance";
+"remove_only_this_occurrence" = "Supprimer seulement cette occurrence";
+"delete_all_instances" = "Supprimer Toutes les Instances";
+"remove_the_entire_repeating_series" = "Supprimer toute la série répétitive";
+"delete_future_instances" = "Supprimer les Instances Futures";
+"keep_past_remove_upcoming_occurrences" = "Garder le passé, supprimer les occurrences à venir";
+"delete_entire_series" = "Supprimer Toute la Série";
+"remove_this_task_and_all_its_instances" = "Supprimer cette tâche et toutes ses instances";
+"keep_completed_instances_remove_future_ones" = "Garder les instances terminées, supprimer les futures";
+"this_action_cannot_be_undone" = "Cette action ne peut pas être annulée";
+"delete_task_navigation_title" = "Supprimer la Tâche";
+
+// MARK: - Additional Keys
+"now" = "maintenant";
+"m" = "min";
+"h" = "h";
+"remaining" = "%@ restant";
+"overdue" = "%@ en retard";
+"starts_in" = "Commence dans %@";

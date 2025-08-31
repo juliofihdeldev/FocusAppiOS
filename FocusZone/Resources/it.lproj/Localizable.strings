@@ -196,3 +196,91 @@
 "repeat_weekends" = "Weekend";
 "repeat_weekly" = "Settimanale";
 "repeat_monthly" = "Mensile";
+
+// MARK: - OnboardingView
+"previous" = "Precedente";
+"next" = "Successivo";
+"skip" = "Salta";
+"transform_your_productivity" = "Trasforma la Tua Produttività";
+"onboarding_description_1" = "Scopri il compagno di concentrazione definitivo che ti aiuta a realizzare di più in meno tempo. La nostra app alimentata dall'IA combina la gestione intelligente del tempo con approfondimenti personalizzati per aumentare la tua produttività e mantenere l'equilibrio lavoro-vita.";
+"powerful_features" = "Funzionalità Potenti";
+"ai_assistant" = "Assistente IA";
+"analytics" = "Analisi";
+"smart_timers" = "Timer Intelligenti";
+"break_suggestions" = "Suggerimenti per le Pause";
+"focus_modes" = "Modalità di Concentrazione";
+"cloud_sync" = "Sincronizzazione Cloud";
+"ready_to_focus" = "Pronto a Concentrarti?";
+"onboarding_description_3" = "Inizia oggi il tuo viaggio di produttività. Crea attività, imposta sessioni di concentrazione e guarda i tuoi progressi crescere con i nostri approfondimenti e raccomandazioni intelligenti.";
+"slide_to_get_started" = "Scorri per Iniziare";
+"welcome" = "Benvenuto!";
+
+// MARK: - TimelineView
+"no_tasks_for_today" = "Nessuna attività per oggi";
+"tap_plus_to_create_first_task" = "Tocca il pulsante + per creare la tua prima attività";
+"enable_notifications" = "Abilita Notifiche";
+"enable" = "Abilita";
+"later" = "Più tardi";
+"enable_notifications_message" = "Abilita le notifiche per ricevere promemoria per le tue attività e rimanere concentrato!";
+"notifications_disabled_banner" = "Notifiche Disabilitate";
+"enable_to_get_task_reminders" = "Abilita per ricevere promemoria per le attività";
+
+// MARK: - WeekDateNavigator
+"today" = "Oggi";
+
+// MARK: - DatePickerSheet
+"select_date" = "Seleziona Data";
+"quick_select" = "Selezione Rapida";
+"tomorrow" = "Domani";
+"next_week" = "Prossima Settimana";
+"cancel" = "Annulla";
+"done" = "Fatto";
+
+// MARK: - TaskCard
+"starts_in" = "Inizia tra";
+"remaining" = "rimanente";
+"overdue" = "in ritardo";
+"hrs" = "ore";
+"min" = "min";
+"s" = "s";
+
+// MARK: - BreakSuggestionCard
+"dismiss" = "Ignora";
+"not_interested" = "Non interessato";
+"add_break" = "Aggiungi Pausa";
+"minutes" = "minuti";
+"swipe" = "scorri";
+"plan_a_break" = "Pianifica una %@ in %@ ?";
+
+// MARK: - TaskActionsModal
+"repeating_task_instance" = "Istanza di attività ripetitiva";
+"repeating_task_series" = "Serie di attività ripetitive";
+"progress" = "Progresso";
+"start_focus_session" = "Avvia Sessione di Concentrazione";
+"mark_complete" = "Segna come Completato";
+"edit_task" = "Modifica Attività";
+"duplicate_task" = "Duplica Attività";
+"delete_task" = "Elimina Attività";
+
+// MARK: - TaskDeletionModal
+"part_of_repeating_series" = "Parte di una serie ripetitiva";
+"what_would_you_like_to_delete" = "Cosa vorresti eliminare?";
+"delete_this_instance" = "Elimina Questa Istanza";
+"remove_only_this_occurrence" = "Rimuovi solo questa occorrenza";
+"delete_all_instances" = "Elimina Tutte le Istanze";
+"remove_the_entire_repeating_series" = "Rimuovi l'intera serie ripetitiva";
+"delete_future_instances" = "Elimina Istanze Future";
+"keep_past_remove_upcoming_occurrences" = "Mantieni il passato, rimuovi le occorrenze future";
+"delete_entire_series" = "Elimina l'Intera Serie";
+"remove_this_task_and_all_its_instances" = "Rimuovi questa attività e tutte le sue istanze";
+"keep_completed_instances_remove_future_ones" = "Mantieni le istanze completate, rimuovi quelle future";
+"this_action_cannot_be_undone" = "Questa azione non può essere annullata";
+"delete_task_navigation_title" = "Elimina Attività";
+
+// MARK: - Additional Keys
+"now" = "ora";
+"m" = "min";
+"h" = "ore";
+"remaining" = "%@ rimanente";
+"overdue" = "%@ in ritardo";
+"starts_in" = "Inizia tra %@";
