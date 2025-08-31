@@ -122,13 +122,13 @@ struct TaskTimeSelector: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
-                Text("When?")
+                Text(NSLocalizedString("when", comment: "When question for time selection"))
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.primary)
                   
                 Spacer()
                 
-                Button("More...") {
+                Button(NSLocalizedString("more", comment: "More button for time selection")) {
                     showingTimeSlots.toggle()
                 }
                 .font(.system(size: 16))
@@ -139,12 +139,12 @@ struct TaskTimeSelector: View {
                 VStack(spacing: 16) {
                     // Quick date selection
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Quick Select")
+                        Text(NSLocalizedString("quick_select", comment: "Quick select section title"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.secondary)
                         
                         HStack(spacing: 12) {
-                            Button("Today") {
+                            Button(NSLocalizedString("today", comment: "Today button")) {
                                 quickDateSelection(0)
                             }
                             .font(.system(size: 14, weight: .medium))
@@ -156,7 +156,7 @@ struct TaskTimeSelector: View {
                                     .fill(isToday ? Color.blue : Color.blue.opacity(0.1))
                             )
                             
-                            Button("Tomorrow") {
+                            Button(NSLocalizedString("tomorrow", comment: "Tomorrow button")) {
                                 quickDateSelection(1)
                             }
                             .font(.system(size: 14, weight: .medium))
@@ -168,7 +168,7 @@ struct TaskTimeSelector: View {
                                     .fill(isTomorrow ? Color.blue : Color.blue.opacity(0.1))
                             )
                             
-                            Button("Next Week") {
+                            Button(NSLocalizedString("next_week", comment: "Next week button")) {
                                 quickDateSelection(7)
                             }
                             .font(.system(size: 14, weight: .medium))
@@ -184,7 +184,7 @@ struct TaskTimeSelector: View {
                     
                     // Date picker
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Select Date")
+                        Text(NSLocalizedString("select_date", comment: "Select date label"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.secondary)
                         
@@ -198,7 +198,7 @@ struct TaskTimeSelector: View {
                     
                     // Time slots
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Select Time")
+                        Text(NSLocalizedString("select_time", comment: "Select time label"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.secondary)
                         
@@ -251,7 +251,7 @@ struct TaskTimeSelector: View {
                             .foregroundColor(.blue)
                         Spacer()
                         
-                        Button("Change") {
+                        Button(NSLocalizedString("change", comment: "Change button for time selection")) {
                             showingTimeSlots.toggle()
                         }
                         .font(.system(size: 14, weight: .medium))

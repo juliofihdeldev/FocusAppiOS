@@ -210,6 +210,49 @@
 "restart_now" = "Redémarrer maintenant";
 "restart_later" = "Redémarrer plus tard";
 
+// MARK: - TaskFormView
+"new_task" = "Nouvelle tâche";
+"create_task" = "Créer la tâche";
+"update_task" = "Mettre à jour la tâche";
+"task_title" = "Titre de la tâche";
+"when" = "Quand ?";
+"more" = "Plus...";
+"quick_select" = "Sélection rapide";
+"today" = "Aujourd'hui";
+"tomorrow" = "Demain";
+"next_week" = "Semaine prochaine";
+"select_date" = "Sélectionner la date";
+"select_time" = "Sélectionner l'heure";
+"change" = "Modifier";
+"how_long" = "Combien de temps ?";
+"hide" = "Masquer";
+"custom" = "Personnalisé...";
+"select_duration" = "Sélectionner la durée";
+"minutes" = "Minutes";
+"cancel" = "Annuler";
+"set" = "Définir";
+"what_type_of_task" = "Quel type de tâche est-ce ?";
+"how_often" = "À quelle fréquence ?";
+"notifications" = "Notifications";
+"notifications_enabled" = "Notifications activées";
+"notifications_disabled" = "Notifications désactivées";
+"you_will_receive" = "Vous recevrez :";
+"five_minutes_before" = "• 5 minutes avant le début de la tâche";
+"when_task_starts" = "• Quand la tâche est programmée pour commencer";
+"completion_confirmation" = "• Confirmation de fin";
+"enable_notifications_settings" = "Activez les notifications dans les Paramètres pour recevoir des rappels de tâches";
+"task_created" = "✅ Tâche créée";
+"task_scheduled_for" = "'%@' programmée pour %@";
+"at_start_of_task" = "Au début de la tâche";
+
+// MARK: - Repeat Rules
+"repeat_none" = "Aucune";
+"repeat_daily" = "Quotidienne";
+"repeat_weekdays" = "Jours ouvrables";
+"repeat_weekends" = "Week-ends";
+"repeat_weekly" = "Hebdomadaire";
+"repeat_monthly" = "Mensuelle";
+
 
 // Welcome
 "welcome_message" = "Bienvenue dans l’application Focus";

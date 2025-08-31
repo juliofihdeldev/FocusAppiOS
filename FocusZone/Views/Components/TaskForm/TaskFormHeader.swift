@@ -5,7 +5,7 @@ struct TaskFormHeader: View {
     
     var body: some View {
         HStack {
-            Text("New Task")
+            Text(NSLocalizedString("new_task", comment: "New task header title"))
                 .font(AppFonts.title())
                 .foregroundColor(AppColors.textPrimary)
             Spacer()

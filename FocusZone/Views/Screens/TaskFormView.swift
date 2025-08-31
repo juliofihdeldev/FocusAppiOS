@@ -25,7 +25,7 @@ struct TaskFormView: View {
     @State private var selectedTaskType: TaskType? = nil
     @State private var selectedIcon: String = "📝"
     @State private var repeatRule: RepeatRule = .none
-    @State private var alerts: [String] = ["At start of task"]
+    @State private var alerts: [String] = [NSLocalizedString("at_start_of_task", comment: "Alert at start of task")]
     @State private var showSubtasks: Bool = true
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
@@ -76,7 +76,7 @@ struct TaskFormView: View {
                             Button(action: {
                                 saveTask()
                             }) {
-                                Text(taskToEdit == nil ? "Create Task" : "Update Task")
+                                Text(taskToEdit == nil ? NSLocalizedString("create_task", comment: "Create task button title") : NSLocalizedString("update_task", comment: "Update task button title"))
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
@@ -251,8 +251,8 @@ struct TaskFormView: View {
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         notificationService.sendImmediateNotification(
-                            title: "✅ Task Created",
-                            body: "'\(taskTitle)' scheduled for \(timeString)"
+                            title: NSLocalizedString("task_created", comment: "Task created notification title"),
+                            body: String(format: NSLocalizedString("task_scheduled_for", comment: "Task scheduled notification message"), taskTitle, timeString)
                         )
                     }
                 }

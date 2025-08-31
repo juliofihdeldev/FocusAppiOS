@@ -38,11 +38,11 @@ struct TaskDurationSelector: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
-                Text("How long?")
+                Text(NSLocalizedString("how_long", comment: "How long question for duration selection"))
                     .font(AppFonts.headline())
                     .foregroundColor(.gray)
                 Spacer()
-                Button(showExtendedRow ? "Hide" : "More…") {
+                Button(showExtendedRow ? NSLocalizedString("hide", comment: "Hide button") : NSLocalizedString("more", comment: "More button")) {
                     withAnimation(.spring(response: 0.25, dampingFraction: 0.9)) {
                         showExtendedRow.toggle()
                     }
@@ -51,7 +51,7 @@ struct TaskDurationSelector: View {
                 .foregroundColor(.pink)
                 .buttonStyle(PlainButtonStyle())
                 .contextMenu {
-                    Button("Custom…") { showMoreSheet = true }
+                    Button(NSLocalizedString("custom", comment: "Custom duration option")) { showMoreSheet = true }
                 }
             }
             
@@ -112,7 +112,7 @@ private struct DurationPickerSheet: View {
     var body: some View {
         NavigationView {
             List {
-                Section("Minutes") {
+                Section(NSLocalizedString("minutes", comment: "Minutes section title")) {
                     Picker("Minutes", selection: $selected) {
                         ForEach(allOptions, id: \.self) { m in
                             Text(label(m)).tag(m)
@@ -123,13 +123,13 @@ private struct DurationPickerSheet: View {
                     .labelsHidden()
                 }
             }
-            .navigationTitle("Select Duration")
+            .navigationTitle(NSLocalizedString("select_duration", comment: "Select duration navigation title"))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(NSLocalizedString("cancel", comment: "Cancel button")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Set") {
+                    Button(NSLocalizedString("set", comment: "Set button")) {
                         duration = selected
                         dismiss()
                     }

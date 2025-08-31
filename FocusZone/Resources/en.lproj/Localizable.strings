@@ -210,7 +210,45 @@
 "restart_now" = "Restart Now";
 "restart_later" = "Restart Later";
 
+// MARK: - TaskFormView
+"new_task" = "New Task";
+"create_task" = "Create Task";
+"update_task" = "Update Task";
+"task_title" = "Task title";
+"when" = "When?";
+"more" = "More...";
+"quick_select" = "Quick Select";
+"today" = "Today";
+"tomorrow" = "Tomorrow";
+"next_week" = "Next Week";
+"select_date" = "Select Date";
+"select_time" = "Select Time";
+"change" = "Change";
+"how_long" = "How long?";
+"hide" = "Hide";
+"custom" = "Custom...";
+"select_duration" = "Select Duration";
+"minutes" = "Minutes";
+"cancel" = "Cancel";
+"set" = "Set";
+"what_type_of_task" = "What type of task is this?";
+"how_often" = "How often?";
+"notifications" = "Notifications";
+"notifications_enabled" = "Notifications enabled";
+"notifications_disabled" = "Notifications disabled";
+"you_will_receive" = "You'll receive:";
+"five_minutes_before" = "• 5 minutes before task starts";
+"when_task_starts" = "• When task is scheduled to begin";
+"completion_confirmation" = "• Completion confirmation";
+"enable_notifications_settings" = "Enable notifications in Settings to get task reminders";
+"task_created" = "✅ Task Created";
+"task_scheduled_for" = "'%@' scheduled for %@";
+"at_start_of_task" = "At start of task";
 
-// Welcome
-
-"welcome_message" = "Welcome to Focus App";
+// MARK: - Repeat Rules
+"repeat_none" = "None";
+"repeat_daily" = "Daily";
+"repeat_weekdays" = "Weekdays";
+"repeat_weekends" = "Weekends";
+"repeat_weekly" = "Weekly";
+"repeat_monthly" = "Monthly";

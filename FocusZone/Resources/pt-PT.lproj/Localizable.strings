@@ -153,3 +153,46 @@
 "language_change_restart_message" = "O aplicativo precisa ser reiniciado para aplicar a mudança de idioma. Deseja reiniciar agora ou mais tarde?";
 "restart_now" = "Reiniciar Agora";
 "restart_later" = "Reiniciar Mais Tarde";
+
+// MARK: - TaskFormView
+"new_task" = "Nova Tarefa";
+"create_task" = "Criar Tarefa";
+"update_task" = "Atualizar Tarefa";
+"task_title" = "Título da tarefa";
+"when" = "Quando?";
+"more" = "Mais...";
+"quick_select" = "Seleção Rápida";
+"today" = "Hoje";
+"tomorrow" = "Amanhã";
+"next_week" = "Próxima Semana";
+"select_date" = "Selecionar Data";
+"select_time" = "Selecionar Hora";
+"change" = "Alterar";
+"how_long" = "Quanto tempo?";
+"hide" = "Ocultar";
+"custom" = "Personalizado...";
+"select_duration" = "Selecionar Duração";
+"minutes" = "Minutos";
+"cancel" = "Cancelar";
+"set" = "Definir";
+"what_type_of_task" = "Que tipo de tarefa é esta?";
+"how_often" = "Com que frequência?";
+"notifications" = "Notificações";
+"notifications_enabled" = "Notificações ativadas";
+"notifications_disabled" = "Notificações desativadas";
+"you_will_receive" = "Você receberá:";
+"five_minutes_before" = "• 5 minutos antes da tarefa começar";
+"when_task_starts" = "• Quando a tarefa estiver programada para começar";
+"completion_confirmation" = "• Confirmação de conclusão";
+"enable_notifications_settings" = "Ative as notificações nas Configurações para receber lembretes de tarefas";
+"task_created" = "✅ Tarefa Criada";
+"task_scheduled_for" = "'%@' agendada para %@";
+"at_start_of_task" = "No início da tarefa";
+
+// MARK: - Repeat Rules
+"repeat_none" = "Nenhuma";
+"repeat_daily" = "Diária";
+"repeat_weekdays" = "Dias úteis";
+"repeat_weekends" = "Fins de semana";
+"repeat_weekly" = "Semanal";
+"repeat_monthly" = "Mensal";

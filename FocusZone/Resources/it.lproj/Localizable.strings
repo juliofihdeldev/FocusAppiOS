@@ -153,3 +153,46 @@
 "language_change_restart_message" = "L'app deve essere riavviata per applicare il cambio di lingua. Vuoi riavviare ora o più tardi?";
 "restart_now" = "Riavvia Ora";
 "restart_later" = "Riavvia Più Tardi";
+
+// MARK: - TaskFormView
+"new_task" = "Nuova Attività";
+"create_task" = "Crea Attività";
+"update_task" = "Aggiorna Attività";
+"task_title" = "Titolo attività";
+"when" = "Quando?";
+"more" = "Altro...";
+"quick_select" = "Selezione Rapida";
+"today" = "Oggi";
+"tomorrow" = "Domani";
+"next_week" = "Prossima Settimana";
+"select_date" = "Seleziona Data";
+"select_time" = "Seleziona Ora";
+"change" = "Cambia";
+"how_long" = "Quanto tempo?";
+"hide" = "Nascondi";
+"custom" = "Personalizzato...";
+"select_duration" = "Seleziona Durata";
+"minutes" = "Minuti";
+"cancel" = "Annulla";
+"set" = "Imposta";
+"what_type_of_task" = "Che tipo di attività è questa?";
+"how_often" = "Con che frequenza?";
+"notifications" = "Notifiche";
+"notifications_enabled" = "Notifiche abilitate";
+"notifications_disabled" = "Notifiche disabilitate";
+"you_will_receive" = "Riceverai:";
+"five_minutes_before" = "• 5 minuti prima che l'attività inizi";
+"when_task_starts" = "• Quando l'attività è programmata per iniziare";
+"completion_confirmation" = "• Conferma di completamento";
+"enable_notifications_settings" = "Abilita le notifiche nelle Impostazioni per ricevere promemoria per le attività";
+"task_created" = "✅ Attività Creata";
+"task_scheduled_for" = "'%@' programmata per %@";
+"at_start_of_task" = "All'inizio dell'attività";
+
+// MARK: - Repeat Rules
+"repeat_none" = "Nessuna";
+"repeat_daily" = "Giornaliera";
+"repeat_weekdays" = "Giorni feriali";
+"repeat_weekends" = "Weekend";
+"repeat_weekly" = "Settimanale";
+"repeat_monthly" = "Mensile";

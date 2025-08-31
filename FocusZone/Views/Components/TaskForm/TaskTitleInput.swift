@@ -12,7 +12,7 @@ struct TaskTitleInput: View {
                 Image(systemName: "checkmark.circle")
                     .foregroundColor(.pink)
                     .font(.system(size: 20))
-                TextField("Task title", text: $taskTitle)
+                TextField(NSLocalizedString("task_title", comment: "Task title input placeholder"), text: $taskTitle)
                     .font(AppFonts.headline())
                     .textFieldStyle(PlainTextFieldStyle())
                     .onChange(of: taskTitle) { newValue in

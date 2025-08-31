@@ -153,3 +153,46 @@
 "language_change_restart_message" = "言語変更を適用するにはアプリを再起動する必要があります。今すぐ再起動しますか、それとも後でしますか？";
 "restart_now" = "今すぐ再起動";
 "restart_later" = "後で再起動";
+
+// MARK: - TaskFormView
+"new_task" = "新しいタスク";
+"create_task" = "タスクを作成";
+"update_task" = "タスクを更新";
+"task_title" = "タスクのタイトル";
+"when" = "いつ？";
+"more" = "もっと...";
+"quick_select" = "クイック選択";
+"today" = "今日";
+"tomorrow" = "明日";
+"next_week" = "来週";
+"select_date" = "日付を選択";
+"select_time" = "時間を選択";
+"change" = "変更";
+"how_long" = "どのくらいの時間？";
+"hide" = "隠す";
+"custom" = "カスタム...";
+"select_duration" = "時間を選択";
+"minutes" = "分";
+"cancel" = "キャンセル";
+"set" = "設定";
+"what_type_of_task" = "これはどのようなタスクですか？";
+"how_often" = "どのくらいの頻度？";
+"notifications" = "通知";
+"notifications_enabled" = "通知が有効";
+"notifications_disabled" = "通知が無効";
+"you_will_receive" = "以下の通知を受け取ります：";
+"five_minutes_before" = "• タスク開始5分前";
+"when_task_starts" = "• タスクが開始予定時刻になった時";
+"completion_confirmation" = "• 完了確認";
+"enable_notifications_settings" = "設定で通知を有効にしてタスクのリマインダーを受け取る";
+"task_created" = "✅ タスクが作成されました";
+"task_scheduled_for" = "'%@'が%@にスケジュールされました";
+"at_start_of_task" = "タスク開始時";
+
+// MARK: - Repeat Rules
+"repeat_none" = "なし";
+"repeat_daily" = "毎日";
+"repeat_weekdays" = "平日";
+"repeat_weekends" = "週末";
+"repeat_weekly" = "毎週";
+"repeat_monthly" = "毎月";
