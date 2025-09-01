@@ -42,7 +42,7 @@ struct FocusInsightsView: View {
                 }
             }
             .background(AppColors.background.ignoresSafeArea())
-            .navigationTitle("Focus Coach")
+            .navigationTitle(NSLocalizedString("focus_coach", comment: "Focus Coach navigation title"))
             .navigationBarTitleDisplayMode(.large)
             .onAppear {
                 setupAnalytics()
@@ -62,12 +62,12 @@ struct FocusInsightsView: View {
                     .foregroundColor(AppColors.accent)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Your Focus Coach")
+                    Text(NSLocalizedString("your_focus_coach", comment: "Your Focus Coach header title"))
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                         .fontWeight(.semibold)
                     
-                    Text("AI-powered insights from your tasks")
+                    Text(NSLocalizedString("ai_powered_insights", comment: "AI-powered insights subtitle"))
                         .font(AppFonts.caption())
                         .foregroundColor(AppColors.textSecondary)
                 }
@@ -88,14 +88,14 @@ struct FocusInsightsView: View {
     private var weeklySummaryCard: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("This Week's Insights")
+                Text(NSLocalizedString("this_weeks_insights", comment: "This Week's Insights section title"))
                     .font(AppFonts.subheadline())
                     .fontWeight(.semibold)
                     .foregroundColor(AppColors.textPrimary)
                 
                 Spacer()
                 
-                Text("\(analyticsEngine.weeklyInsights.count) insights")
+                Text(String(format: NSLocalizedString("insights_count", comment: "Number of insights"), analyticsEngine.weeklyInsights.count))
                     .font(AppFonts.caption())
                     .foregroundColor(AppColors.textSecondary)
             }
@@ -134,11 +134,11 @@ struct FocusInsightsView: View {
                 .scaleEffect(1.2)
                 .tint(AppColors.accent)
             
-            Text("Analyzing your focus patterns...")
+            Text(NSLocalizedString("analyzing_focus_patterns", comment: "Analyzing focus patterns loading text"))
                 .font(AppFonts.body())
                 .foregroundColor(AppColors.textSecondary)
             
-            Text("This may take a moment")
+            Text(NSLocalizedString("this_may_take_moment", comment: "Loading may take a moment text"))
                 .font(AppFonts.caption())
                 .foregroundColor(AppColors.textSecondary.opacity(0.7))
         }
@@ -153,18 +153,18 @@ struct FocusInsightsView: View {
                 .foregroundColor(AppColors.textSecondary.opacity(0.6))
             
             VStack(spacing: 8) {
-                Text("Not enough data yet")
+                Text(NSLocalizedString("not_enough_data_yet", comment: "Not enough data yet title"))
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textSecondary)
                 
-                Text("Complete a few more tasks to unlock personalized insights")
+                Text(NSLocalizedString("complete_tasks_for_insights", comment: "Complete tasks to unlock insights message"))
                     .font(AppFonts.body())
                     .foregroundColor(AppColors.textSecondary.opacity(0.8))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
             
-            Button("View Sample Insights") {
+            Button(NSLocalizedString("view_sample_insights", comment: "View Sample Insights button")) {
                 // Show sample insights for demonstration
                 showSampleInsights()
             }
@@ -190,7 +190,7 @@ struct FocusInsightsView: View {
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "arrow.clockwise")
-                    Text("Refresh Insights")
+                    Text(NSLocalizedString("refresh_insights", comment: "Refresh Insights button"))
                 }
                 .font(AppFonts.body())
                 .foregroundColor(AppColors.accent)
@@ -204,7 +204,7 @@ struct FocusInsightsView: View {
             .padding(.horizontal, 20)
 
             
-            Button("Upgrade for Advanced Insights") {
+            Button(NSLocalizedString("upgrade_advanced_insights", comment: "Upgrade for Advanced Insights button")) {
                 showingUpgradeSheet = true
             }
             .font(AppFonts.caption())
@@ -236,18 +236,18 @@ struct FocusInsightsView: View {
         analyticsEngine.weeklyInsights = [
             FocusInsight(
                 type: .timeOfDay,
-                title: "🌅 Peak Performance Window",
-                message: "You're 40% more productive during early morning",
-                recommendation: "Schedule your most important tasks between 6-9 AM",
+                title: NSLocalizedString("peak_performance_window", comment: "Peak Performance Window insight title"),
+                message: String(format: NSLocalizedString("productive_early_morning", comment: "Productive during early morning message"), 40),
+                recommendation: NSLocalizedString("schedule_important_tasks_early", comment: "Schedule important tasks early recommendation"),
                 impactScore: 85,
                 dataPoints: 12,
                 trend: .improving
             ),
             FocusInsight(
                 type: .breakPattern,
-                title: "🧘 Break Power Boost",
-                message: "Tasks after breaks have 25% higher completion rates",
-                recommendation: "Schedule 5-10 minute breaks before important tasks",
+                title: NSLocalizedString("break_power_boost", comment: "Break Power Boost insight title"),
+                message: String(format: NSLocalizedString("tasks_after_breaks_higher", comment: "Tasks after breaks have higher completion rates"), 25),
+                recommendation: NSLocalizedString("schedule_breaks_before_tasks", comment: "Schedule breaks before important tasks recommendation"),
                 impactScore: 75,
                 dataPoints: 8,
                 trend: .improving

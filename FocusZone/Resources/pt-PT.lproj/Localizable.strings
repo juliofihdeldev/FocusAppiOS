@@ -284,3 +284,76 @@
 "remaining" = "%@ restante";
 "overdue" = "%@ em atraso";
 "starts_in" = "Começa em %@";
+
+// MARK: - Focus Insights View
+"focus_coach" = "Coach de Foco";
+"your_focus_coach" = "O Seu Coach de Foco";
+"ai_powered_insights" = "Insights alimentados por IA das suas tarefas";
+"this_weeks_insights" = "Insights desta Semana";
+"insights_count" = "%d insights";
+"analyzing_focus_patterns" = "A analisar os seus padrões de foco...";
+"this_may_take_moment" = "Isto pode demorar um momento";
+"not_enough_data_yet" = "Ainda não há dados suficientes";
+"complete_tasks_for_insights" = "Complete mais algumas tarefas para desbloquear insights personalizados";
+"view_sample_insights" = "Ver Insights de Exemplo";
+"refresh_insights" = "Atualizar Insights";
+"upgrade_advanced_insights" = "Atualizar para Insights Avançados";
+"peak_performance_window" = "🌅 Janela de Performance Máxima";
+"productive_early_morning" = "É %d%% mais produtivo durante %@";
+"schedule_important_tasks_early" = "Agende as suas tarefas mais importantes entre as 6h e 9h";
+"break_power_boost" = "🧘 Impulso de Poder da Pausa";
+"tasks_after_breaks_higher" = "As tarefas após pausas têm %d%% de taxas de conclusão mais altas";
+"schedule_breaks_before_tasks" = "Agende pausas de 5-10 minutos antes de tarefas importantes";
+
+// MARK: - Insight Card
+"impact" = "Impacto";
+"based_on_tasks" = "Baseado em %d tarefas";
+"collapse" = "Colapsar";
+"view_details" = "Ver detalhes";
+"recommendation" = "Recomendação";
+"add_to_reminders" = "Adicionar aos lembretes";
+
+// MARK: - Insight Types
+"time_pattern" = "Padrão Temporal";
+"duration" = "Duração";
+"break_time" = "Tempo de Pausa";
+"completion" = "Conclusão";
+"weekly_pattern" = "Padrão Semanal";
+
+// MARK: - Time Periods
+"early_morning" = "cedo de manhã";
+"late_morning" = "tarde de manhã";
+"early_afternoon" = "cedo da tarde";
+"late_afternoon" = "tarde da tarde";
+"evening" = "tarde";
+"night" = "noite";
+"time_6_9_am" = "6h-9h";
+"time_9_am_12_pm" = "9h-12h";
+"time_12_3_pm" = "12h-15h";
+"time_3_6_pm" = "15h-18h";
+"time_6_9_pm" = "18h-21h";
+"time_9_plus_pm" = "21h+";
+
+// MARK: - Duration Categories
+"short_15_30_min" = "curta (15-30 min)";
+"medium_30_60_min" = "média (30-60 min)";
+"long_1_2_hour" = "longa (1-2 hora)";
+"extended_2_plus_hour" = "estendida (2+ horas)";
+
+// MARK: - Analytics Engine
+"break_auto" = "Pausa (Auto)";
+"room_for_growth" = "Espaço para Crescimento";
+"catch_up_focus_auto" = "Recuperar Foco (Auto)";
+"more_productive_during_time" = "É %d%% mais produtivo durante %@";
+"schedule_important_tasks_between" = "Agende as suas tarefas mais importantes entre %@";
+"focus_drops_during_time" = "O seu foco diminui %d%% durante %@";
+"schedule_breaks_admin_tasks" = "Considere agendar pausas, tarefas administrativas ou trabalho mais leve durante %@";
+"complete_percentage_duration_tasks" = "Conclui %d%% das tarefas %@";
+"break_longer_tasks_chunks" = "Tente dividir tarefas mais longas em blocos de %d minutos";
+"tasks_after_breaks_higher_completion" = "As tarefas após pausas têm %d%% de taxas de conclusão mais altas";
+"schedule_breaks_before_important_tasks" = "Agende pausas de 5-10 minutos antes de tarefas importantes";
+"completed_percentage_tasks_week" = "Concluiu %d%% das tarefas esta semana (%d h focado)";
+"great_momentum_increase_goals" = "Excelente momento! Considere aumentar gradualmente os seus objetivos de foco diários";
+"away_from_completion_goal" = "Está a %d%% do seu objetivo de conclusão desta semana";
+"reduce_task_durations_schedule_fewer" = "Tente reduzir a duração das tarefas em 25%% ou agendar menos tarefas por dia";
+"schedule_challenging_tasks_on_day" = "Agende as suas tarefas mais desafiadoras às %@s";

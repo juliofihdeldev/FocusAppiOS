@@ -69,7 +69,7 @@ class FocusAnalyticsEngine: ObservableObject {
                 // Break before important tasks: 10 minutes
                 let breakStart = movedStart.addingTimeInterval(TimeInterval(-10 * 60))
                 if breakStart >= startOfDay(task.startTime) {
-                    changes.append(.addFocusBlock(date: breakStart, durationMinutes: 10, title: "Break (Auto)"))
+                    changes.append(.addFocusBlock(date: breakStart, durationMinutes: 10, title: NSLocalizedString("break_auto", comment: "Auto-generated break title")))
                 }
             }
         }
@@ -81,10 +81,10 @@ class FocusAnalyticsEngine: ObservableObject {
         }
 
         // 3) completion: if last 7-day completion looks low, add a catch-up 60m block mid-week evening (6-9 PM)
-        if let lowCompletion = weeklyInsights.first(where: { $0.type == .completion && $0.title.contains("Room for Growth") }) {
+        if let lowCompletion = weeklyInsights.first(where: { $0.type == .completion && $0.title.contains(NSLocalizedString("room_for_growth", comment: "Room for Growth insight title")) }) {
             let midWeek = Calendar.current.date(byAdding: .day, value: 3, to: range.start) ?? range.start
             if let catchUpStart = suggestStart(in: .evening, sameDayAs: midWeek, duration: 60) {
-                changes.append(.addFocusBlock(date: catchUpStart, durationMinutes: 60, title: "Catch-up Focus (Auto)"))
+                changes.append(.addFocusBlock(date: catchUpStart, durationMinutes: 60, title: NSLocalizedString("catch_up_focus_auto", comment: "Auto-generated catch-up focus title")))
             }
         }
 
@@ -150,8 +150,8 @@ class FocusAnalyticsEngine: ObservableObject {
                 insights.append(FocusInsight(
                     type: .timeOfDay,
                     title: "🌅 Peak Performance Window",
-                    message: "You're \(Int(improvement * 100))% more productive during \(bestSlot.key.displayName)",
-                    recommendation: "Schedule your most important tasks between \(bestSlot.key.timeRange)",
+                                    message: String(format: NSLocalizedString("more_productive_during_time", comment: "More productive during time period message"), Int(improvement * 100), bestSlot.key.displayName),
+                recommendation: String(format: NSLocalizedString("schedule_important_tasks_between", comment: "Schedule important tasks between time recommendation"), bestSlot.key.timeRange),
                     impactScore: improvement * 100,
                     dataPoints: bestSlot.value.taskCount,
                     trend: .improving
@@ -167,8 +167,8 @@ class FocusAnalyticsEngine: ObservableObject {
                 insights.append(FocusInsight(
                     type: .timeOfDay,
                     title: "⚠️ Energy Dip Detected",
-                    message: "Your focus drops \(Int(decline * 100))% during \(worstSlot.key.displayName)",
-                    recommendation: "Consider scheduling breaks, admin tasks, or lighter work during \(worstSlot.key.timeRange)",
+                                    message: String(format: NSLocalizedString("focus_drops_during_time", comment: "Focus drops during time period message"), Int(decline * 100), worstSlot.key.displayName),
+                recommendation: String(format: NSLocalizedString("schedule_breaks_admin_tasks", comment: "Schedule breaks or admin tasks during time recommendation"), worstSlot.key.timeRange),
                     impactScore: decline * 80,
                     dataPoints: worstSlot.value.taskCount,
                     trend: .declining
@@ -194,8 +194,8 @@ class FocusAnalyticsEngine: ObservableObject {
                 insights.append(FocusInsight(
                     type: .taskDuration,
                     title: "⏱️ Sweet Spot Duration",
-                    message: "You complete \(Int(completionRate * 100))% of \(optimalDuration.key.displayName) tasks",
-                    recommendation: "Try breaking longer tasks into \(optimalDuration.key.suggestedDuration)-minute chunks",
+                                    message: String(format: NSLocalizedString("complete_percentage_duration_tasks", comment: "Complete percentage of duration tasks message"), Int(completionRate * 100), optimalDuration.key.displayName),
+                recommendation: String(format: NSLocalizedString("break_longer_tasks_chunks", comment: "Break longer tasks into chunks recommendation"), optimalDuration.key.suggestedDuration),
                     impactScore: completionRate * 90,
                     dataPoints: optimalDuration.value.count,
                     trend: .stable
@@ -228,8 +228,8 @@ class FocusAnalyticsEngine: ObservableObject {
             return [FocusInsight(
                 type: .breakPattern,
                 title: "🧘 Break Power Boost",
-                message: "Tasks after breaks have \(Int(breakBenefit * 100))% higher completion rates",
-                recommendation: "Schedule 5-10 minute breaks before important tasks",
+                message: String(format: NSLocalizedString("tasks_after_breaks_higher_completion", comment: "Tasks after breaks have higher completion rates message"), Int(breakBenefit * 100)),
+                recommendation: NSLocalizedString("schedule_breaks_before_important_tasks", comment: "Schedule breaks before important tasks recommendation"),
                 impactScore: breakBenefit * 85,
                 dataPoints: tasksAfterBreaks.count,
                 trend: .improving
@@ -257,8 +257,8 @@ class FocusAnalyticsEngine: ObservableObject {
                 insights.append(FocusInsight(
                     type: .completion,
                     title: "🎯 Consistency Champion",
-                    message: "You completed \(Int(completionRate * 100))% of tasks this week (\(totalFocusMinutes/60)h focused)",
-                    recommendation: "Great momentum! Consider gradually increasing your daily focus goals",
+                                    message: String(format: NSLocalizedString("completed_percentage_tasks_week", comment: "Completed percentage of tasks this week message"), Int(completionRate * 100), totalFocusMinutes/60),
+                recommendation: NSLocalizedString("great_momentum_increase_goals", comment: "Great momentum, consider increasing goals recommendation"),
                     impactScore: completionRate * 70,
                     dataPoints: last7Days.count,
                     trend: .improving
@@ -268,8 +268,8 @@ class FocusAnalyticsEngine: ObservableObject {
                 insights.append(FocusInsight(
                     type: .completion,
                     title: "📈 Room for Growth",
-                    message: "You're \(Int(shortfall * 100))% away from your completion goal this week",
-                    recommendation: "Try reducing task durations by 25% or scheduling fewer tasks per day",
+                                    message: String(format: NSLocalizedString("away_from_completion_goal", comment: "Away from completion goal message"), Int(shortfall * 100)),
+                recommendation: NSLocalizedString("reduce_task_durations_schedule_fewer", comment: "Reduce task durations or schedule fewer recommendation"),
                     impactScore: shortfall * 60,
                     dataPoints: last7Days.count,
                     trend: .needsImprovement
@@ -301,7 +301,7 @@ class FocusAnalyticsEngine: ObservableObject {
                     type: .dayOfWeek,
                     title: "📅 Weekly Rhythm",
                     message: "\(dayName(bestDay.key)) is your strongest day (\(Int(bestDay.value * 100))% completion)",
-                    recommendation: "Schedule your most challenging tasks on \(dayName(bestDay.key))s",
+                    recommendation: String(format: NSLocalizedString("schedule_challenging_tasks_on_day", comment: "Schedule challenging tasks on specific day recommendation"), dayName(bestDay.key)),
                     impactScore: difference * 75,
                     dataPoints: dayGroups[bestDay.key]?.count ?? 0,
                     trend: .stable
@@ -421,23 +421,23 @@ enum TimeOfDay: String, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .earlyMorning: return "early morning"
-        case .lateMorning: return "late morning"
-        case .earlyAfternoon: return "early afternoon"
-        case .lateAfternoon: return "late afternoon"
-        case .evening: return "evening"
-        case .night: return "night"
+        case .earlyMorning: return NSLocalizedString("early_morning", comment: "Early morning time period")
+        case .lateMorning: return NSLocalizedString("late_morning", comment: "Late morning time period")
+        case .earlyAfternoon: return NSLocalizedString("early_afternoon", comment: "Early afternoon time period")
+        case .lateAfternoon: return NSLocalizedString("late_afternoon", comment: "Late afternoon time period")
+        case .evening: return NSLocalizedString("evening", comment: "Evening time period")
+        case .night: return NSLocalizedString("night", comment: "Night time period")
         }
     }
     
     var timeRange: String {
         switch self {
-        case .earlyMorning: return "6-9 AM"
-        case .lateMorning: return "9 AM-12 PM"
-        case .earlyAfternoon: return "12-3 PM"
-        case .lateAfternoon: return "3-6 PM"
-        case .evening: return "6-9 PM"
-        case .night: return "9+ PM"
+        case .earlyMorning: return NSLocalizedString("time_6_9_am", comment: "6-9 AM time range")
+        case .lateMorning: return NSLocalizedString("time_9_am_12_pm", comment: "9 AM-12 PM time range")
+        case .earlyAfternoon: return NSLocalizedString("time_12_3_pm", comment: "12-3 PM time range")
+        case .lateAfternoon: return NSLocalizedString("time_3_6_pm", comment: "3-6 PM time range")
+        case .evening: return NSLocalizedString("time_6_9_pm", comment: "6-9 PM time range")
+        case .night: return NSLocalizedString("time_9_plus_pm", comment: "9+ PM time range")
         }
     }
 }
@@ -459,10 +459,10 @@ enum DurationCategory: String, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .short: return "short (15-30 min)"
-        case .medium: return "medium (30-60 min)"
-        case .long: return "long (1-2 hour)"
-        case .extended: return "extended (2+ hour)"
+        case .short: return NSLocalizedString("short_15_30_min", comment: "Short duration 15-30 min")
+        case .medium: return NSLocalizedString("medium_30_60_min", comment: "Medium duration 30-60 min")
+        case .long: return NSLocalizedString("long_1_2_hour", comment: "Long duration 1-2 hour")
+        case .extended: return NSLocalizedString("extended_2_plus_hour", comment: "Extended duration 2+ hour")
         }
     }
     

@@ -255,3 +255,48 @@ To test localization:
 -   **NEW: Language selection requires app restart for full effect**
 -   **NEW: Language preferences are persisted across app launches**
 -   **NEW: System language is automatically detected and used if supported**
+
+## FocusInsightsView Localization
+
+The FocusInsightsView and all its related components have been successfully localized. This includes:
+
+### Views Localized:
+
+-   **FocusInsightsView.swift** - Main focus insights screen with AI-powered analytics
+-   **InsightCard.swift** - Individual insight display cards
+-   **FocusAnalyticsEngine.swift** - Analytics engine with insight generation
+
+### New Localization Keys Added:
+
+-   **FocusInsightsView**: 17 keys for main screen content, loading states, and actions
+-   **InsightCard**: 6 keys for card interactions and recommendations
+-   **Insight Types**: 5 keys for different insight categories
+-   **Time Periods**: 12 keys for time-of-day and time range displays
+-   **Duration Categories**: 4 keys for task duration classifications
+-   **Analytics Engine**: 15 keys for insight messages and recommendations
+
+### Total New Keys: 59 localization keys
+
+### Files Updated:
+
+-   All 5 language files: `en.lproj/Localizable.strings`, `fr.lproj/Localizable.strings`, `pt-PT.lproj/Localizable.strings`, `it.lproj/Localizable.strings`, `ja.lproj/Localizable.strings`
+-   `Localizable.xcstrings` - Centralized string catalog
+-   All Swift files with hardcoded strings replaced with `NSLocalizedString()` calls
+
+### Dynamic Content Handling:
+
+-   Used `String(format: NSLocalizedString(...), ...)` for strings with dynamic content
+-   Properly localized percentage displays, time periods, and task counts
+-   Maintained consistent formatting across all languages
+-   Handled complex analytics messages with multiple dynamic parameters
+
+### Key Features Localized:
+
+-   AI-powered insights and recommendations
+-   Time-based productivity patterns
+-   Break effectiveness analysis
+-   Task completion analytics
+-   Performance trend indicators
+-   Sample insights for demonstration
+
+The project builds successfully and all FocusInsightsView components are now fully localized across all supported languages.

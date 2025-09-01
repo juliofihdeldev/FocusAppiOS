@@ -284,3 +284,76 @@
 "remaining" = "%@残り";
 "overdue" = "%@期限切れ";
 "starts_in" = "開始まで%@";
+
+// MARK: - Focus Insights View
+"focus_coach" = "集中コーチ";
+"your_focus_coach" = "あなたの集中コーチ";
+"ai_powered_insights" = "AI搭載のタスクからの洞察";
+"this_weeks_insights" = "今週の洞察";
+"insights_count" = "%dの洞察";
+"analyzing_focus_patterns" = "集中パターンを分析中...";
+"this_may_take_moment" = "少し時間がかかる場合があります";
+"not_enough_data_yet" = "まだ十分なデータがありません";
+"complete_tasks_for_insights" = "パーソナライズされた洞察をアンロックするために、もう少しタスクを完了してください";
+"view_sample_insights" = "サンプル洞察を表示";
+"refresh_insights" = "洞察を更新";
+"upgrade_advanced_insights" = "高度な洞察のためにアップグレード";
+"peak_performance_window" = "🌅 ピークパフォーマンスウィンドウ";
+"productive_early_morning" = "早朝の%@に%d%%より生産的です";
+"schedule_important_tasks_early" = "最も重要なタスクを6-9時にスケジュール";
+"break_power_boost" = "🧘 休憩パワーブースト";
+"tasks_after_breaks_higher" = "休憩後のタスクは%d%%高い完了率";
+"schedule_breaks_before_tasks" = "重要なタスクの前に5-10分の休憩をスケジュール";
+
+// MARK: - Insight Card
+"impact" = "影響";
+"based_on_tasks" = "%dのタスクに基づく";
+"collapse" = "折りたたむ";
+"view_details" = "詳細を表示";
+"recommendation" = "推奨";
+"add_to_reminders" = "リマインダーに追加";
+
+// MARK: - Insight Types
+"time_pattern" = "時間パターン";
+"duration" = "期間";
+"break_time" = "休憩時間";
+"completion" = "完了";
+"weekly_pattern" = "週次パターン";
+
+// MARK: - Time Periods
+"early_morning" = "早朝";
+"late_morning" = "午前遅く";
+"early_afternoon" = "午後早く";
+"late_afternoon" = "午後遅く";
+"evening" = "夕方";
+"night" = "夜";
+"time_6_9_am" = "6-9時";
+"time_9_am_12_pm" = "9-12時";
+"time_12_3_pm" = "12-15時";
+"time_3_6_pm" = "15-18時";
+"time_6_9_pm" = "18-21時";
+"time_9_plus_pm" = "21時以降";
+
+// MARK: - Duration Categories
+"short_15_30_min" = "短い（15-30分）";
+"medium_30_60_min" = "中程度（30-60分）";
+"long_1_2_hour" = "長い（1-2時間）";
+"extended_2_plus_hour" = "延長（2時間以上）";
+
+// MARK: - Analytics Engine
+"break_auto" = "休憩（自動）";
+"room_for_growth" = "成長の余地";
+"catch_up_focus_auto" = "集中力回復（自動）";
+"more_productive_during_time" = "%@に%d%%より生産的です";
+"schedule_important_tasks_between" = "最も重要なタスクを%@の間にスケジュール";
+"focus_drops_during_time" = "%@に集中力が%d%%低下";
+"schedule_breaks_admin_tasks" = "%@の間に休憩、管理タスク、または軽い作業をスケジュールすることを検討";
+"complete_percentage_duration_tasks" = "%@タスクの%d%%を完了";
+"break_longer_tasks_chunks" = "より長いタスクを%d分のチャンクに分割してみてください";
+"tasks_after_breaks_higher_completion" = "休憩後のタスクは%d%%高い完了率";
+"schedule_breaks_before_important_tasks" = "重要なタスクの前に5-10分の休憩をスケジュール";
+"completed_percentage_tasks_week" = "今週のタスクの%d%%を完了（%d時間集中）";
+"great_momentum_increase_goals" = "素晴らしい勢い！毎日の集中目標を徐々に増やすことを検討";
+"away_from_completion_goal" = "今週の完了目標から%d%%離れています";
+"reduce_task_durations_schedule_fewer" = "タスクの期間を25%%短縮するか、1日あたりのタスク数を減らしてみてください";
+"schedule_challenging_tasks_on_day" = "最も困難なタスクを%@にスケジュール";
