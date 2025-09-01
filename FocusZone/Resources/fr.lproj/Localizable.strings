@@ -413,3 +413,13 @@
 "remaining" = "%@ restant";
 "overdue" = "%@ en retard";
 "starts_in" = "Commence dans %@";
+
+// MARK: - Splash Screen
+"stay_focused_achieve_more" = "Restez concentré, accomplissez plus";
+"loading" = "Chargement...";
+
+// MARK: - Tab Navigation
+"timeline" = "Chronologie";
+"insights" = "Aperçus";
+"settings" = "Paramètres";
+"pro" = "PRO";

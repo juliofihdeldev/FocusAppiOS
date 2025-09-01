@@ -160,7 +160,7 @@ struct AppTitleView: View {
                 }
             }
             
-            Text("Stay focused, achieve more")
+            Text(NSLocalizedString("stay_focused_achieve_more", comment: "Splash screen tagline"))
                 .font(AppFonts.subheadline()) // Using system font instead of AppFonts
                 .foregroundColor(.white.opacity(0.8))
                 .opacity(opacity)
@@ -194,7 +194,7 @@ struct LoadingIndicator: View {
                 }
             }
             
-            Text("Loading...")
+            Text(NSLocalizedString("loading", comment: "Loading indicator text"))
                 .font(.system(size: 12)) // Using system font instead of AppFonts
                 .foregroundColor(.white.opacity(0.6))
                 .opacity(opacity)

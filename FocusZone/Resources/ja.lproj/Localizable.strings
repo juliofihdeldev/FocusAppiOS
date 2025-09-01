@@ -357,3 +357,13 @@
 "away_from_completion_goal" = "今週の完了目標から%d%%離れています";
 "reduce_task_durations_schedule_fewer" = "タスクの期間を25%%短縮するか、1日あたりのタスク数を減らしてみてください";
 "schedule_challenging_tasks_on_day" = "最も困難なタスクを%@にスケジュール";
+
+// MARK: - Splash Screen
+"stay_focused_achieve_more" = "集中し続け、より多くを達成";
+"loading" = "読み込み中...";
+
+// MARK: - Tab Navigation
+"timeline" = "タイムライン";
+"insights" = "洞察";
+"settings" = "設定";
+"pro" = "PRO";

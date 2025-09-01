@@ -10,13 +10,13 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             TimelineView()
                 .tabItem {
-                    Label("Timeline", systemImage: "calendar")
+                    Label(NSLocalizedString("timeline", comment: "Timeline tab label"), systemImage: "calendar")
                 }
                 .tag(0)
 
             FocusInsightsView()
                 .tabItem {
-                    Label("Insights", systemImage: selectedTab == 1 ? "brain.head.profile.fill" : "brain.head.profile")
+                    Label(NSLocalizedString("insights", comment: "Insights tab label"), systemImage: selectedTab == 1 ? "brain.head.profile.fill" : "brain.head.profile")
                 }
                 .tag(1)
                 .overlay(
@@ -27,7 +27,7 @@ struct MainTabView: View {
 
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(NSLocalizedString("settings", comment: "Settings tab label"), systemImage: "gear")
                 }
                 .tag(2)
         }
@@ -40,7 +40,7 @@ struct MainTabView: View {
     @ViewBuilder
     private var proTabBadge: some View {
         if !subscriptionManager.isProUser && selectedTab != 1 {
-            Text("PRO")
+            Text(NSLocalizedString("pro", comment: "Pro subscription badge"))
                 .font(.system(size: 8, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 6)

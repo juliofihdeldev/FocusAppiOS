@@ -357,3 +357,13 @@
 "away_from_completion_goal" = "Está a %d%% do seu objetivo de conclusão desta semana";
 "reduce_task_durations_schedule_fewer" = "Tente reduzir a duração das tarefas em 25%% ou agendar menos tarefas por dia";
 "schedule_challenging_tasks_on_day" = "Agende as suas tarefas mais desafiadoras às %@s";
+
+// MARK: - Splash Screen
+"stay_focused_achieve_more" = "Mantenha-se focado, alcance mais";
+"loading" = "A carregar...";
+
+// MARK: - Tab Navigation
+"timeline" = "Cronologia";
+"insights" = "Perspetivas";
+"settings" = "Definições";
+"pro" = "PRO";

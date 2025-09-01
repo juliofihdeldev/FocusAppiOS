@@ -325,3 +325,13 @@
 "away_from_completion_goal" = "You're %d%% away from your completion goal this week";
 "reduce_task_durations_schedule_fewer" = "Try reducing task durations by 25%% or scheduling fewer tasks per day";
 "schedule_challenging_tasks_on_day" = "Schedule your most challenging tasks on %@s";
+
+// MARK: - Splash Screen
+"stay_focused_achieve_more" = "Stay focused, achieve more";
+"loading" = "Loading...";
+
+// MARK: - Tab Navigation
+"timeline" = "Timeline";
+"insights" = "Insights";
+"settings" = "Settings";
+"pro" = "PRO";
