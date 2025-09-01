@@ -307,10 +307,21 @@ final class CloudSyncManager: ObservableObject {
                 if let remoteUpdatedAt = record["updatedAt"] as? Date,
                    remoteUpdatedAt > existingTask.updatedAt {
                     try await updateTaskFromRecord(existingTask, record: record)
+                } else {
+                    print("ℹ️ Local task is newer, skipping update: \(existingTask.title)")
                 }
             } else {
-                // Create new task from remote data
-                try await createTaskFromRecord(record, modelContext: modelContext)
+                // Check if task already exists in database to prevent duplicates
+                let recordName = record.recordID.recordName
+                let allTasks = try modelContext.fetch(FetchDescriptor<Task>())
+                let existingTasks = allTasks.filter { $0.id.uuidString == recordName }
+                
+                if existingTasks.isEmpty {
+                    // Create new task from remote data only if it doesn't exist
+                    try await createTaskFromRecord(record, modelContext: modelContext)
+                } else {
+                    print("ℹ️ Task already exists locally, skipping creation: \(record["title"] as? String ?? "Unknown")")
+                }
             }
         }
         
@@ -334,13 +345,26 @@ final class CloudSyncManager: ObservableObject {
         if let icon = record["icon"] as? String {
             task.icon = icon
         }
+        if let startTime = record["startTime"] as? Date {
+            task.startTime = startTime
+        }
+        if let updatedAt = record["updatedAt"] as? Date {
+            task.updatedAt = updatedAt
+        }
         
-        task.updatedAt = Date()
+        print("✅ Updated task from CloudKit record: \(task.title) (ID: \(task.id))")
     }
     
     private func createTaskFromRecord(_ record: CKRecord, modelContext: ModelContext) async throws {
-        // Create new task from CloudKit record
+        // Extract UUID from CloudKit record ID to prevent duplicates
+        guard let taskUUID = UUID(uuidString: record.recordID.recordName) else {
+            print("❌ Failed to parse UUID from CloudKit record: \(record.recordID.recordName)")
+            return
+        }
+        
+        // Create new task with the correct UUID from CloudKit
         let task = Task(
+            id: taskUUID, // Use the UUID from CloudKit record
             title: "",
             icon: "target",
             startTime: Date(),
@@ -348,6 +372,7 @@ final class CloudSyncManager: ObservableObject {
             color: .blue
         )
         
+        // Update task with data from CloudKit record
         if let title = record["title"] as? String {
             task.title = title
         }
@@ -363,11 +388,18 @@ final class CloudSyncManager: ObservableObject {
         if let icon = record["icon"] as? String {
             task.icon = icon
         }
-        
-        task.updatedAt = Date()
-        task.createdAt = Date()
+        if let startTime = record["startTime"] as? Date {
+            task.startTime = startTime
+        }
+        if let createdAt = record["createdAt"] as? Date {
+            task.createdAt = createdAt
+        }
+        if let updatedAt = record["updatedAt"] as? Date {
+            task.updatedAt = updatedAt
+        }
         
         modelContext.insert(task)
+        print("✅ Created task from CloudKit record: \(task.title) (ID: \(task.id))")
     }
     
     private func uploadLocalChanges(_ localChanges: [Task], modelContext: ModelContext) async throws {
