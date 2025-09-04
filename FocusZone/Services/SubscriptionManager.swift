@@ -312,14 +312,16 @@ enum SubscriptionStatus: String, CaseIterable {
 
 
 struct ProFeatures {
-    static let maxTasksForFree = 5
+    static let maxTasksForFree = 3
     static let maxFocusSessionsForFree = 5
-    static let maxInsightsForFree = 5
+    static let maxInsightsForFree = 3
     
-    static let proFeaturesList = [
-        "Unlimited tasks",
-        "Advanced insights & recommendations",
-        "Custom focus modes",
-        "Smart break suggestions",
-    ]
+    static var proFeaturesList: [String] {
+        return [
+            NSLocalizedString("unlimited_tasks", comment: "Unlimited tasks feature"),
+            NSLocalizedString("advanced_insights_recommendations", comment: "Advanced insights and recommendations feature"),
+            NSLocalizedString("custom_focus_modes", comment: "Custom focus modes feature"),
+            NSLocalizedString("smart_break_suggestions", comment: "Smart break suggestions feature"),
+        ]
+    }
 }
