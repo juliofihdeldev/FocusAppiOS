@@ -32,26 +32,9 @@ struct TimelineView: View {
                     }
                     
                     // Date Header - Fixed at top
-                    HStack {
-                        WeekDateNavigator(
-                            selectedDate: $selectedDate
-                        )
-                        
-                        // Debug Delete All Button (only in debug mode)
-                        #if DEBUG
-                        Button(action: {
-                            deleteAllTasks()
-                        }) {
-                            Image(systemName: "trash.fill")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.red)
-                                .frame(width: 32, height: 32)
-                                .background(Color.red.opacity(0.1))
-                                .clipShape(Circle())
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        #endif
-                    }
+                    WeekDateNavigator(
+                        selectedDate: $selectedDate
+                    )
                     
                     // Main Content Area
                     ScrollViewReader { proxy in
@@ -365,27 +348,6 @@ struct TimelineView: View {
             }
         }
     }
-    
-    #if DEBUG
-    private func deleteAllTasks() {
-        let descriptor = FetchDescriptor<FocusTask>()
-        
-        do {
-            let allTasks = try modelContext.fetch(descriptor)
-            for task in allTasks {
-                modelContext.delete(task)
-            }
-            try modelContext.save()
-            
-            // Refresh the view
-            viewModel.forceRefreshTasks(for: selectedDate)
-            
-            print("DEBUG: Deleted all tasks (\(allTasks.count) tasks)")
-        } catch {
-            print("DEBUG: Failed to delete all tasks: \(error)")
-        }
-    }
-    #endif
 }
 
 struct FloatingActionButton: View {
