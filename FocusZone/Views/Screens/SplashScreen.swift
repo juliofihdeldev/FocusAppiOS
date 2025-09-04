@@ -2,7 +2,6 @@ import SwiftUI
 
 struct SplashScreen: View {
     @State private var isAnimating = false
-    @State private var showMainApp = false
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0.0
     @State private var rotationAngle: Double = 0
@@ -71,17 +70,6 @@ struct SplashScreen: View {
         }
         .onAppear {
             startAnimations()
-            
-            // Transition to main app after 4 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    showMainApp = true
-                }
-            }
-        }
-        .fullScreenCover(isPresented: $showMainApp) {
-            MainTabView()
-                .environmentObject(themeManager)
         }
     }
     
