@@ -423,3 +423,13 @@
 "insights" = "Aperçus";
 "settings" = "Paramètres";
 "pro" = "PRO";
+
+// MARK: - ProGate Translations
+"upgrade_to_pro" = "Passer à Pro";
+"task_limit_reached" = "Vous avez atteint la limite de %d tâches pour les utilisateurs gratuits. Passez à Pro pour des tâches illimitées !";
+"upgrade_now" = "Passer à Pro";
+"maybe_later" = "Peut-être plus tard";
+"unlimited_tasks" = "Tâches illimitées";
+"advanced_insights_recommendations" = "Insights avancés et recommandations";
+"custom_focus_modes" = "Modes de concentration personnalisés";
+"smart_break_suggestions" = "Suggestions de pauses intelligentes";

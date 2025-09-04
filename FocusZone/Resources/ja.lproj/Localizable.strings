@@ -367,3 +367,13 @@
 "insights" = "洞察";
 "settings" = "設定";
 "pro" = "PRO";
+
+// MARK: - ProGate Translations
+"upgrade_to_pro" = "Proにアップグレード";
+"task_limit_reached" = "無料ユーザーの%dタスクの制限に達しました。無制限のタスクのためにProにアップグレードしてください！";
+"upgrade_now" = "今すぐアップグレード";
+"maybe_later" = "後で";
+"unlimited_tasks" = "無制限のタスク";
+"advanced_insights_recommendations" = "高度なインサイトと推奨事項";
+"custom_focus_modes" = "カスタムフォーカスモード";
+"smart_break_suggestions" = "スマートブレーク提案";
