@@ -25,30 +25,77 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // App Header
-                    appHeader
-                    
-                    // Settings Sections
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                // iPad Layout - Two column
+                iPadLayout
+            } else {
+                // iPhone Layout - Single column
+                iPhoneLayout
+            }
+        }
+    }
+    
+    // MARK: - iPad Layout
+    private var iPadLayout: some View {
+        ScrollView {
+            VStack(spacing: 32) {
+                // App Header
+                appHeader
+                
+                // Two column layout for iPad
+                HStack(alignment: .top, spacing: 24) {
+                    // Left column
                     VStack(spacing: 20) {
                         subscriptionSection
                         appearanceSection
                         notificationSection
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    // Right column
+                    VStack(spacing: 20) {
                         dataSection
                         focusSection
                         aboutSection
                         cloudKitSyncSection
                     }
-                    .padding(.horizontal, 20)
-                    
-                    Spacer(minLength: 50)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.top, 20)
+                .padding(.horizontal, 40)
+                
+                Spacer(minLength: 50)
             }
-            .background(AppColors.background.ignoresSafeArea())
-            .navigationBarHidden(true)
+            .padding(.top, 20)
         }
+        .background(AppColors.background.ignoresSafeArea())
+        .navigationBarHidden(true)
+    }
+    
+    // MARK: - iPhone Layout
+    private var iPhoneLayout: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // App Header
+                appHeader
+                
+                // Settings Sections
+                VStack(spacing: 20) {
+                    subscriptionSection
+                    appearanceSection
+                    notificationSection
+                    dataSection
+                    focusSection
+                    aboutSection
+                    cloudKitSyncSection
+                }
+                .padding(.horizontal, 20)
+                
+                Spacer(minLength: 50)
+            }
+            .padding(.top, 20)
+        }
+        .background(AppColors.background.ignoresSafeArea())
+        .navigationBarHidden(true)
         .onChange(of: theme.currentBackground) { newValue in
             // TODO Store preference
         }

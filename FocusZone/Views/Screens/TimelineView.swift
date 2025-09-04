@@ -37,90 +37,24 @@ struct TimelineView: View {
                     ScrollViewReader { proxy in
                         ScrollView(.vertical, showsIndicators: false) {
                             LazyVStack(spacing: 0) {
-                                if viewModel.tasks.isEmpty {
-                                    // Empty state
-                                    VStack(spacing: 16) {
-                                        Image(systemName: "calendar.badge.plus")
-                                            .font(.system(size: 48))
-                                            .foregroundColor(AppColors.textSecondary)
-                                        
-                                        Text(NSLocalizedString("no_tasks_for_today", comment: "No tasks message"))
-                                            .font(AppFonts.headline())
-                                            .foregroundColor(AppColors.textSecondary)
-                                        
-                                        Text(NSLocalizedString("tap_plus_to_create_first_task", comment: "Instruction to create first task"))
-                                            .font(AppFonts.body())
-                                            .foregroundColor(AppColors.textSecondary)
-                                            .multilineTextAlignment(.center)
-                                    }
-                                    .padding(.top, 10)
-                                } else {
-                                    ForEach(Array(viewModel.tasks.enumerated()), id: \.element.id) { index, task in
-                                        TaskCard(
-                                            title: task.title,
-                                            time: viewModel.timeRange(for: task),
-                                            icon: task.icon,
-                                            color: viewModel.taskColor(task),
-                                            isCompleted: task.isCompleted,
-                                            durationMinutes: task.durationMinutes,
-                                            task: task,
-                                            timelineViewModel: viewModel
-                                        )
-//                                        .padding(.horizontal, 16)
-//                                        .padding(.vertical, 8)
-                                        .onTapGesture {
-                                            selectedTaskForActions = task
-                                        }
-                                        
-                                        // Show break suggestions after this task
-                                        ForEach(viewModel.breakSuggestions.filter { $0.insertAfterTaskId == task.id }) { suggestion in
-                                            BreakSuggestionCard(
-                                                suggestion: suggestion,
-                                                onAccept: {
-                                                    viewModel.acceptBreakSuggestion(suggestion)
-                                                },
-                                                onDismiss: {
-                                                    viewModel.dismissBreakSuggestion(suggestion)
-                                                }
-                                            )
-                                            .padding(.horizontal, 16)
-                                            .padding(.vertical, 4)
-                                        }
-                                    }
-                                    
-                                    // Add standalone suggestions after all tasks
-                                    ForEach(viewModel.breakSuggestions.filter { $0.insertAfterTaskId == nil }) { suggestion in
-                                        BreakSuggestionCard(
-                                            suggestion: suggestion,
-                                            onAccept: {
-                                                viewModel.acceptBreakSuggestion(suggestion)
-                                            },
-                                            onDismiss: {
-                                                viewModel.dismissBreakSuggestion(suggestion)
-                                            }
-                                        )
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 4)
-                                    }
-                                    
-                                    // And add this to the onChange modifier for selectedDate:
-                                    .onChange(of: selectedDate) { _, newDate in
-                                        viewModel.loadTodayTasks(for: newDate)
-                                        viewModel.updateBreakSuggestions() // Add this line
-                                    }
-                                    
+                                // Break Suggestions
+                                if !viewModel.breakSuggestions.isEmpty {
+                                    breakSuggestionsSection
                                 }
                                 
-                                // Bottom padding to prevent content from hiding behind FAB
-                                Spacer()
-                                    .frame(height: 100)
+                                // Tasks List
+                                tasksListSection
+                                
+                                // Empty state
+                                if viewModel.todayTasks.isEmpty && viewModel.breakSuggestions.isEmpty {
+                                    emptyStateView
+                                }
                             }
                         }
                         .refreshable {
                             viewModel.forceRefreshTasks(for: selectedDate)
                         }
-                        .padding(.horizontal, 16)
-//                        .padding(.vertical, 26)
+                        .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 24 : 16)
                     }
                 }
                 
@@ -134,8 +68,8 @@ struct TimelineView: View {
                         FloatingActionButton {
                             showAddTaskForm = true
                         }
-                        .padding(.trailing, 20)
-                        .padding(.bottom, 20)
+                        .padding(.trailing, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 20)
+                        .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 20)
                     }
                 }
             }
@@ -213,6 +147,17 @@ struct TimelineView: View {
         }
     }
     
+    // MARK: - iPad Content Layout (Removed for now)
+    private var iPadContentLayout: some View {
+        EmptyView()
+    }
+    
+    // MARK: - iPhone Content Layout (Removed for now)  
+    private var iPhoneContentLayout: some View {
+        EmptyView()
+    }
+    
+    
     private var notificationPermissionBanner: some View {
         HStack(spacing: 12) {
             Image(systemName: "bell.slash.fill")
@@ -243,7 +188,7 @@ struct TimelineView: View {
             .background(AppColors.accent)
             .cornerRadius(16)
         }
-        .padding(.horizontal, 16)
+        .responsivePadding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(Color.orange.opacity(0.1))
         .overlay(
@@ -318,30 +263,42 @@ struct FloatingActionButton: View {
     let action: () -> Void
     @State private var isPressed = false
     
+    private var isIPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
     var body: some View {
         Button(action: action) {
-            Image(systemName: "plus")
-                .font(.system(size: 24, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(width: 56, height: 56)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.purple.opacity(0.9),
-                            Color.blue.opacity(0.8)
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+            HStack(spacing: 8) {
+                Image(systemName: "plus")
+                    .font(.system(size: isIPad ? 20 : 24, weight: .semibold))
+                    .foregroundColor(.white)
+                
+                if isIPad {
+                    Text("New Task")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+            }
+            .frame(width: isIPad ? 120 : 56, height: isIPad ? 50 : 56)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.purple.opacity(0.9),
+                        Color.blue.opacity(0.8)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .clipShape(Circle())
-                .shadow(
-                    color: Color.black.opacity(0.3),
-                    radius: isPressed ? 4 : 8,
-                    x: 0,
-                    y: isPressed ? 2 : 4
-                )
-                .scaleEffect(isPressed ? 0.95 : 1.0)
+            )
+            .clipShape(isIPad ? RoundedRectangle(cornerRadius: 25) : Circle())
+            .shadow(
+                color: Color.black.opacity(0.3),
+                radius: isPressed ? 4 : 8,
+                x: 0,
+                y: isPressed ? 2 : 4
+            )
+            .scaleEffect(isPressed ? 0.95 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())
         .onLongPressGesture(minimumDuration: 0, maximumDistance: 50) {

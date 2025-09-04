@@ -26,6 +26,88 @@ struct TaskCard: View {
         let progressHeight = progressInfo.shouldShow && progressInfo.percentage > 0 ? 
             max(minProgressHeight, calculatedProgressHeight) : calculatedProgressHeight
         
+        let isIPad = UIDevice.current.userInterfaceIdiom == .pad
+        
+        if isIPad {
+            // iPad Layout - Card style
+            iPadCardLayout(baseHeight: baseHeight, progressInfo: progressInfo)
+        } else {
+            // iPhone Layout - Timeline style
+            iPhoneTimelineLayout(baseHeight: baseHeight, progressInfo: progressInfo)
+        }
+    }
+    
+    // MARK: - iPad Card Layout
+    private func iPadCardLayout(baseHeight: CGFloat, progressInfo: (shouldShow: Bool, percentage: Double, color: Color)) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with icon and status
+            HStack {
+                // Icon
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.2))
+                        .frame(width: 50, height: 50)
+                    
+                    Text(icon)
+                        .font(.title2)
+                        .foregroundColor(color)
+                }
+                
+                Spacer()
+                
+                // Status indicator
+                statusIndicator(progressInfo: progressInfo)
+            }
+            
+            // Task title
+            Text(title)
+                .font(.headline)
+                .foregroundColor(AppColors.textPrimary)
+                .lineLimit(3)
+                .multilineTextAlignment(.leading)
+            
+            // Time range
+            Text(formatTimeRange())
+                .font(.subheadline)
+                .foregroundColor(.gray)
+            
+            // Progress text for active tasks
+            if progressInfo.shouldShow && !isCompleted && overdueMinutesFun() / 60 < 12 {
+                Text(getProgressText())
+                    .font(.caption)
+                    .foregroundColor(progressInfo.color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(progressInfo.color.opacity(0.1))
+                    .cornerRadius(8)
+            }
+            
+            // Conflict indicators
+            if hasConflicts {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(conflictDetails) { conflict in
+                        TaskConflictIndicator(conflict: conflict)
+                    }
+                }
+            }
+            
+            Spacer()
+        }
+        .padding(16)
+        .frame(height: max(120, baseHeight * 0.8))
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(color.opacity(0.3), lineWidth: 2)
+        )
+    }
+    
+    // MARK: - iPhone Timeline Layout
+    private func iPhoneTimelineLayout(baseHeight: CGFloat, progressInfo: (shouldShow: Bool, percentage: Double, color: Color)) -> some View {
         HStack(alignment: .top, spacing: 0) {
             // Left side - Timeline with progress Capsule
             VStack(spacing: 0) {
@@ -53,7 +135,6 @@ struct TaskCard: View {
                         )
                 }
             }
-            
             
             // Right side - Task content
             VStack(alignment: .leading, spacing: 8) {
