@@ -312,9 +312,9 @@ enum SubscriptionStatus: String, CaseIterable {
 
 
 struct ProFeatures {
-    static let maxTasksForFree = 3
+    static let maxTasksForFree = 5
     static let maxFocusSessionsForFree = 5
-    static let maxInsightsForFree = 3
+    static let maxInsightsForFree = 5
     
     static let proFeaturesList = [
         "Unlimited tasks",
