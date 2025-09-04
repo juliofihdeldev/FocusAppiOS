@@ -42,7 +42,12 @@ struct TaskFormView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    TaskFormHeader(onDismiss: { dismiss() })
+                    TaskFormHeader(onDismiss: { 
+                        // Ensure dismiss is called on main thread
+                        DispatchQueue.main.async {
+                            dismiss()
+                        }
+                    })
                     
                     VStack(alignment: .leading, spacing: 40) {
                         
@@ -107,6 +112,18 @@ struct TaskFormView: View {
             .background(AppColors.background.ignoresSafeArea())
         }
         .navigationBarHidden(true)
+        .gesture(
+            // Add swipe down gesture to dismiss
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.height > 100 {
+                        // Swipe down detected, dismiss the form
+                        DispatchQueue.main.async {
+                            dismiss()
+                        }
+                    }
+                }
+        )
         .onAppear {
             loadTaskData()
             // Prefill next start time if available (for new tasks only)
@@ -264,7 +281,10 @@ struct TaskFormView: View {
         }
         
         print("TaskFormView: Dismissing form")
-        dismiss()
+        // Ensure dismiss is called on main thread
+        DispatchQueue.main.async {
+            dismiss()
+        }
     }
 }
 
