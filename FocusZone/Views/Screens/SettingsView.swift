@@ -11,14 +11,14 @@ struct SettingsView: View {
     @State private var showingContact = false
     @State private var enableFocusMode = true
     @State private var showPaywall = false
-
+    
     @State private var showingClearDataConfirmation = false
     @State private var showingClearDataAlert = false
     @State private var clearDataMessage = ""
     @State private var showingDeleteTaskAlert = false
     @StateObject private var focusManager = FocusModeManager()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
-
+    
     @StateObject private var cloudSyncManager = CloudSyncManager()
     @StateObject private var languageManager = LanguageManager.shared
     @State private var showingLanguageSelection = false
@@ -64,7 +64,7 @@ struct SettingsView: View {
         .sheet(isPresented: $showingLanguageSelection) {
             LanguageSelectionSheet(languageManager: languageManager)
         }
-
+        
         .confirmationDialog(
             NSLocalizedString("clear_all_data_confirmation", comment: "Clear all data confirmation dialog title"),
             isPresented: $showingClearDataConfirmation,
@@ -90,7 +90,7 @@ struct SettingsView: View {
         } message: {
             Text("This will delete ALL tasks from local data. This action cannot be undone and is for testing purposes only.")
         }
-
+        
     }
     
     // MARK: - App Header
@@ -120,7 +120,7 @@ struct SettingsView: View {
                     )
                 
                 VStack(spacing: 4) {
-                    Text("FocusZone")
+                    Text("FocusZen+")
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                         .fontWeight(.semibold)
@@ -297,7 +297,7 @@ struct SettingsView: View {
         }
     }
     
-
+    
     
     // Focus  Section
     private var focusSection: some View {
@@ -334,7 +334,7 @@ struct SettingsView: View {
     private var dataSection: some View {
         SettingsSection(title: NSLocalizedString("data", comment: "Data section title"), icon: "internaldrive") {
             VStack(spacing: 0) {
-     
+                
                 
                 SettingsNavigationRow(
                     title: NSLocalizedString("clear_all_data", comment: "Clear all data button title"),
@@ -347,6 +347,8 @@ struct SettingsView: View {
                 Divider()
                     .padding(.leading, 52)
                 
+                // Debug Delete All Button (only in debug mode)
+            #if DEBUG
                 SettingsNavigationRow(
                     title: "🧪 Delete All Tasks for Testing",
                     subtitle: "Delete all tasks from local data for testing purposes",
@@ -354,6 +356,7 @@ struct SettingsView: View {
                     isDestructive: true,
                     action: { showingDeleteTaskAlert = true }
                 )
+            #endif
             }
         }
     }
@@ -515,7 +518,7 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-              
+                
             }
             .padding(.horizontal, 4)
             
@@ -604,7 +607,7 @@ struct SettingsNavigationRow: View {
             .padding(.vertical, 14)
         }
         .onChange(of: isDestructive) { newValue in
-          
+            
         }
         .buttonStyle(PlainButtonStyle())
     }
