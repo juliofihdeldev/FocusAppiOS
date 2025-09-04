@@ -31,6 +31,7 @@ struct TaskFormView: View {
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
     @StateObject private var taskCreationState = TaskCreationState.shared
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.modelContext) private var modelContext
     private let notificationService = NotificationService.shared
     
@@ -221,6 +222,29 @@ struct TaskFormView: View {
                 print("TaskFormView: Error details: \(error.localizedDescription)")
             }
         } else {
+            // Check task limit for new tasks
+            if !subscriptionManager.isProUser {
+                let descriptor = FetchDescriptor<Task>(
+                    predicate: #Predicate<Task> { task in
+                        task.statusRawValue != "cancelled"
+                    }
+                )
+                
+                do {
+                    let allTasks = try modelContext.fetch(descriptor)
+                    if allTasks.count >= ProFeatures.maxTasksForFree {
+                        print("TaskFormView: Task limit reached, cannot create new task")
+                        // Show error or dismiss form
+                        DispatchQueue.main.async {
+                            dismiss()
+                        }
+                        return
+                    }
+                } catch {
+                    print("TaskFormView: Error checking task count: \(error)")
+                }
+            }
+            
             // Create new task
             print("TaskFormView: Creating new task")
             

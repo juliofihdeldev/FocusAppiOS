@@ -537,6 +537,31 @@ class TimelineViewModel: ObservableObject {
         return formatter.string(from: date)
     }
     
+    // MARK: - Task Count Methods
+    
+    func getCurrentTaskCount() -> Int {
+        return tasks.count
+    }
+    
+    func canCreateNewTask() -> Bool {
+        guard let modelContext = modelContext else { return false }
+        
+        let descriptor = FetchDescriptor<Task>(
+            predicate: #Predicate<Task> { task in
+                // Count only non-cancelled tasks
+                task.statusRawValue != "cancelled"
+            }
+        )
+        
+        do {
+            let allTasks = try modelContext.fetch(descriptor)
+            return allTasks.count < ProFeatures.maxTasksForFree
+        } catch {
+            print("Error fetching task count: \(error)")
+            return false
+        }
+    }
+    
     private func updateWidgetData() {
         WidgetDataManager.shared.updateWidgetData(tasks: tasks)
         WidgetCenter.shared.reloadAllTimelines()

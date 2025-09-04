@@ -14,6 +14,8 @@ struct TimelineView: View {
     @State private var editingTask: FocusTask?
     @State private var selectedTaskForActions: FocusTask?
     @State private var showNotificationAlert = false
+    @State private var showProGate = false
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     
     var body: some View {
         NavigationView {
@@ -132,7 +134,7 @@ struct TimelineView: View {
                         Spacer()
                         
                         FloatingActionButton {
-                            showAddTaskForm = true
+                            handleAddTaskButtonTap()
                         }
                         .padding(.trailing, 20)
                         .padding(.bottom, 20)
@@ -181,6 +183,20 @@ struct TimelineView: View {
                 TaskFormView(taskToEdit: task)
                     .environment(\.modelContext, modelContext)
             }
+        }
+        .sheet(isPresented: $showProGate) {
+            ProGate(
+                onUpgrade: {
+                    showProGate = false
+                    // Navigate to paywall or handle upgrade
+                    // You can add navigation to PaywallView here
+                },
+                onDismiss: {
+                    showProGate = false
+                },
+                currentTaskCount: viewModel.getCurrentTaskCount(),
+                maxTasks: ProFeatures.maxTasksForFree
+            )
         }
         .sheet(isPresented: Binding<Bool>(
             get: { selectedTaskForActions != nil },
@@ -311,6 +327,21 @@ struct TimelineView: View {
     private func startTask(_ task: FocusTask) {
         timerService.startTask(task)
         selectedTaskForActions = nil
+    }
+    
+    private func handleAddTaskButtonTap() {
+        if subscriptionManager.isProUser {
+            // Pro users can always add tasks
+            showAddTaskForm = true
+        } else {
+            // Check if user can add more tasks
+            if viewModel.canCreateNewTask() {
+                showAddTaskForm = true
+            } else {
+                // Show pro gate
+                showProGate = true
+            }
+        }
     }
 }
 
