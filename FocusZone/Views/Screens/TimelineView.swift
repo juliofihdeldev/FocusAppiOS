@@ -15,6 +15,7 @@ struct TimelineView: View {
     @State private var selectedTaskForActions: FocusTask?
     @State private var showNotificationAlert = false
     @State private var showProGate = false
+    @State private var showPaywall = false
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     
     var body: some View {
@@ -188,8 +189,7 @@ struct TimelineView: View {
             ProGate(
                 onUpgrade: {
                     showProGate = false
-                    // Navigate to paywall or handle upgrade
-                    // You can add navigation to PaywallView here
+                    showPaywall = true
                 },
                 onDismiss: {
                     showProGate = false
@@ -197,6 +197,11 @@ struct TimelineView: View {
                 currentTaskCount: viewModel.getCurrentTaskCount(),
                 maxTasks: ProFeatures.maxTasksForFree
             )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
         .sheet(isPresented: Binding<Bool>(
             get: { selectedTaskForActions != nil },
