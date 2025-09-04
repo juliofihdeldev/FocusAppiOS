@@ -245,9 +245,11 @@ final class CloudSyncManager: ObservableObject {
             await MainActor.run { self.syncProgress = 0.4 }
             let remoteChanges = try await fetchRemoteChanges()
             
+            // TOFIX remoteChanges are really messy
+            
             // Step 3: Merge changes and resolve conflicts
             await MainActor.run { self.syncProgress = 0.6 }
-            try await mergeChanges(localChanges: localChanges, remoteChanges: remoteChanges, modelContext: modelContext)
+            try await mergeChanges(localChanges: localChanges, remoteChanges: [], modelContext: modelContext)
             
             // Step 4: Upload local changes
             await MainActor.run { self.syncProgress = 0.8 }
@@ -295,7 +297,8 @@ final class CloudSyncManager: ObservableObject {
         let query = CKQuery(recordType: "Task", predicate: NSPredicate(value: true))
         
         let result = try await privateDatabase.records(matching: query)
-        return result.matchResults.compactMap { try? $0.1.get() }
+        print(">>>>>>> REMOTE CHANGES SENT",result)
+        return result .matchResults.compactMap { try? $0.1.get() }
     }
     
     private func mergeChanges(localChanges: [Task], remoteChanges: [CKRecord], modelContext: ModelContext) async throws {
@@ -498,5 +501,90 @@ final class CloudSyncManager: ObservableObject {
         case .failed(let error):
             return "Sync failed: \(error)"
         }
+    }
+    
+    // MARK: - Testing Methods
+    
+    /// Deletes a task from both CloudKit and local data for testing purposes
+    func deleteTaskForTesting(_ task: Task, modelContext: ModelContext) async throws {
+        print("🧪 Testing: Deleting task '\(task.title)' (ID: \(task.id)) from CloudKit and local data")
+        
+        // 1. Delete from CloudKit
+        let recordID = CKRecord.ID(recordName: task.id.uuidString)
+        
+        do {
+            try await privateDatabase.deleteRecord(withID: recordID)
+            print("✅ Task deleted from CloudKit successfully")
+        } catch {
+            print("⚠️ Failed to delete from CloudKit: \(error.localizedDescription)")
+            // Continue with local deletion even if CloudKit fails
+        }
+        
+        // 2. Delete from local SwiftData
+        modelContext.delete(task)
+        
+        do {
+            try modelContext.save()
+            print("✅ Task deleted from local data successfully")
+        } catch {
+            print("❌ Failed to save local context after deletion: \(error.localizedDescription)")
+            throw error
+        }
+        
+        print("🧪 Testing: Task deletion completed successfully")
+    }
+    
+    /// Deletes all tasks from both CloudKit and local data for testing purposes
+    func deleteAllTasksForTesting(modelContext: ModelContext) async throws {
+        print("🧪 Testing: Deleting ALL tasks from CloudKit and local data")
+        
+        // 1. Fetch all local tasks
+        let descriptor = FetchDescriptor<Task>()
+        let allTasks = try modelContext.fetch(descriptor)
+        
+        print("🧪 Found \(allTasks.count) tasks to delete")
+        
+        // 2. Delete from CloudKit
+        let recordIDs = allTasks.map { CKRecord.ID(recordName: $0.id.uuidString) }
+        
+        if !recordIDs.isEmpty {
+            do {
+                let modifyOperation = CKModifyRecordsOperation(recordsToSave: [], recordIDsToDelete: recordIDs)
+                modifyOperation.savePolicy = .changedKeys
+                modifyOperation.qualityOfService = .userInitiated
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    modifyOperation.modifyRecordsResultBlock = { result in
+                        switch result {
+                        case .success:
+                            continuation.resume()
+                        case .failure(let error):
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                    
+                    privateDatabase.add(modifyOperation)
+                }
+                print("✅ All tasks deleted from CloudKit successfully")
+            } catch {
+                print("⚠️ Failed to delete some tasks from CloudKit: \(error.localizedDescription)")
+                // Continue with local deletion even if CloudKit fails
+            }
+        }
+        
+        // 3. Delete from local SwiftData
+        for task in allTasks {
+            modelContext.delete(task)
+        }
+        
+        do {
+            try modelContext.save()
+            print("✅ All tasks deleted from local data successfully")
+        } catch {
+            print("❌ Failed to save local context after deletion: \(error.localizedDescription)")
+            throw error
+        }
+        
+        print("🧪 Testing: All tasks deletion completed successfully")
     }
 }

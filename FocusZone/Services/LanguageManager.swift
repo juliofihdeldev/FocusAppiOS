@@ -6,9 +6,7 @@ class LanguageManager: ObservableObject {
     
     @Published var currentLanguage: String {
         didSet {
-            UserDefaults.standard.set(currentLanguage, forKey: "selected_language")
-            UserDefaults.standard.set([currentLanguage], forKey: "AppleLanguages")
-            UserDefaults.standard.synchronize()
+            setLanguagePreference()
             
             // Post notification to restart app for language change
             NotificationCenter.default.post(name: .languageChanged, object: nil)
@@ -33,6 +31,15 @@ class LanguageManager: ObservableObject {
             let supportedCodes = supportedLanguages.map { $0.0 }
             self.currentLanguage = supportedCodes.contains(systemLanguage) ? systemLanguage : "en"
         }
+        
+        // Immediately set the language preference to ensure proper localization
+        setLanguagePreference()
+    }
+    
+    private func setLanguagePreference() {
+        UserDefaults.standard.set(currentLanguage, forKey: "selected_language")
+        UserDefaults.standard.set([currentLanguage], forKey: "AppleLanguages")
+        UserDefaults.standard.synchronize()
     }
     
     func getLanguageDisplayName(for code: String) -> String {

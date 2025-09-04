@@ -14,6 +14,7 @@ struct FocusZoneApp: App {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var notificationService = NotificationService.shared
     @StateObject private var cloudSyncManager = CloudSyncManager()
+    @StateObject private var languageManager = LanguageManager.shared
     // CloudKit-backed SwiftData container
     let modelContainer: ModelContainer = {
         do {
@@ -30,7 +31,10 @@ struct FocusZoneApp: App {
                 .environmentObject(themeManager)
                 .environmentObject(notificationService)
                 .environmentObject(cloudSyncManager)
+                .environmentObject(languageManager)
                 .task {
+                    // Initialize language early to ensure proper localization
+                    _ = languageManager.currentLanguage
                     // Request notification permission when app launches
                     await requestNotificationPermission()
                 }

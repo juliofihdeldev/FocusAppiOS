@@ -4,6 +4,7 @@ struct OnboardingView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     @State private var currentPage = 0
     @State private var animateContent = false
+    @EnvironmentObject var languageManager: LanguageManager
     
     private let totalPages = 3
         
@@ -395,4 +396,5 @@ struct SliderGetStartedButton: View {
 
 #Preview {
     OnboardingView()
+        .environmentObject(LanguageManager.shared)
 }

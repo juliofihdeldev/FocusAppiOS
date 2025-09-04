@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UserNotifications
+import CloudKit
 
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
@@ -14,6 +15,7 @@ struct SettingsView: View {
     @State private var showingClearDataConfirmation = false
     @State private var showingClearDataAlert = false
     @State private var clearDataMessage = ""
+    @State private var showingDeleteTaskAlert = false
     @StateObject private var focusManager = FocusModeManager()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
 
@@ -79,6 +81,14 @@ struct SettingsView: View {
             Button(NSLocalizedString("ok", comment: "OK button title")) { }
         } message: {
             Text(clearDataMessage)
+        }
+        .alert("🧪 Delete All Tasks for Testing", isPresented: $showingDeleteTaskAlert) {
+            Button("Delete All Tasks", role: .destructive) {
+                deleteTaskForTesting()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will delete ALL tasks from local data. This action cannot be undone and is for testing purposes only.")
         }
 
     }
@@ -327,11 +337,22 @@ struct SettingsView: View {
      
                 
                 SettingsNavigationRow(
-                                    title: NSLocalizedString("clear_all_data", comment: "Clear all data button title"),
-                subtitle: NSLocalizedString("reset_all_tasks_settings", comment: "Clear all data description"),
+                    title: NSLocalizedString("clear_all_data", comment: "Clear all data button title"),
+                    subtitle: NSLocalizedString("reset_all_tasks_settings", comment: "Clear all data description"),
                     icon: "trash.circle.fill",
                     isDestructive: true,
                     action: { showingClearDataConfirmation = true }
+                )
+                
+                Divider()
+                    .padding(.leading, 52)
+                
+                SettingsNavigationRow(
+                    title: "🧪 Delete All Tasks for Testing",
+                    subtitle: "Delete all tasks from local data for testing purposes",
+                    icon: "trash.circle.fill",
+                    isDestructive: true,
+                    action: { showingDeleteTaskAlert = true }
                 )
             }
         }
@@ -428,6 +449,46 @@ struct SettingsView: View {
             } catch {
                 await MainActor.run {
                     clearDataMessage = String(format: NSLocalizedString("error_clearing_data", comment: "Error message when clearing data fails"), error.localizedDescription)
+                    showingClearDataAlert = true
+                }
+            }
+        }
+    }
+    
+    private func deleteTaskForTesting() {
+        _Concurrency.Task {
+            do {
+                // Fetch all tasks
+                let taskDescriptor = FetchDescriptor<Task>()
+                let allTasks = try modelContext.fetch(taskDescriptor)
+                
+                let taskCount = allTasks.count
+                print("🧪 Testing: Found \(taskCount) tasks to delete")
+                
+                if taskCount > 0 {
+                    // Delete all tasks from local SwiftData
+                    for task in allTasks {
+                        modelContext.delete(task)
+                    }
+                    try modelContext.save()
+                    
+                    await MainActor.run {
+                        clearDataMessage = "✅ Successfully deleted \(taskCount) tasks from local data (CloudKit sync will handle remote deletion)"
+                        showingClearDataAlert = true
+                    }
+                    
+                    print("🧪 Testing: All \(taskCount) tasks deleted successfully")
+                    
+                } else {
+                    await MainActor.run {
+                        clearDataMessage = "ℹ️ No tasks found to delete"
+                        showingClearDataAlert = true
+                    }
+                }
+                
+            } catch {
+                await MainActor.run {
+                    clearDataMessage = "❌ Error deleting tasks: \(error.localizedDescription)"
                     showingClearDataAlert = true
                 }
             }
