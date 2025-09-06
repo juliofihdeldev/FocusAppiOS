@@ -2,11 +2,35 @@ import Foundation
 import ActivityKit
 import SwiftUI
 
+// Define the same attributes as the widget extension
+struct FocusZoneWidgetAttributes: ActivityAttributes {
+    public struct ContentState: Codable, Hashable {
+        var taskTitle: String
+        var taskDescription: String?
+        var startTime: Date
+        var endTime: Date
+        var isActive: Bool
+        var timeRemaining: TimeInterval
+        var progress: Double
+        var currentPhase: FocusPhase
+        var totalSessions: Int
+        var completedSessions: Int
+    }
+
+    var taskId: String
+    var taskType: String
+    var focusMode: String
+    var sessionDuration: TimeInterval
+    var breakDuration: TimeInterval?
+}
+
+// FocusPhase is already defined in FocusActivityAttributes.swift
+
 @MainActor
 class LiveActivityManager: ObservableObject {
     static let shared = LiveActivityManager()
     
-    @Published var currentActivity: Activity<FocusActivityAttributes>?
+    @Published var currentActivity: Activity<FocusZoneWidgetAttributes>?
     @Published var isLiveActivitySupported: Bool = false
     
     private init() {
@@ -15,18 +39,26 @@ class LiveActivityManager: ObservableObject {
     
     private func checkLiveActivitySupport() {
         isLiveActivitySupported = ActivityAuthorizationInfo().areActivitiesEnabled
+        print("Live Activity Support: \(isLiveActivitySupported)")
     }
     
     func startLiveActivity(for task: Task, sessionDuration: TimeInterval, breakDuration: TimeInterval? = nil) {
+        print("🎯 LiveActivityManager: startLiveActivity called")
+        print("🎯 Task: \(task.title)")
+        print("🎯 Duration: \(sessionDuration)")
+        print("🎯 Live Activity Support: \(isLiveActivitySupported)")
+        
         guard isLiveActivitySupported else {
-            print("Live Activities are not supported on this device")
+            print("❌ Live Activities are not supported on this device")
             return
         }
         
         // End any existing activity
         endCurrentActivity()
         
-        let attributes = FocusActivityAttributes(
+        print("🚀 Starting Live Activity for task: \(task.title)")
+        
+        let attributes = FocusZoneWidgetAttributes(
             taskId: task.id.uuidString,
             taskType: task.taskTypeRawValue ?? "work",
             focusMode: "deep_focus",
@@ -34,7 +66,7 @@ class LiveActivityManager: ObservableObject {
             breakDuration: breakDuration
         )
         
-        let contentState = FocusActivityAttributes.ContentState(
+        let contentState = FocusZoneWidgetAttributes.ContentState(
             taskTitle: task.title,
             taskDescription: nil,
             startTime: Date(),
@@ -48,16 +80,18 @@ class LiveActivityManager: ObservableObject {
         )
         
         do {
-            let activity = try Activity<FocusActivityAttributes>.request(
+            let activity = try Activity<FocusZoneWidgetAttributes>.request(
                 attributes: attributes,
                 content: .init(state: contentState, staleDate: nil),
                 pushType: nil
             )
             
             currentActivity = activity
-            print("Live Activity started for task: \(task.title)")
+            print("✅ Live Activity started successfully for task: \(task.title)")
+            print("✅ Activity ID: \(activity.id)")
         } catch {
-            print("Failed to start Live Activity: \(error)")
+            print("❌ Failed to start Live Activity: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
         }
     }
     

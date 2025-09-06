@@ -267,7 +267,7 @@ struct TaskTimer: View {
             if ((task.focusSettings?.isEnabled) != nil) {
                 focusManager.blockedNotifications = 1
                 _Concurrency.Task {
-                    await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60))
+                    await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60), task: task)
                 }
             }
         }

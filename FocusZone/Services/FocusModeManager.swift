@@ -74,7 +74,7 @@ class FocusModeManager: NSObject, ObservableObject {
     
     // MARK: - Focus Activation
     
-    func activateFocus(mode: FocusMode, duration: TimeInterval) async -> Bool {
+    func activateFocus(mode: FocusMode, duration: TimeInterval, task: Task? = nil) async -> Bool {
         print("🎯 Attempting to activate focus mode: \(mode.displayName)")
         
         do {
@@ -109,13 +109,16 @@ class FocusModeManager: NSObject, ObservableObject {
             self.blockedNotifications = 0
             
             // Start Live Activity
-            if let currentTask = getCurrentTask() {
+            if let currentTask = task {
+                print("🎯 FocusModeManager: Starting Live Activity for task: \(currentTask.title)")
                 liveActivityManager.startLiveActivity(
                     for: currentTask,
                     sessionDuration: duration,
                     breakDuration: nil
                 )
                 startLiveActivityTimer(duration: duration)
+            } else {
+                print("❌ FocusModeManager: No task provided, cannot start Live Activity")
             }
             
             // Schedule auto-deactivation

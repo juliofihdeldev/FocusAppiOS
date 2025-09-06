@@ -42,8 +42,16 @@ class TaskTimerService: ObservableObject {
         print("TaskTimerService: Starting task '\(task.title)' with \(timeAlreadySpent)m already elapsed")
         print("TaskTimerService: Starting timer at \(startingElapsedSeconds) seconds")
         
+        // Start focus session and Live Activity
         _Concurrency.Task {
-          await  focusManager.setupCustomNotificationFiltering(for: .deepWork)
+            await focusManager.setupCustomNotificationFiltering(for: .deepWork)
+            
+            // Calculate remaining time for focus session
+            let remainingMinutes = task.durationMinutes - timeAlreadySpent
+            let remainingSeconds = TimeInterval(remainingMinutes * 60)
+            
+            // Start focus session with Live Activity
+            await focusManager.activateFocus(mode: .deepWork, duration: remainingSeconds, task: task)
         }
         // If we've already reached or exceeded planned time, complete immediately
         let maxAllowedSeconds = (task.durationMinutes) * 60
@@ -59,7 +67,6 @@ class TaskTimerService: ObservableObject {
     public func calculateSmartElapsedTime(for task: Task) -> Int {
         return  task.durationMinutes - _minutesRemain (for: task)
     }
-    
     
     public func _minutesRemain(for task: Task) -> Int {
         let now = Date()
@@ -85,8 +92,6 @@ class TaskTimerService: ObservableObject {
         }
         return 0
     }
-    
-    
     
     // Pause the current task
     @MainActor func pauseTask() {

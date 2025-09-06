@@ -297,7 +297,6 @@ final class CloudSyncManager: ObservableObject {
         let query = CKQuery(recordType: "Task", predicate: NSPredicate(value: true))
         
         let result = try await privateDatabase.records(matching: query)
-        print(">>>>>>> REMOTE CHANGES SENT",result)
         return result .matchResults.compactMap { try? $0.1.get() }
     }
     

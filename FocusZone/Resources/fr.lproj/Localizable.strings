@@ -282,7 +282,7 @@
 "enable_to_get_task_reminders" = "Activez pour recevoir des rappels de tâches";
 
 // MARK: - WeekDateNavigator
-"today" = "Aujourd'hui";
+"today" = "Today";
 
 // MARK: - DatePickerSheet
 "select_date" = "Sélectionner la Date";

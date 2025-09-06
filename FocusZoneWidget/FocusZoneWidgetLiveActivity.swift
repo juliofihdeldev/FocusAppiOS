@@ -9,22 +9,21 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
+// Define the attributes for the widget extension
 struct FocusZoneWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
         var taskTitle: String
         var taskDescription: String?
         var startTime: Date
         var endTime: Date
         var isActive: Bool
         var timeRemaining: TimeInterval
-        var progress: Double // 0.0 to 1.0
+        var progress: Double
         var currentPhase: FocusPhase
         var totalSessions: Int
         var completedSessions: Int
     }
 
-    // Fixed non-changing properties about your activity go here!
     var taskId: String
     var taskType: String
     var focusMode: String
@@ -32,6 +31,7 @@ struct FocusZoneWidgetAttributes: ActivityAttributes {
     var breakDuration: TimeInterval?
 }
 
+// FocusPhase is defined in the main app, but we need to define it here for the widget extension
 enum FocusPhase: String, CaseIterable, Codable {
     case focus = "focus"
     case shortBreak = "short_break"
