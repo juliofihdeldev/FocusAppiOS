@@ -3,6 +3,8 @@ import Combine
 import SwiftData
 
 class TaskTimerService: ObservableObject {
+    static let shared = TaskTimerService()
+    
     @Published var currentTask: Task?
     @Published var elapsedSeconds: Int = 0
     
@@ -10,7 +12,11 @@ class TaskTimerService: ObservableObject {
     private var startTime: Date?
     private var modelContext: ModelContext?
     
-    @StateObject private var focusManager = FocusModeManager()
+    @MainActor private let focusManager = FocusModeManager()
+    
+    private init() {
+        // Initialize any required properties here
+    }
     
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
@@ -44,14 +50,14 @@ class TaskTimerService: ObservableObject {
         
         // Start focus session and Live Activity
         _Concurrency.Task {
-            await focusManager.setupCustomNotificationFiltering(for: .deepWork)
+            await focusManager.setupCustomNotificationFiltering(for: FocusMode.deepWork)
             
             // Calculate remaining time for focus session
             let remainingMinutes = task.durationMinutes - timeAlreadySpent
             let remainingSeconds = TimeInterval(remainingMinutes * 60)
             
             // Start focus session with Live Activity
-            await focusManager.activateFocus(mode: .deepWork, duration: remainingSeconds, task: task)
+            await focusManager.activateFocus(mode: FocusMode.deepWork, duration: remainingSeconds, task: task)
         }
         // If we've already reached or exceeded planned time, complete immediately
         let maxAllowedSeconds = (task.durationMinutes) * 60
@@ -100,21 +106,22 @@ class TaskTimerService: ObservableObject {
         stopTimer()
         
         // Calculate total time spent including current session
-        let currentSessionMinutes = elapsedSeconds / 60
+        let _ = elapsedSeconds / 60
         task.status = .paused
         task.updatedAt = Date()
         saveContext()
         
         // Update Live Activity to show paused state
-        let remainingSeconds = max(0, (task.durationMinutes * 60) - elapsedSeconds)
-        let progress = min(1.0, Double(elapsedSeconds) / Double(task.durationMinutes * 60))
+        let (progress, remainingSeconds) = calculateSessionProgress()
         
-        focusManager.liveActivityManager.updateLiveActivity(
-            timeRemaining: TimeInterval(remainingSeconds),
-            progress: progress,
-            currentPhase: .paused,
-            isActive: false
-        )
+        _Concurrency.Task { @MainActor in
+            self.focusManager.liveActivityManager.updateLiveActivity(
+                timeRemaining: TimeInterval(remainingSeconds),
+                progress: progress,
+                currentPhase: FocusPhase.paused,
+                isActive: false
+            )
+        }
     }
     
     // Resume a paused task
@@ -132,15 +139,16 @@ class TaskTimerService: ObservableObject {
         elapsedSeconds = timeAlreadySpent * 60
         
         // Update Live Activity to show active state
-        let remainingSeconds = max(0, (task.durationMinutes * 60) - elapsedSeconds)
-        let progress = min(1.0, Double(elapsedSeconds) / Double(task.durationMinutes * 60))
+        let (progress, remainingSeconds) = calculateSessionProgress()
         
-        focusManager.liveActivityManager.updateLiveActivity(
-            timeRemaining: TimeInterval(remainingSeconds),
-            progress: progress,
-            currentPhase: .focus,
-            isActive: true
-        )
+        _Concurrency.Task { @MainActor in
+            self.focusManager.liveActivityManager.updateLiveActivity(
+                timeRemaining: TimeInterval(remainingSeconds),
+                progress: progress,
+                currentPhase: FocusPhase.focus,
+                isActive: true
+            )
+        }
         
         startTimer()
     }
@@ -160,12 +168,19 @@ class TaskTimerService: ObservableObject {
         saveContext()
         
         // Update Live Activity to show completed state
-        focusManager.liveActivityManager.updateLiveActivity(
-            timeRemaining: 0,
-            progress: 1.0,
-            currentPhase: .completed,
-            isActive: false
-        )
+        _Concurrency.Task { @MainActor in
+            self.focusManager.liveActivityManager.updateLiveActivity(
+                timeRemaining: 0,
+                progress: 1.0,
+                currentPhase: FocusPhase.completed,
+                isActive: false
+            )
+        }
+        
+        // End Live Activity after showing completion
+        _Concurrency.Task { @MainActor in
+            self.focusManager.liveActivityManager.endCurrentActivity()
+        }
         
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -199,6 +214,8 @@ class TaskTimerService: ObservableObject {
     
     // Private timer methods
     private func startTimer() {
+        var lastUpdateTime = Date()
+        
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             DispatchQueue.main.async {
                 guard let task = self.currentTask else { return }
@@ -209,13 +226,19 @@ class TaskTimerService: ObservableObject {
                 if self.elapsedSeconds < maxAllowedSeconds {
                     self.elapsedSeconds += 1
                     
-                    // Update Live Activity progress
-                    self.updateLiveActivityProgress()
+                    // Update Live Activity only every 5 seconds to improve performance
+                    let currentTime = Date()
+                    if currentTime.timeIntervalSince(lastUpdateTime) >= 5.0 {
+                        self.updateLiveActivityProgress()
+                        lastUpdateTime = currentTime
+                    }
                 }
 
                 // Auto-complete exactly at cap and stop counting beyond
                 if self.elapsedSeconds >= maxAllowedSeconds {
                     self.elapsedSeconds = maxAllowedSeconds
+                    // Always update Live Activity on completion
+                    self.updateLiveActivityProgress()
                     // Prevent further ticks from changing state
                     self.handleTimerCompletion()
                 }
@@ -230,21 +253,43 @@ class TaskTimerService: ObservableObject {
     
     // MARK: - Live Activity Updates
     
+    private func calculateSessionProgress() -> (progress: Double, remainingSeconds: Int) {
+        guard let task = currentTask else { return (0.0, 0) }
+        
+        // Calculate progress based on total task duration
+        let totalTaskSeconds = task.durationMinutes * 60
+        let remainingSeconds = max(0, totalTaskSeconds - elapsedSeconds)
+        let progress = min(1.0, Double(elapsedSeconds) / Double(totalTaskSeconds))
+        
+        print("🎯 Progress Calculation Debug:")
+        print("   - Total Task Seconds: \(totalTaskSeconds)")
+        print("   - Elapsed Seconds: \(elapsedSeconds)")
+        print("   - Remaining Seconds: \(remainingSeconds)")
+        print("   - Progress: \(progress) (\(Int(progress * 100))%)")
+        
+        return (progress, remainingSeconds)
+    }
+    
     private func updateLiveActivityProgress() {
         guard let task = currentTask else { return }
         
-        let remainingSeconds = max(0, (task.durationMinutes * 60) - elapsedSeconds)
-        let progress = min(1.0, Double(elapsedSeconds) / Double(task.durationMinutes * 60))
+        let (progress, remainingSeconds) = calculateSessionProgress()
         
-        print("🎯 TaskTimerService: Updating Live Activity progress - \(Int(progress * 100))%")
+        print("🎯 TaskTimerService: Updating Live Activity progress")
+        print("   - Task: \(task.title)")
+        print("   - Progress: \(Int(progress * 100))%")
+        print("   - Remaining: \(remainingSeconds)s")
+        print("   - Total Elapsed: \(elapsedSeconds)s")
         
         // Update Live Activity with current progress
-        focusManager.liveActivityManager.updateLiveActivity(
-            timeRemaining: TimeInterval(remainingSeconds),
-            progress: progress,
-            currentPhase: .focus,
-            isActive: true
-        )
+        _Concurrency.Task { @MainActor in
+            self.focusManager.liveActivityManager.updateLiveActivity(
+                timeRemaining: TimeInterval(remainingSeconds),
+                progress: progress,
+                currentPhase: FocusPhase.focus,
+                isActive: true
+            )
+        }
     }
     
     // Handle automatic timer completion
@@ -351,7 +396,7 @@ class TaskTimerService: ObservableObject {
     
     // Get progress information for UI
     var progressInfo: (percentage: Double, color: Color, isOvertime: Bool) {
-        guard let task = currentTask else {
+        guard currentTask != nil else {
             return (0.0, .gray, false)
         }
         

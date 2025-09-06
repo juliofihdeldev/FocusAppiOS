@@ -10,7 +10,7 @@ struct TaskActionsModal: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingTimer = false
     @State private var showingDeletionOptions = false
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
     
     enum DeletionType {
         case instance

@@ -14,7 +14,7 @@ struct TaskCard: View {
     @State private var hasConflicts: Bool = false
     @State private var conflictDetails: [TaskConflictService.TaskConflict] = []
     private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
 
     var body: some View {
         // Calculate height based on duration (1 minute = 2 points, minimum 60pt)

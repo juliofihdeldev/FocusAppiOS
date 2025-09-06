@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct TaskTimer: View {
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss: DismissAction
     let task: Task

@@ -6,7 +6,7 @@ typealias FocusTask = Task
 
 struct TimelineView: View {
     @StateObject private var viewModel = TimelineViewModel()
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
     @EnvironmentObject var notificationService: NotificationService
     @Environment(\.modelContext) private var modelContext
     @State private var selectedDate: Date = Date()
