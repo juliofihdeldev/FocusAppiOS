@@ -1,78 +1,10 @@
-//
-//  FocusZoneWidgetLiveActivity.swift
-//  FocusZoneWidget
-//
-//  Created by Julio J Fils on 7/20/25.
-//
-
-import ActivityKit
-import WidgetKit
 import SwiftUI
+import WidgetKit
+import ActivityKit
 
-struct FocusZoneWidgetAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var taskTitle: String
-        var taskDescription: String?
-        var startTime: Date
-        var endTime: Date
-        var isActive: Bool
-        var timeRemaining: TimeInterval
-        var progress: Double // 0.0 to 1.0
-        var currentPhase: FocusPhase
-        var totalSessions: Int
-        var completedSessions: Int
-    }
-
-    // Fixed non-changing properties about your activity go here!
-    var taskId: String
-    var taskType: String
-    var focusMode: String
-    var sessionDuration: TimeInterval
-    var breakDuration: TimeInterval?
-}
-
-enum FocusPhase: String, CaseIterable, Codable {
-    case focus = "focus"
-    case shortBreak = "short_break"
-    case longBreak = "long_break"
-    case completed = "completed"
-    case paused = "paused"
-    
-    var displayName: String {
-        switch self {
-        case .focus:
-            return "Focus"
-        case .shortBreak:
-            return "Short Break"
-        case .longBreak:
-            return "Long Break"
-        case .completed:
-            return "Completed"
-        case .paused:
-            return "Paused"
-        }
-    }
-    
-    var icon: String {
-        switch self {
-        case .focus:
-            return "brain.head.profile"
-        case .shortBreak:
-            return "cup.and.saucer"
-        case .longBreak:
-            return "bed.double"
-        case .completed:
-            return "checkmark.circle.fill"
-        case .paused:
-            return "pause.circle.fill"
-        }
-    }
-}
-
-struct FocusZoneWidgetLiveActivity: Widget {
+struct FocusLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: FocusZoneWidgetAttributes.self) { context in
+        ActivityConfiguration(for: FocusActivityAttributes.self) { context in
             // Lock screen/banner UI goes here
             FocusLiveActivityView(context: context)
         } dynamicIsland: { context in
@@ -166,7 +98,7 @@ struct FocusZoneWidgetLiveActivity: Widget {
 }
 
 struct FocusLiveActivityView: View {
-    let context: ActivityViewContext<FocusZoneWidgetAttributes>
+    let context: ActivityViewContext<FocusActivityAttributes>
     
     var body: some View {
         VStack(spacing: 0) {
@@ -284,53 +216,37 @@ struct FocusLiveActivityView: View {
     }
 }
 
-extension FocusZoneWidgetAttributes {
-    fileprivate static var preview: FocusZoneWidgetAttributes {
-        FocusZoneWidgetAttributes(
-            taskId: "preview-task",
-            taskType: "work",
-            focusMode: "deep_focus",
-            sessionDuration: 1500,
-            breakDuration: 300
-        )
-    }
-}
-
-extension FocusZoneWidgetAttributes.ContentState {
-    fileprivate static var focus: FocusZoneWidgetAttributes.ContentState {
-        FocusZoneWidgetAttributes.ContentState(
-            taskTitle: "Complete Project Proposal",
-            taskDescription: "Write the technical specifications and timeline",
-            startTime: Date(),
-            endTime: Date().addingTimeInterval(1500),
-            isActive: true,
-            timeRemaining: 1200,
-            progress: 0.2,
-            currentPhase: .focus,
-            totalSessions: 4,
-            completedSessions: 1
-        )
-    }
-    
-    fileprivate static var breakTime: FocusZoneWidgetAttributes.ContentState {
-        FocusZoneWidgetAttributes.ContentState(
-            taskTitle: "Code Review",
-            taskDescription: "Review pull requests and provide feedback",
-            startTime: Date(),
-            endTime: Date().addingTimeInterval(300),
-            isActive: false,
-            timeRemaining: 180,
-            progress: 0.4,
-            currentPhase: .shortBreak,
-            totalSessions: 4,
-            completedSessions: 2
-        )
-    }
-}
-
-#Preview("Live Activity", as: .content, using: FocusZoneWidgetAttributes.preview) {
-   FocusZoneWidgetLiveActivity()
+#Preview("Live Activity", as: .content, using: FocusActivityAttributes(
+    taskId: "preview-task",
+    taskType: "work",
+    focusMode: "deep_focus",
+    sessionDuration: 1500,
+    breakDuration: 300
+)) {
+    FocusLiveActivityWidget()
 } contentStates: {
-    FocusZoneWidgetAttributes.ContentState.focus
-    FocusZoneWidgetAttributes.ContentState.breakTime
+    FocusActivityAttributes.ContentState(
+        taskTitle: "Complete Project Proposal",
+        taskDescription: "Write the technical specifications and timeline",
+        startTime: Date(),
+        endTime: Date().addingTimeInterval(1500),
+        isActive: true,
+        timeRemaining: 1200,
+        progress: 0.2,
+        currentPhase: .focus,
+        totalSessions: 4,
+        completedSessions: 1
+    )
+    FocusActivityAttributes.ContentState(
+        taskTitle: "Code Review",
+        taskDescription: "Review pull requests and provide feedback",
+        startTime: Date(),
+        endTime: Date().addingTimeInterval(300),
+        isActive: false,
+        timeRemaining: 180,
+        progress: 0.4,
+        currentPhase: .shortBreak,
+        totalSessions: 4,
+        completedSessions: 2
+    )
 }
