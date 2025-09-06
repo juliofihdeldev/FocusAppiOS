@@ -33,7 +33,7 @@ class FocusModeManager: NSObject, ObservableObject {
     private var focusSession: FocusSession?
     
     // Live Activity integration
-    private let liveActivityManager = LiveActivityManager.shared
+    let liveActivityManager = LiveActivityManager.shared
     private var focusTimer: Timer?
     
     // MARK: - Initialization
