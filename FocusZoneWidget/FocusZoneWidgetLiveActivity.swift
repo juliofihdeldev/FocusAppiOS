@@ -173,7 +173,7 @@ struct FocusLiveActivityView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("FocusZone")
+                    Text("FocusZen+")
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.white.opacity(0.8))
@@ -274,7 +274,6 @@ struct FocusLiveActivityView: View {
             )
         )
         .cornerRadius(16)
-        .padding(.horizontal, 16)
     }
     
     private func formatTimeRemaining(_ timeInterval: TimeInterval) -> String {
