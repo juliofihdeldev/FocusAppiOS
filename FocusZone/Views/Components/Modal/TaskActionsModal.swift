@@ -10,13 +10,25 @@ struct TaskActionsModal: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingTimer = false
     @State private var showingDeletionOptions = false
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
     
     enum DeletionType {
         case instance
         case allInstances
         case futureInstances
     }
+    
+    // Computed property to check if current time is within task's scheduled window
+    private var isCurrentTimeInTaskWindow: Bool {
+        let now = Date()
+        let taskStartTime = task.startTime
+        let taskEndTime = taskStartTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
+        
+        // Show button only when current time is between task start and end time
+        return now >= taskStartTime && now <= taskEndTime
+    }
+    
+
     
     var body: some View {
         VStack(spacing: 8) {
@@ -40,11 +52,11 @@ struct TaskActionsModal: View {
                                 
                                 // Show task type indicator
                                 if task.isGeneratedFromRepeat {
-                                    Text("Repeating task instance")
+                                    Text(NSLocalizedString("repeating_task_instance", comment: "Repeating task instance label"))
                                         .font(AppFonts.caption())
                                         .foregroundColor(.orange)
                                 } else if task.isParentTask {
-                                    Text("Repeating task series")
+                                    Text(NSLocalizedString("repeating_task_series", comment: "Repeating task series label"))
                                         .font(AppFonts.caption())
                                         .foregroundColor(.blue)
                                 }
@@ -65,7 +77,7 @@ struct TaskActionsModal: View {
                         if timerService._minutesRemain(for: task) > 0 {
                             VStack(spacing: 6) {
                                 HStack {
-                                    Text("Progress")
+                                    Text(NSLocalizedString("progress", comment: "Progress label"))
                                         .font(AppFonts.caption())
                                         .foregroundColor(.gray)
                                     Spacer()
@@ -93,9 +105,9 @@ struct TaskActionsModal: View {
                     
                     // Action Buttons Card
                     VStack(spacing: 1) {
-                        if !task.isCompleted || timerService._minutesRemain(for: task) < 0 {
+                        if (!task.isCompleted || timerService._minutesRemain(for: task) < 0) && isCurrentTimeInTaskWindow {
                             TaskActionButton(
-                                title: "Launch timer",
+                                title: NSLocalizedString("start_focus_session", comment: "Start focus session button"),
                                 icon: "play.fill",
                                 color: task.color,
                                 action: {
@@ -106,7 +118,7 @@ struct TaskActionsModal: View {
                         
                         if !task.isCompleted {
                             TaskActionButton(
-                                title: "Mark Complete",
+                                title: NSLocalizedString("mark_complete", comment: "Mark complete button"),
                                 icon: "checkmark.circle",
                                 color: .green,
                                 action: {
@@ -117,7 +129,7 @@ struct TaskActionsModal: View {
                         }
                         
                         TaskActionButton(
-                            title: "Edit Task",
+                            title: NSLocalizedString("edit_task", comment: "Edit task button"),
                             icon: "pencil",
                             color: .blue,
                             action: {
@@ -127,7 +139,7 @@ struct TaskActionsModal: View {
                         )
                         
                         TaskActionButton(
-                            title: "Duplicate Task",
+                            title: NSLocalizedString("duplicate_task", comment: "Duplicate task button"),
                             icon: "doc.on.doc",
                             color: .orange,
                             action: {
@@ -140,7 +152,7 @@ struct TaskActionsModal: View {
                             .padding(.vertical, 8)
                         
                         TaskActionButton(
-                            title: "Delete Task",
+                            title: NSLocalizedString("delete_task", comment: "Delete task button"),
                             icon: "trash",
                             color: .red,
                             isDestructive: true,

@@ -12,12 +12,12 @@ enum RepeatRule: String, CaseIterable, Identifiable, Codable {
 
     var displayName: String {
         switch self {
-        case .none: return "None"
-        case .daily: return "Daily"
-        case .weekdays: return "Weekdays"
-        case .weekends: return "Weekends"
-        case .weekly: return "Weekly"
-        case .monthly: return "Monthly"
+        case .none: return NSLocalizedString("repeat_none", comment: "No repeat option")
+        case .daily: return NSLocalizedString("repeat_daily", comment: "Comment: Daily repeat option")
+        case .weekdays: return NSLocalizedString("repeat_weekdays", comment: "Weekdays repeat option")
+        case .weekends: return NSLocalizedString("repeat_weekends", comment: "Weekends repeat option")
+        case .weekly: return NSLocalizedString("repeat_weekly", comment: "Weekly repeat option")
+        case .monthly: return NSLocalizedString("repeat_monthly", comment: "Monthly repeat option")
         }
     }
 }

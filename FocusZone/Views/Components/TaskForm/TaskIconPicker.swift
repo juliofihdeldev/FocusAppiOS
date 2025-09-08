@@ -8,7 +8,7 @@ struct TaskIconPicker: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
-                Text("What type of task is this?")
+                Text(NSLocalizedString("what_type_of_task", comment: "What type of task question"))
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textSecondary)
                 Spacer()

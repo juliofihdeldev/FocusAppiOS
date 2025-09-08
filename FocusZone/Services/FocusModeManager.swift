@@ -32,6 +32,10 @@ class FocusModeManager: NSObject, ObservableObject {
     private var focusStatusObserver: NSObjectProtocol?
     private var focusSession: FocusSession?
     
+    // Live Activity integration
+    let liveActivityManager = LiveActivityManager.shared
+    private var focusTimer: Timer?
+    
     // MARK: - Initialization
     
     override init() {
@@ -70,7 +74,7 @@ class FocusModeManager: NSObject, ObservableObject {
     
     // MARK: - Focus Activation
     
-    func activateFocus(mode: FocusMode, duration: TimeInterval) async -> Bool {
+    func activateFocus(mode: FocusMode, duration: TimeInterval, task: Task? = nil) async -> Bool {
         print("🎯 Attempting to activate focus mode: \(mode.displayName)")
         
         do {
@@ -103,6 +107,19 @@ class FocusModeManager: NSObject, ObservableObject {
             self.currentFocusMode = mode
             self.isActiveFocus = true
             self.blockedNotifications = 0
+            
+            // Start Live Activity
+            if let currentTask = task {
+                print("🎯 FocusModeManager: Starting Live Activity for task: \(currentTask.title)")
+                liveActivityManager.startLiveActivity(
+                    for: currentTask,
+                    sessionDuration: duration,
+                    breakDuration: nil
+                )
+                startLiveActivityTimer(duration: duration)
+            } else {
+                print("❌ FocusModeManager: No task provided, cannot start Live Activity")
+            }
             
             // Schedule auto-deactivation
             scheduleAutoDeactivation(after: duration)
@@ -151,6 +168,10 @@ class FocusModeManager: NSObject, ObservableObject {
             
             // Cancel auto-deactivation timer
             cancelAutoDeactivation()
+            
+            // Stop Live Activity timer and end activity
+            stopLiveActivityTimer()
+            liveActivityManager.endCurrentActivity()
             
             // Update state
             self.isActiveFocus = false
@@ -552,6 +573,53 @@ extension FocusModeManager: UNUserNotificationCenterDelegate {
         }
         
         completionHandler()
+    }
+    
+    // MARK: - Live Activity Management
+
+    private func getCurrentTask() -> Task? {
+        // This method should return the current active task
+        // For now, we'll return nil and implement this based on your task management system
+        // You may need to integrate with your existing task management
+        return nil
+    }
+    
+    private func startLiveActivityTimer(duration: TimeInterval) {
+        stopLiveActivityTimer() // Stop any existing timer
+        
+        var timeRemaining = duration
+        focusTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            
+            timeRemaining -= 1.0
+            let progress = max(0, (duration - timeRemaining) / duration)
+            
+            // Disabled FocusModeManager Live Activity updates to prevent conflicts
+            // with TaskTimerService progress calculation
+            // self.liveActivityManager.updateLiveActivity(
+            //     timeRemaining: timeRemaining,
+            //     progress: progress,
+            //     currentPhase: .focus,
+            //     isActive: self.isActiveFocus
+            // )
+            
+            if timeRemaining <= 0 {
+                self.stopLiveActivityTimer()
+            }
+        }
+    }
+    
+    private func stopLiveActivityTimer() {
+        focusTimer?.invalidate()
+        focusTimer = nil
+    }
+    
+    func pauseLiveActivity() {
+        liveActivityManager.pauseLiveActivity()
+    }
+    
+    func resumeLiveActivity() {
+        liveActivityManager.resumeLiveActivity()
     }
 }
 

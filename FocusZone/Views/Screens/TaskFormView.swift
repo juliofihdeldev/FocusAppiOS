@@ -18,19 +18,20 @@ struct TaskFormView: View {
     let taskToEdit: Task?
     
     @State private var taskTitle: String = ""
-    @State private var selectedDate: Date = Date()
-    @State private var startTime: Date = Date()
+    @State private var selectedDate: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+    @State private var startTime: Date = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
     @State private var duration: Int = 15
     @State private var selectedColor: Color = .pink
     @State private var selectedTaskType: TaskType? = nil
     @State private var selectedIcon: String = "📝"
     @State private var repeatRule: RepeatRule = .none
-    @State private var alerts: [String] = ["At start of task"]
+    @State private var alerts: [String] = [NSLocalizedString("at_start_of_task", comment: "Alert at start of task")]
     @State private var showSubtasks: Bool = true
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
     @StateObject private var taskCreationState = TaskCreationState.shared
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.modelContext) private var modelContext
     private let notificationService = NotificationService.shared
     
@@ -42,7 +43,12 @@ struct TaskFormView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    TaskFormHeader(onDismiss: { dismiss() })
+                    TaskFormHeader(onDismiss: { 
+                        // Ensure dismiss is called on main thread
+                        DispatchQueue.main.async {
+                            dismiss()
+                        }
+                    })
                     
                     VStack(alignment: .leading, spacing: 40) {
                         
@@ -76,8 +82,8 @@ struct TaskFormView: View {
                             Button(action: {
                                 saveTask()
                             }) {
-                                Text(taskToEdit == nil ? "Create Task" : "Update Task")
-                                    .font(AppFonts.headline())
+                                Text(taskToEdit == nil ? NSLocalizedString("create_task", comment: "Create task button title") : NSLocalizedString("update_task", comment: "Update task button title"))
+                                    .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 16)
@@ -107,6 +113,18 @@ struct TaskFormView: View {
             .background(AppColors.background.ignoresSafeArea())
         }
         .navigationBarHidden(true)
+        .gesture(
+            // Add swipe down gesture to dismiss
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.height > 100 {
+                        // Swipe down detected, dismiss the form
+                        DispatchQueue.main.async {
+                            dismiss()
+                        }
+                    }
+                }
+        )
         .onAppear {
             loadTaskData()
             // Prefill next start time if available (for new tasks only)
@@ -204,6 +222,29 @@ struct TaskFormView: View {
                 print("TaskFormView: Error details: \(error.localizedDescription)")
             }
         } else {
+            // Check task limit for new tasks
+            if !subscriptionManager.isProUser {
+                let descriptor = FetchDescriptor<Task>(
+                    predicate: #Predicate<Task> { task in
+                        task.statusRawValue != "cancelled"
+                    }
+                )
+                
+                do {
+                    let allTasks = try modelContext.fetch(descriptor)
+                    if allTasks.count >= ProFeatures.maxTasksForFree {
+                        print("TaskFormView: Task limit reached, cannot create new task")
+                        // Show error or dismiss form
+                        DispatchQueue.main.async {
+                            dismiss()
+                        }
+                        return
+                    }
+                } catch {
+                    print("TaskFormView: Error checking task count: \(error)")
+                }
+            }
+            
             // Create new task
             print("TaskFormView: Creating new task")
             
@@ -251,8 +292,8 @@ struct TaskFormView: View {
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         notificationService.sendImmediateNotification(
-                            title: "✅ Task Created",
-                            body: "'\(taskTitle)' scheduled for \(timeString)"
+                            title: NSLocalizedString("task_created", comment: "Task created notification title"),
+                            body: String(format: NSLocalizedString("task_scheduled_for", comment: "Task scheduled notification message"), taskTitle, timeString)
                         )
                     }
                 }
@@ -264,7 +305,10 @@ struct TaskFormView: View {
         }
         
         print("TaskFormView: Dismissing form")
-        dismiss()
+        // Ensure dismiss is called on main thread
+        DispatchQueue.main.async {
+            dismiss()
+        }
     }
 }
 

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct SplashScreen: View {
     @State private var isAnimating = false
-    @State private var showMainApp = false
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0.0
     @State private var rotationAngle: Double = 0
@@ -71,17 +70,6 @@ struct SplashScreen: View {
         }
         .onAppear {
             startAnimations()
-            
-            // Transition to main app after 4 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    showMainApp = true
-                }
-            }
-        }
-        .fullScreenCover(isPresented: $showMainApp) {
-            MainTabView()
-                .environmentObject(themeManager)
         }
     }
     
@@ -146,7 +134,7 @@ struct AppTitleView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 0) {
-                ForEach(Array("Focus".enumerated()), id: \.offset) { index, character in
+                ForEach(Array("FocusZEN+".enumerated()), id: \.offset) { index, character in
                     Text(String(character))
                         .font(AppFonts.largetitle()) // Using system font instead of AppFonts
                         .foregroundColor(.white)
@@ -160,7 +148,7 @@ struct AppTitleView: View {
                 }
             }
             
-            Text("Stay focused, achieve more")
+            Text(NSLocalizedString("stay_focused_achieve_more", comment: "Splash screen tagline"))
                 .font(AppFonts.subheadline()) // Using system font instead of AppFonts
                 .foregroundColor(.white.opacity(0.8))
                 .opacity(opacity)
@@ -194,7 +182,7 @@ struct LoadingIndicator: View {
                 }
             }
             
-            Text("Loading...")
+            Text(NSLocalizedString("loading", comment: "Loading indicator text"))
                 .font(.system(size: 12)) // Using system font instead of AppFonts
                 .foregroundColor(.white.opacity(0.6))
                 .opacity(opacity)

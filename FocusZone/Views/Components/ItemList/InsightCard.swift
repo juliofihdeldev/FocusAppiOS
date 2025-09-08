@@ -59,7 +59,7 @@ struct InsightCard: View {
                             .font(.system(size: 16, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                         
-                        Text("Impact")
+                        Text(NSLocalizedString("impact", comment: "Impact score label"))
                             .font(.system(size: 8, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                     }
@@ -93,7 +93,7 @@ struct InsightCard: View {
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(trendColor.opacity(0.7))
                         
-                        Text("Based on \(insight.dataPoints) tasks")
+                        Text(String(format: NSLocalizedString("based_on_tasks", comment: "Based on number of tasks"), insight.dataPoints))
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(AppColors.textSecondary.opacity(0.7))
                     }
@@ -102,7 +102,7 @@ struct InsightCard: View {
                     
                     // Expand indicator
                     HStack(spacing: 4) {
-                        Text(isExpanded ? "Collapse" : "View details")
+                        Text(isExpanded ? NSLocalizedString("collapse", comment: "Collapse button") : NSLocalizedString("view_details", comment: "View details button"))
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(trendColor)
                         
@@ -154,7 +154,7 @@ struct InsightCard: View {
                                     .foregroundColor(.yellow)
                             }
                             
-                            Text("Recommendation")
+                            Text(NSLocalizedString("recommendation", comment: "Recommendation section title"))
                                 .font(AppFonts.subheadline())
                                 .fontWeight(.semibold)
                                 .foregroundColor(AppColors.textPrimary)
@@ -189,7 +189,7 @@ struct InsightCard: View {
                                 HStack(spacing: 6) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 12, weight: .medium))
-                                    Text("Add to reminders")
+                                    Text(NSLocalizedString("add_to_reminders", comment: "Add to reminders button"))
                                         .font(.system(size: 13, weight: .medium))
                                 }
                                 .foregroundColor(.white)
@@ -288,15 +288,15 @@ extension InsightType {
     var displayName: String {
         switch self {
         case .timeOfDay:
-            return "Time Pattern"
+            return NSLocalizedString("time_pattern", comment: "Time Pattern insight type")
         case .taskDuration:
-            return "Duration"
+            return NSLocalizedString("duration", comment: "Duration insight type")
         case .breakPattern:
-            return "Break Time"
+            return NSLocalizedString("break_time", comment: "Break Time insight type")
         case .completion:
-            return "Completion"
+            return NSLocalizedString("completion", comment: "Completion insight type")
         case .dayOfWeek:
-            return "Weekly Pattern"
+            return NSLocalizedString("weekly_pattern", comment: "Weekly Pattern insight type")
         }
     }
 }

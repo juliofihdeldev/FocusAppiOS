@@ -1,0 +1,379 @@
+/*
+ * Japanese Localization for FocusZen+ App
+ *
+ * This file contains all user-facing strings in Japanese.
+ * Each string has a unique key that can be referenced in the code.
+ */
+
+"welcome_message" = "Focusアプリへようこそ";
+
+// MARK: - Common UI Elements
+"close" = "閉じる";
+"today" = "今日";
+"enable" = "有効にする";
+"later" = "後で";
+"active" = "アクティブ";
+"now" = "今";
+"live" = "ライブ";
+"next" = "次";
+"tasks" = "タスク";
+
+// MARK: - Task Management
+"create_task" = "タスクを作成";
+"update_task" = "タスクを更新";
+"no_tasks_today" = "今日のタスクはありません";
+"add_first_task" = "+ボタンをタップして最初のタスクを作成";
+"all_done" = "完了！";
+"great_work_today" = "今日もお疲れ様でした";
+"no_tasks" = "タスクなし";
+"add_some_tasks" = "タスクを追加してください";
+"focus" = "集中";
+"today_focus" = "今日の集中";
+
+// MARK: - Focus Modes
+"focus_mode" = "集中モード";
+"suggested_focus_mode" = "提案：%@で%@";
+
+// MARK: - Notifications
+"enable_notifications_title" = "通知を有効にする";
+"enable_notifications_message" = "タスクのリマインダーを受け取って集中を保つために通知を有効にしてください！";
+"notifications_disabled" = "通知が無効";
+"enable_notifications_description" = "タスクのリマインダーを受け取るために有効にする";
+
+// MARK: - Pro Features
+"upgrade_to_pro" = "Proにアップグレード";
+"pro" = "PRO";
+"free_trial_active" = "無料トライアル中";
+"next_billing" = "次回請求：%@";
+"limited_features" = "機能制限";
+"advanced_analytics_content" = "高度な分析コンテンツ";
+
+// MARK: - Settings
+"settings" = "設定";
+"appearance" = "外観";
+"language" = "言語";
+"notifications" = "通知";
+"data" = "データ";
+"about" = "について";
+"dark_mode" = "ダークモード";
+"switch_light_dark_themes" = "ライトテーマとダークテーマを切り替え";
+"task_reminders" = "タスクリマインダー";
+"get_notified_tasks_starting" = "タスクが開始する際に通知を受け取る";
+"clear_all_data" = "すべてのデータをクリア";
+"reset_all_tasks_settings" = "すべてのタスクと設定をリセット";
+"version" = "バージョン";
+"contact_support" = "サポートに連絡";
+"get_help_send_feedback" = "ヘルプを取得またはフィードバックを送信";
+"built_with_swiftui" = "SwiftUIで構築";
+"focus_helps_stay_focused" = "Focusは集中を保つのに役立ちます";
+"stay_focused_achieve_more" = "集中を保ち、より多くを達成";
+"focus_concentration" = "集中力";
+"subscription" = "サブスクリプション";
+"restore_purchases" = "購入を復元";
+"restore_subscription_device" = "このデバイスでサブスクリプションを復元";
+"manage_subscription" = "サブスクリプションを管理";
+"change_cancel_subscription" = "サブスクリプションを変更またはキャンセル";
+"unlock_all_features" = "すべての機能をアンロック";
+
+// MARK: - Settings Screen Specific
+"focus" = "集中";
+"icloud_sync" = "iCloud同期";
+"upgrade_to_pro" = "Proにアップグレード";
+"unlock_all_features_boost_productivity" = "すべての機能をアンロックして生産性を向上";
+"restore_purchases" = "購入を復元";
+"restore_subscription_another_device" = "別のデバイスからサブスクリプションを復元";
+"manage_subscription" = "サブスクリプションを管理";
+"change_cancel_your_subscription" = "サブスクリプションを変更またはキャンセル";
+"clear_all_data_confirmation" = "すべてのデータをクリア";
+"clear_all_data_warning" = "これにより、すべてのタスク、設定、アプリデータが永続的に削除されます。この操作は元に戻せません。";
+"cancel" = "キャンセル";
+"data_cleared" = "データがクリアされました";
+"ok" = "OK";
+"all_data_successfully_cleared" = "すべてのデータが正常にクリアされました。アプリは変更を適用するために再起動されます。";
+"error_clearing_data" = "データのクリア中にエラーが発生しました：%@";
+"about_us" = "私たちについて";
+"version_1_0" = "バージョン1.0";
+"contact_support" = "サポートに連絡";
+"get_help_send_feedback" = "ヘルプを取得してフィードバックを送信";
+
+// MARK: - About Sheet
+"about" = "について";
+"done" = "完了";
+"about_focuszen_plus" = "FocusZen+について";
+"focuszen_plus_description" = "FocusZen+は、インテリジェントな時間管理と集中を妨げない作業セッションを通じて、集中を保ち、タスクを効率的に管理し、目標を達成するのに役立つ個人向け生産性コンパニオンです。";
+"our_mission" = "私たちの使命";
+"our_mission_description" = "個人が時間をコントロールし、気を散らすものを排除し、集中した作業セッションとインテリジェントなタスク管理を通じて、個人生活と職業生活で意味のある進歩を創造する力を与えることです。";
+"key_features" = "主要機能";
+"focus_sessions" = "集中セッション";
+"focus_sessions_description" = "深い作業のための専用時間ブロック";
+"ai_powered_insights" = "AI駆動の洞察";
+"ai_powered_insights_description" = "より良い生産性のためのスマートな提案";
+"smart_notifications" = "スマート通知";
+"smart_notifications_description" = "中断しないインテリジェントなリマインダー";
+"progress_tracking" = "進捗追跡";
+"progress_tracking_description" = "生産性に関する視覚的な洞察";
+"customizable_focus_modes" = "カスタマイズ可能な集中モード";
+"customizable_focus_modes_description" = "異なる作業タイプに合わせた設定";
+"built_with" = "構築に使用";
+"swiftui_ios_15" = "• SwiftUI & iOS 15+";
+"core_data_persistence" = "• 永続化のためのCore Data";
+"widgetkit_home_screen" = "• ホーム画面ウィジェット用のWidgetKit";
+"localization_global_users" = "• グローバルユーザー向けのローカライゼーション";
+"get_in_touch" = "お問い合わせ";
+"support_email" = "support@focuszenplus.app";
+"website_url" = "focuszenplus.app";
+"copyright_2024" = "© 2024 FocusZen+";
+"made_with_love_productivity" = "生産性のために❤️で作られました";
+
+// MARK: - Contact Sheet
+"contact_support" = "お問い合わせ & サポート";
+"contact_support_description" = "お手伝いします！サポートチームにお問い合わせいただくか、フィードバックをお送りください。";
+"support_options" = "サポートオプション";
+"email_support" = "メールサポート";
+"get_help_via_email" = "メールでヘルプを取得";
+"website" = "ウェブサイト";
+"visit_website_help" = "ヘルプのためにウェブサイトをご覧ください";
+"faq_help_center" = "FAQ & ヘルプセンター";
+"find_answers_common_questions" = "よくある質問の答えを見つける";
+"send_feedback" = "フィードバックを送信";
+"rate_app" = "アプリを評価";
+"share_experience_app_store" = "App Storeで体験を共有";
+"feature_request" = "機能リクエスト";
+"suggest_new_features_improvements" = "新しい機能や改善を提案";
+"report_bug" = "バグを報告";
+"help_us_fix_issues" = "遭遇した問題の修正を支援";
+"response_time" = "応答時間";
+"response_time_description" = "通常、営業日中の24時間以内に応答いたします";
+
+// MARK: - Language Selection
+"language" = "言語";
+"language_selection" = "言語選択";
+"system_default" = "システムデフォルト";
+"language_change_restart_required" = "言語変更には再起動が必要です";
+"language_change_restart_message" = "言語変更を適用するにはアプリを再起動する必要があります。今すぐ再起動しますか、それとも後でしますか？";
+"restart_now" = "今すぐ再起動";
+"restart_later" = "後で再起動";
+
+// MARK: - TaskFormView
+"new_task" = "新しいタスク";
+"create_task" = "タスクを作成";
+"update_task" = "タスクを更新";
+"task_title" = "タスクのタイトル";
+"when" = "いつ？";
+"more" = "もっと...";
+"quick_select" = "クイック選択";
+"today" = "今日";
+"tomorrow" = "明日";
+"next_week" = "来週";
+"select_date" = "日付を選択";
+"select_time" = "時間を選択";
+"change" = "変更";
+"how_long" = "どのくらいの時間？";
+"hide" = "隠す";
+"custom" = "カスタム...";
+"select_duration" = "時間を選択";
+"minutes" = "分";
+"cancel" = "キャンセル";
+"set" = "設定";
+"what_type_of_task" = "これはどのようなタスクですか？";
+"how_often" = "どのくらいの頻度？";
+"notifications" = "通知";
+"notifications_enabled" = "通知が有効";
+"notifications_disabled" = "通知が無効";
+"you_will_receive" = "以下の通知を受け取ります：";
+"five_minutes_before" = "• タスク開始5分前";
+"when_task_starts" = "• タスクが開始予定時刻になった時";
+"completion_confirmation" = "• 完了確認";
+"enable_notifications_settings" = "設定で通知を有効にしてタスクのリマインダーを受け取る";
+"task_created" = "✅ タスクが作成されました";
+"task_scheduled_for" = "'%@'が%@にスケジュールされました";
+"at_start_of_task" = "タスク開始時";
+
+// MARK: - Repeat Rules
+"repeat_none" = "なし";
+"repeat_daily" = "毎日";
+"repeat_weekdays" = "平日";
+"repeat_weekends" = "週末";
+"repeat_weekly" = "毎週";
+"repeat_monthly" = "月次";
+
+// MARK: - OnboardingView
+"previous" = "前へ";
+"next" = "次へ";
+"skip" = "スキップ";
+"transform_your_productivity" = "生産性を変革しよう";
+"onboarding_description_1" = "より短時間でより多くのことを達成するのに役立つ究極の集中コンパニオンを発見しましょう。AI搭載のアプリは、インテリジェントな時間管理とパーソナライズされた洞察を組み合わせて、生産性を向上させ、ワークライフバランスを維持します。";
+"powerful_features" = "強力な機能";
+"ai_assistant" = "AIアシスタント";
+"analytics" = "分析";
+"smart_timers" = "スマートタイマー";
+"break_suggestions" = "休憩提案";
+"focus_modes" = "集中モード";
+"cloud_sync" = "クラウド同期";
+"ready_to_focus" = "集中する準備はできましたか？";
+"onboarding_description_3" = "今日から生産性の旅を始めましょう。タスクを作成し、集中セッションを設定し、インテリジェントな洞察と推奨事項で進歩を見守りましょう。";
+"slide_to_get_started" = "スライドして開始";
+"welcome" = "ようこそ！";
+
+// MARK: - TimelineView
+"no_tasks_for_today" = "今日のタスクはありません";
+"tap_plus_to_create_first_task" = "+ボタンをタップして最初のタスクを作成";
+"enable_notifications" = "通知を有効にする";
+"enable" = "有効にする";
+"later" = "後で";
+"enable_notifications_message" = "タスクのリマインダーを受け取り、集中し続けるために通知を有効にしてください！";
+"notifications_disabled_banner" = "通知が無効";
+"enable_to_get_task_reminders" = "タスクリマインダーを受け取るために有効にする";
+
+// MARK: - WeekDateNavigator
+"today" = "今日";
+
+// MARK: - DatePickerSheet
+"select_date" = "日付を選択";
+"quick_select" = "クイック選択";
+"tomorrow" = "明日";
+"next_week" = "来週";
+"cancel" = "キャンセル";
+"done" = "完了";
+
+// MARK: - TaskCard
+"starts_in" = "開始まで";
+"remaining" = "残り";
+"overdue" = "期限切れ";
+"hrs" = "時間";
+"min" = "分";
+"s" = "秒";
+
+// MARK: - BreakSuggestionCard
+"dismiss" = "却下";
+"not_interested" = "興味なし";
+"add_break" = "休憩を追加";
+"minutes" = "分";
+"swipe" = "スワイプ";
+"plan_a_break" = "%@で%@を計画しますか？";
+
+// MARK: - TaskActionsModal
+"repeating_task_instance" = "繰り返しタスクのインスタンス";
+"repeating_task_series" = "繰り返しタスクシリーズ";
+"progress" = "進捗";
+"start_focus_session" = "集中セッションを開始";
+"mark_complete" = "完了としてマーク";
+"edit_task" = "タスクを編集";
+"duplicate_task" = "タスクを複製";
+"delete_task" = "タスクを削除";
+
+// MARK: - TaskDeletionModal
+"part_of_repeating_series" = "繰り返しシリーズの一部";
+"what_would_you_like_to_delete" = "何を削除したいですか？";
+"delete_this_instance" = "このインスタンスを削除";
+"remove_only_this_occurrence" = "この発生のみを削除";
+"delete_all_instances" = "すべてのインスタンスを削除";
+"remove_the_entire_repeating_series" = "繰り返しシリーズ全体を削除";
+"delete_future_instances" = "将来のインスタンスを削除";
+"keep_past_remove_upcoming_occurrences" = "過去を保持し、今後の発生を削除";
+"delete_entire_series" = "シリーズ全体を削除";
+"remove_this_task_and_all_its_instances" = "このタスクとそのすべてのインスタンスを削除";
+"keep_completed_instances_remove_future_ones" = "完了したインスタンスを保持し、将来のものを削除";
+"this_action_cannot_be_undone" = "このアクションは元に戻せません";
+"delete_task_navigation_title" = "タスクを削除";
+
+// MARK: - Additional Keys
+"now" = "今";
+"m" = "分";
+"h" = "時間";
+"remaining" = "%@残り";
+"overdue" = "%@期限切れ";
+"starts_in" = "開始まで%@";
+
+// MARK: - Focus Insights View
+"focus_coach" = "集中コーチ";
+"your_focus_coach" = "あなたの集中コーチ";
+"ai_powered_insights" = "AI搭載のタスクからの洞察";
+"this_weeks_insights" = "今週の洞察";
+"insights_count" = "%dの洞察";
+"analyzing_focus_patterns" = "集中パターンを分析中...";
+"this_may_take_moment" = "少し時間がかかる場合があります";
+"not_enough_data_yet" = "まだ十分なデータがありません";
+"complete_tasks_for_insights" = "パーソナライズされた洞察をアンロックするために、もう少しタスクを完了してください";
+"view_sample_insights" = "サンプル洞察を表示";
+"refresh_insights" = "洞察を更新";
+"upgrade_advanced_insights" = "高度な洞察のためにアップグレード";
+"peak_performance_window" = "🌅 ピークパフォーマンスウィンドウ";
+"productive_early_morning" = "早朝の%@に%d%%より生産的です";
+"schedule_important_tasks_early" = "最も重要なタスクを6-9時にスケジュール";
+"break_power_boost" = "🧘 休憩パワーブースト";
+"tasks_after_breaks_higher" = "休憩後のタスクは%d%%高い完了率";
+"schedule_breaks_before_tasks" = "重要なタスクの前に5-10分の休憩をスケジュール";
+
+// MARK: - Insight Card
+"impact" = "影響";
+"based_on_tasks" = "%dのタスクに基づく";
+"collapse" = "折りたたむ";
+"view_details" = "詳細を表示";
+"recommendation" = "推奨";
+"add_to_reminders" = "リマインダーに追加";
+
+// MARK: - Insight Types
+"time_pattern" = "時間パターン";
+"duration" = "期間";
+"break_time" = "休憩時間";
+"completion" = "完了";
+"weekly_pattern" = "週次パターン";
+
+// MARK: - Time Periods
+"early_morning" = "早朝";
+"late_morning" = "午前遅く";
+"early_afternoon" = "午後早く";
+"late_afternoon" = "午後遅く";
+"evening" = "夕方";
+"night" = "夜";
+"time_6_9_am" = "6-9時";
+"time_9_am_12_pm" = "9-12時";
+"time_12_3_pm" = "12-15時";
+"time_3_6_pm" = "15-18時";
+"time_6_9_pm" = "18-21時";
+"time_9_plus_pm" = "21時以降";
+
+// MARK: - Duration Categories
+"short_15_30_min" = "短い（15-30分）";
+"medium_30_60_min" = "中程度（30-60分）";
+"long_1_2_hour" = "長い（1-2時間）";
+"extended_2_plus_hour" = "延長（2時間以上）";
+
+// MARK: - Analytics Engine
+"break_auto" = "休憩（自動）";
+"room_for_growth" = "成長の余地";
+"catch_up_focus_auto" = "集中力回復（自動）";
+"more_productive_during_time" = "%@に%d%%より生産的です";
+"schedule_important_tasks_between" = "最も重要なタスクを%@の間にスケジュール";
+"focus_drops_during_time" = "%@に集中力が%d%%低下";
+"schedule_breaks_admin_tasks" = "%@の間に休憩、管理タスク、または軽い作業をスケジュールすることを検討";
+"complete_percentage_duration_tasks" = "%@タスクの%d%%を完了";
+"break_longer_tasks_chunks" = "より長いタスクを%d分のチャンクに分割してみてください";
+"tasks_after_breaks_higher_completion" = "休憩後のタスクは%d%%高い完了率";
+"schedule_breaks_before_important_tasks" = "重要なタスクの前に5-10分の休憩をスケジュール";
+"completed_percentage_tasks_week" = "今週のタスクの%d%%を完了（%d時間集中）";
+"great_momentum_increase_goals" = "素晴らしい勢い！毎日の集中目標を徐々に増やすことを検討";
+"away_from_completion_goal" = "今週の完了目標から%d%%離れています";
+"reduce_task_durations_schedule_fewer" = "タスクの期間を25%%短縮するか、1日あたりのタスク数を減らしてみてください";
+"schedule_challenging_tasks_on_day" = "最も困難なタスクを%@にスケジュール";
+
+// MARK: - Splash Screen
+"stay_focused_achieve_more" = "集中し続け、より多くを達成";
+"loading" = "読み込み中...";
+
+// MARK: - Tab Navigation
+"timeline" = "タイムライン";
+"insights" = "洞察";
+"settings" = "設定";
+"pro" = "PRO";
+
+// MARK: - ProGate Translations
+"upgrade_to_pro" = "Proにアップグレード";
+"task_limit_reached" = "無料ユーザーの%dタスクの制限に達しました。無制限のタスクのためにProにアップグレードしてください！";
+"upgrade_now" = "今すぐアップグレード";
+"maybe_later" = "後で";
+"unlimited_tasks" = "無制限のタスク";
+"advanced_insights_recommendations" = "高度なインサイトと推奨事項";
+"custom_focus_modes" = "カスタムフォーカスモード";
+"smart_break_suggestions" = "スマートブレーク提案";

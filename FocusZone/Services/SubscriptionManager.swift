@@ -266,6 +266,28 @@ class SubscriptionManager: ObservableObject {
         
         return transaction.expirationDate
     }
+    
+    // MARK: - Task Limit Methods
+    
+    func canCreateTask(currentTaskCount: Int) -> Bool {
+        if isProUser {
+            return true // Pro users have unlimited tasks
+        }
+        return currentTaskCount < ProFeatures.maxTasksForFree
+    }
+    
+    func getTaskLimitMessage(currentTaskCount: Int) -> String {
+        if isProUser {
+            return "Unlimited tasks with Pro"
+        }
+        
+        let remaining = ProFeatures.maxTasksForFree - currentTaskCount
+        if remaining > 0 {
+            return "\(remaining) tasks remaining"
+        } else {
+            return "Upgrade to Pro for unlimited tasks"
+        }
+    }
 }
 
 enum SubscriptionStatus: String, CaseIterable {
@@ -290,14 +312,16 @@ enum SubscriptionStatus: String, CaseIterable {
 
 
 struct ProFeatures {
-    static let maxTasksForFree = 10
+    static let maxTasksForFree = 3
     static let maxFocusSessionsForFree = 5
     static let maxInsightsForFree = 3
     
-    static let proFeaturesList = [
-        "Unlimited tasks",
-        "Advanced insights & recommendations",
-        "Custom focus modes",
-        "Smart break suggestions",
-    ]
+    static var proFeaturesList: [String] {
+        return [
+            NSLocalizedString("unlimited_tasks", comment: "Unlimited tasks feature"),
+            NSLocalizedString("advanced_insights_recommendations", comment: "Advanced insights and recommendations feature"),
+            NSLocalizedString("custom_focus_modes", comment: "Custom focus modes feature"),
+            NSLocalizedString("smart_break_suggestions", comment: "Smart break suggestions feature"),
+        ]
+    }
 }

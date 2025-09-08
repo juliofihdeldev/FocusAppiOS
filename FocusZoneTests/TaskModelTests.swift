@@ -4,9 +4,6 @@ import Foundation
 @testable import FocusZone
 
 struct TaskModelTests {
-    
-    // MARK: - Task Creation Tests
-    
     @Test func testTaskInitialization() async throws {
         let task = Task(
             title: "Test Task",
@@ -46,8 +43,6 @@ struct TaskModelTests {
         #expect(task.repeatRuleRawValue == RepeatRule.daily.rawValue)
     }
     
-    // MARK: - Task Properties Tests
-    
     @Test func testTaskStatus() async throws {
         let task = Task(
             title: "Status Test Task",
@@ -82,8 +77,6 @@ struct TaskModelTests {
     
     // Note: testTaskColor test removed due to persistent test environment issues
     // The color functionality is tested indirectly through other task creation tests
-    
-    // MARK: - Task Relationships Tests
     
     @Test func testTaskParentChildRelationship() async throws {
         let parentTask = Task(

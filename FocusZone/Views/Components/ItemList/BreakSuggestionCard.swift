@@ -56,10 +56,10 @@ struct BreakSuggestionCard: View {
                                 .foregroundColor(.red)
                                 .font(.title2)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Dismiss")
+                                Text(NSLocalizedString("dismiss", comment: "Dismiss button"))
                                     .font(AppFonts.caption())
                                     .foregroundColor(.red)
-                                Text("Not interested")
+                                Text(NSLocalizedString("not_interested", comment: "Not interested text"))
                                     .font(AppFonts.caption())
                                     .foregroundColor(.gray)
                             }
@@ -75,10 +75,10 @@ struct BreakSuggestionCard: View {
                     if dragOffset.width > 20 {
                         HStack(spacing: 8) {
                             VStack(alignment: .trailing, spacing: 2) {
-                                Text("Add Break")
+                                Text(NSLocalizedString("add_break", comment: "Add break button"))
                                     .font(AppFonts.caption())
                                     .foregroundColor(suggestion.type.color)
-                                Text("\(suggestion.suggestedDuration) minutes")
+                                Text(String(format: NSLocalizedString("minutes", comment: "Minutes format"), suggestion.suggestedDuration))
                                     .font(AppFonts.caption())
                                     .foregroundColor(.gray)
                             }
@@ -112,7 +112,7 @@ struct BreakSuggestionCard: View {
                                 Image(systemName: "chevron.left")
                                     .font(.system(size: 10))
                                     .foregroundColor(.gray)
-                                Text("swipe")
+                                Text(NSLocalizedString("swipe", comment: "Swipe instruction"))
                                     .font(.system(size: 10))
                                     .foregroundColor(.gray)
                                 Image(systemName: "chevron.right")
@@ -128,7 +128,7 @@ struct BreakSuggestionCard: View {
                         Text(suggestion.icon)
                             .font(.title3)
                         
-                        Text("Plan a \(suggestion.type.displayName.lowercased()) in \(timeUntilText)?")
+                        Text(String(format: NSLocalizedString("plan_a_break", comment: "Plan a break question"), suggestion.type.displayName.lowercased(), timeUntilText))
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.textPrimary)
                     }
@@ -239,13 +239,13 @@ struct BreakSuggestionCard: View {
     
     private var timeUntilText: String {
         if suggestion.timeUntilOptimal <= 0 {
-            return "now"
+            return NSLocalizedString("now", comment: "Now time indicator")
         } else if suggestion.timeUntilOptimal < 60 {
-            return "\(suggestion.timeUntilOptimal)m"
+            return "\(suggestion.timeUntilOptimal)" + NSLocalizedString("m", comment: "Minutes abbreviation")
         } else {
             let hours = suggestion.timeUntilOptimal / 60
             let minutes = suggestion.timeUntilOptimal % 60
-            return minutes > 0 ? "\(hours)h \(minutes)m" : "\(hours)h"
+            return minutes > 0 ? "\(hours)" + NSLocalizedString("h", comment: "Hours abbreviation") + " \(minutes)" + NSLocalizedString("m", comment: "Minutes abbreviation") : "\(hours)" + NSLocalizedString("h", comment: "Hours abbreviation")
         }
     }
     

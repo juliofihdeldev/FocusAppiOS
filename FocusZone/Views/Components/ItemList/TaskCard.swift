@@ -14,7 +14,7 @@ struct TaskCard: View {
     @State private var hasConflicts: Bool = false
     @State private var conflictDetails: [TaskConflictService.TaskConflict] = []
     private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
 
     var body: some View {
         // Calculate height based on duration (1 minute = 2 points, minimum 60pt)
@@ -222,9 +222,9 @@ struct TaskCard: View {
         let minutes = durationMinutes % 60
         
         if hours > 0 {
-            return minutes > 0 ? "\(hours) hrs, \(minutes) min" : "\(hours) hrs"
+            return minutes > 0 ? String(format: NSLocalizedString("hrs", comment: "Hours abbreviation"), "\(hours)") + ", " + String(format: NSLocalizedString("min", comment: "Minutes abbreviation"), "\(minutes)") : String(format: NSLocalizedString("hrs", comment: "Hours abbreviation"), "\(hours)")
         } else {
-            return "\(minutes) min"
+            return String(format: NSLocalizedString("min", comment: "Minutes abbreviation"), "\(minutes)")
         }
     }
     
@@ -242,9 +242,9 @@ struct TaskCard: View {
             if minutesUntilStart > 60 {
                 let hours = minutesUntilStart / 60
                 let mins = minutesUntilStart % 60
-                return "Starts in \(hours)h \(mins)m"
+                return String(format: NSLocalizedString("starts_in", comment: "Starts in time format"), "\(hours)h \(mins)m")
             } else {
-                return "Starts in \(minutesUntilStart)m"
+                return String(format: NSLocalizedString("starts_in", comment: "Starts in time format"), "\(minutesUntilStart)m")
             }
         }
         
@@ -256,13 +256,13 @@ struct TaskCard: View {
             if remainingMinutes > 60 {
                 let hours = remainingMinutes / 60
                 let mins = remainingMinutes % 60
-                return mins > 0 ? "\(hours)h \(mins)m remaining" : "\(hours)h remaining"
+                return mins > 0 ? String(format: NSLocalizedString("remaining", comment: "Time remaining format"), "\(hours)h \(mins)m") : String(format: NSLocalizedString("remaining", comment: "Time remaining format"), "\(hours)h")
             } else if remainingMinutes > 0 {
-                return "\(remainingMinutes)m remaining"
+                return String(format: NSLocalizedString("remaining", comment: "Time remaining format"), "\(remainingMinutes)m")
             } else {
                 // Less than a minute remaining
                 let remainingSeconds = Int(remaining)
-                return "\(remainingSeconds)s remaining"
+                return String(format: NSLocalizedString("remaining", comment: "Time remaining format"), "\(remainingSeconds)s")
             }
         } else {
             // Task is overdue
@@ -272,9 +272,9 @@ struct TaskCard: View {
             if overdueMinutes > 60 {
                 let hours = overdueMinutes / 60
                 let mins = overdueMinutes % 60
-                return mins > 0 ? "\(hours)h \(mins)m overdue" : "\(hours)h overdue"
+                return mins > 0 ? String(format: NSLocalizedString("overdue", comment: "Time overdue format"), "\(hours)h \(mins)m") : String(format: NSLocalizedString("overdue", comment: "Time overdue format"), "\(hours)h")
             } else {
-                return "\(overdueMinutes)m overdue"
+                return String(format: NSLocalizedString("overdue", comment: "Time overdue format"), "\(overdueMinutes)m")
             }
         }
     }

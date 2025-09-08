@@ -9,7 +9,7 @@ struct NotificationInfoSection: View {
             HStack {
                 Image(systemName: "bell.fill")
                     .foregroundColor(.blue)
-                Text("Notifications")
+                Text(NSLocalizedString("notifications", comment: "Notifications section title"))
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textPrimary)
                 Spacer()
@@ -20,25 +20,25 @@ struct NotificationInfoSection: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Notifications enabled")
+                        Text(NSLocalizedString("notifications_enabled", comment: "Notifications enabled status"))
                             .font(AppFonts.body())
                             .foregroundColor(.green)
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("You'll receive:")
+                        Text(NSLocalizedString("you_will_receive", comment: "You will receive notifications list header"))
                             .font(AppFonts.caption())
                             .foregroundColor(.gray)
                         
-                        Text("• 5 minutes before task starts")
+                        Text(NSLocalizedString("five_minutes_before", comment: "5 minutes before task starts notification"))
                             .font(AppFonts.caption())
                             .foregroundColor(.gray)
                         
-                        Text("• When task is scheduled to begin")
+                        Text(NSLocalizedString("when_task_starts", comment: "When task starts notification"))
                             .font(AppFonts.caption())
                             .foregroundColor(.gray)
                         
-                        Text("• Completion confirmation")
+                        Text(NSLocalizedString("completion_confirmation", comment: "Completion confirmation notification"))
                             .font(AppFonts.caption())
                             .foregroundColor(.gray)
                     }
@@ -46,12 +46,12 @@ struct NotificationInfoSection: View {
                     HStack {
                         Image(systemName: "bell.slash.fill")
                             .foregroundColor(.orange)
-                        Text("Notifications disabled")
+                        Text(NSLocalizedString("notifications_disabled", comment: "Notifications disabled status"))
                             .font(AppFonts.body())
                             .foregroundColor(.orange)
                     }
                     
-                    Text("Enable notifications in Settings to get task reminders")
+                    Text(NSLocalizedString("enable_notifications_settings", comment: "Enable notifications in settings message"))
                         .font(AppFonts.caption())
                         .foregroundColor(.gray)
                 }

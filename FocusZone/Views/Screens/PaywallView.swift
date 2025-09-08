@@ -36,19 +36,19 @@ struct PaywallView: View {
                     VStack(spacing: 12) {
                         // Header
                         VStack(spacing: 12) {
-                            // App icon
-//                            Image(systemName: "brain.head.profile")
-//                                .font(.system(size: 60, weight: .light))
-//                                .foregroundColor(.white)
-//                                .padding()
-//                                .background(
-//                                    Circle()
-//                                        .fill(.ultraThinMaterial)
-//                                        .overlay(
-//                                            Circle()
-//                                                .stroke(.white.opacity(0.3), lineWidth: 1)
-//                                        )
-//                                )
+//                             App icon
+                            Image(systemName: "brain.head.profile")
+                                .font(.system(size: 60, weight: .light))
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(
+                                    Circle()
+                                        .fill(.ultraThinMaterial)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(.white.opacity(0.3), lineWidth: 1)
+                                        )
+                                )
                             
                             VStack(spacing: 8) {
                                 Text("Unlock FocusZen+ Pro")
@@ -66,7 +66,7 @@ struct PaywallView: View {
                         // Features showcase
                         VStack(spacing: 12) {
                             ForEach(Array(ProFeatures.proFeaturesList.enumerated()), id: \.offset) { index, feature in
-                                FeatureRow(
+                                FeatureRow_(
                                     icon: getFeatureIcon(for: index),
                                     title: feature,
                                     delay: Double(index) * 0.1,

@@ -2,9 +2,9 @@ import SwiftUI
 import SwiftData
 
 struct TaskTimer: View {
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss: DismissAction
     let task: Task
 
     @State private var showCompletionAlert = false
@@ -267,7 +267,7 @@ struct TaskTimer: View {
             if ((task.focusSettings?.isEnabled) != nil) {
                 focusManager.blockedNotifications = 1
                 _Concurrency.Task {
-                    await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60))
+                    await focusManager.activateFocus(mode: .deepWork, duration: TimeInterval(timerService.currentRemainingMinutes * 60), task: task)
                 }
             }
         }

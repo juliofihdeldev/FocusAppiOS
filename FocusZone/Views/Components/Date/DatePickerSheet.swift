@@ -8,13 +8,13 @@ struct DatePickerSheet: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Text("Select Date")
+                Text(NSLocalizedString("select_date", comment: "Select date title"))
                     .font(AppFonts.title())
                     .fontWeight(.bold)
                     .foregroundColor(AppColors.textPrimary)
                     .padding(.top, 20)
                 
-                DatePicker("Select Date", selection: $selectedDate, displayedComponents: [.date])
+                DatePicker(NSLocalizedString("select_date", comment: "Select date picker label"), selection: $selectedDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical)
                     .accentColor(AppColors.accent)
                     .padding()
@@ -23,13 +23,13 @@ struct DatePickerSheet: View {
                     .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                 
                 VStack(spacing: 12) {
-                    Text("Quick Select")
+                    Text(NSLocalizedString("quick_select", comment: "Quick select title"))
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                     HStack(spacing: 12) {
-                        quickDateButton(title: "Today", date: Date())
-                        quickDateButton(title: "Tomorrow", date: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date())
-                        quickDateButton(title: "Next Week", date: Calendar.current.date(byAdding: .weekOfYear, value: 1, to: Date()) ?? Date())
+                        quickDateButton(title: NSLocalizedString("today", comment: "Today button"), date: Date())
+                        quickDateButton(title: NSLocalizedString("tomorrow", comment: "Tomorrow button"), date: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date())
+                        quickDateButton(title: NSLocalizedString("next_week", comment: "Next week button"), date: Calendar.current.date(byAdding: .weekOfYear, value: 1, to: Date()) ?? Date())
                     }
                 }
                 .padding()
@@ -44,11 +44,11 @@ struct DatePickerSheet: View {
             .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") { dismiss() }
+                    Button(NSLocalizedString("cancel", comment: "Cancel button")) { dismiss() }
                         .foregroundColor(AppColors.accent)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(NSLocalizedString("done", comment: "Done button")) {
                         currentWeekOffset = 0
                         dismiss()
                     }

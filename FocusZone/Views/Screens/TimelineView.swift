@@ -6,7 +6,7 @@ typealias FocusTask = Task
 
 struct TimelineView: View {
     @StateObject private var viewModel = TimelineViewModel()
-    @StateObject private var timerService = TaskTimerService()
+    @ObservedObject private var timerService = TaskTimerService.shared
     @EnvironmentObject var notificationService: NotificationService
     @Environment(\.modelContext) private var modelContext
     @State private var selectedDate: Date = Date()
@@ -14,6 +14,9 @@ struct TimelineView: View {
     @State private var editingTask: FocusTask?
     @State private var selectedTaskForActions: FocusTask?
     @State private var showNotificationAlert = false
+    @State private var showProGate = false
+    @State private var showPaywall = false
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
     
     var body: some View {
         NavigationView {
@@ -22,7 +25,7 @@ struct TimelineView: View {
                 AppColors.background
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                VStack(spacing: 40) {
                     // Notification permission banner
                     if !notificationService.isAuthorized {
                         notificationPermissionBanner
@@ -32,16 +35,6 @@ struct TimelineView: View {
                     WeekDateNavigator(
                         selectedDate: $selectedDate
                     )
-                    .padding(.bottom, 16)
-                    
-                    // // Debug button (remove in production)
-                    // #if DEBUG
-                    // Button("Test Task Creation") {
-                    //     viewModel.createTestTask()
-                    // }
-                    // .foregroundColor(.blue)
-                    // .padding(.bottom, 8)
-                    // #endif
                     
                     // Main Content Area
                     ScrollViewReader { proxy in
@@ -54,11 +47,11 @@ struct TimelineView: View {
                                             .font(.system(size: 48))
                                             .foregroundColor(AppColors.textSecondary)
                                         
-                                        Text("No tasks for today")
+                                        Text(NSLocalizedString("no_tasks_for_today", comment: "No tasks message"))
                                             .font(AppFonts.headline())
                                             .foregroundColor(AppColors.textSecondary)
                                         
-                                        Text("Tap the + button to create your first task")
+                                        Text(NSLocalizedString("tap_plus_to_create_first_task", comment: "Instruction to create first task"))
                                             .font(AppFonts.body())
                                             .foregroundColor(AppColors.textSecondary)
                                             .multilineTextAlignment(.center)
@@ -130,7 +123,7 @@ struct TimelineView: View {
                             viewModel.forceRefreshTasks(for: selectedDate)
                         }
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 26)
+//                        .padding(.vertical, 26)
                     }
                 }
                 
@@ -142,7 +135,7 @@ struct TimelineView: View {
                         Spacer()
                         
                         FloatingActionButton {
-                            showAddTaskForm = true
+                            handleAddTaskButtonTap()
                         }
                         .padding(.trailing, 20)
                         .padding(.bottom, 20)
@@ -192,6 +185,24 @@ struct TimelineView: View {
                     .environment(\.modelContext, modelContext)
             }
         }
+        .sheet(isPresented: $showProGate) {
+            ProGate(
+                onUpgrade: {
+                    showProGate = false
+                    showPaywall = true
+                },
+                onDismiss: {
+                    showProGate = false
+                },
+                currentTaskCount: viewModel.getCurrentTaskCount(),
+                maxTasks: ProFeatures.maxTasksForFree
+            )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
         .sheet(isPresented: Binding<Bool>(
             get: { selectedTaskForActions != nil },
             set: { if !$0 { selectedTaskForActions = nil } }
@@ -211,15 +222,15 @@ struct TimelineView: View {
                 .presentationDragIndicator(.visible)
             }
         }
-        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
-            Button("Enable") {
+        .alert(NSLocalizedString("enable_notifications", comment: "Enable notifications alert title"), isPresented: $showNotificationAlert) {
+            Button(NSLocalizedString("enable", comment: "Enable button text")) {
                 _Concurrency.Task {
                     await viewModel.requestNotificationPermission()
                 }
             }
-            Button("Later", role: .cancel) { }
+            Button(NSLocalizedString("later", comment: "Later button text"), role: .cancel) { }
         } message: {
-            Text("Enable notifications to get reminders for your tasks and stay focused!")
+            Text(NSLocalizedString("enable_notifications_message", comment: "Enable notifications message"))
         }
     }
     
@@ -230,19 +241,19 @@ struct TimelineView: View {
                 .font(.title2)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Notifications Disabled")
+                Text(NSLocalizedString("notifications_disabled_banner", comment: "Notifications disabled banner title"))
                     .font(AppFonts.subheadline())
                     .fontWeight(.semibold)
                     .foregroundColor(AppColors.textPrimary)
                 
-                Text("Enable to get task reminders")
+                Text(NSLocalizedString("enable_to_get_task_reminders", comment: "Enable to get task reminders"))
                     .font(AppFonts.caption())
                     .foregroundColor(AppColors.textSecondary)
             }
             
             Spacer()
             
-            Button("Enable") {
+            Button(NSLocalizedString("enable", comment: "Enable button text")) {
                 showNotificationAlert = true
             }
             .font(AppFonts.caption())
@@ -322,6 +333,21 @@ struct TimelineView: View {
         timerService.startTask(task)
         selectedTaskForActions = nil
     }
+    
+    private func handleAddTaskButtonTap() {
+        if subscriptionManager.isProUser {
+            // Pro users can always add tasks
+            showAddTaskForm = true
+        } else {
+            // Check if user can add more tasks
+            if viewModel.canCreateNewTask() {
+                showAddTaskForm = true
+            } else {
+                // Show pro gate
+                showProGate = true
+            }
+        }
+    }
 }
 
 struct FloatingActionButton: View {
@@ -363,8 +389,98 @@ struct FloatingActionButton: View {
     }
 }
 
+
+
+// MARK: - Sample Data
+let _sampleTasks: [Task] = [
+    Task(
+        id: UUID(),
+        title: "Rise and Shine",
+        icon: "🌅",
+        startTime: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 45,
+        color: .pink,
+        isCompleted: true
+    ),
+    Task(
+        id: UUID(),
+        title: "Keep working",
+        icon: "💼",
+        startTime: Calendar.current.date(bySettingHour: 16, minute: 11, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 120, // 2h 30min
+        color: .green,
+        isCompleted: false
+    ),
+    Task(
+        id: UUID(),
+        title: "Go for a Run!",
+        icon: "🏃‍♂️",
+        startTime: Calendar.current.date(bySettingHour: 19, minute: 15, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 90, // 1h 30min
+        color: .orange,
+        isCompleted: false
+    ),
+    
+    Task(
+        id: UUID(),
+        title: "Go for a Run!",
+        icon: "🏃‍♂️",
+        startTime: Calendar.current.date(bySettingHour: 19, minute: 35, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 60, // 1h 30min
+        color: .orange,
+        isCompleted: false
+    ),
+    Task(
+        id: UUID(),
+        title: "Wind Down",
+        icon: "🌙",
+        startTime: Calendar.current.date(bySettingHour: 15, minute: 00, second: 0, of: Date()) ?? Date(),
+        durationMinutes: 45,
+        color: .blue,
+        isCompleted: false
+    )
+]
+
+// MARK: - Timeline View Container
+struct TimelineViewPreview: View {
+    @State private var selectedDate = Date()
+    @State private var tasks: [Task] = _sampleTasks
+    
+    var body: some View {
+        ZStack {
+            // Dark background
+            Color.black.ignoresSafeArea()
+            
+            VStack(spacing: 40) {
+                // Date Header
+                WeekDateNavigator(selectedDate: $selectedDate)
+            
+                // Timeline
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(tasks) { task in
+                            TaskCard(
+                                title: task.title,
+                                time: "",
+                                icon: task.icon,
+                                color: task.color,
+                                isCompleted: task.isCompleted,
+                                durationMinutes: task.durationMinutes,
+                                task: task,
+                                timelineViewModel: nil
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                
+                }
+            }
+        }
+    }
+}
+
 #Preview {
-    TimelineView()
+    TimelineViewPreview()
         .environmentObject(ThemeManager())
         .environmentObject(NotificationService.shared)
 }

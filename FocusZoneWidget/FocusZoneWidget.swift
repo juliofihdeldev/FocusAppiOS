@@ -697,6 +697,7 @@ struct FocusZoneWidgetEntryView: View {
 struct FocusZoneWidgetBundle: WidgetBundle {
     var body: some Widget {
         FocusZoneWidget()
+        FocusZoneWidgetLiveActivity()
     }
 }
 

@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UserNotifications
+import CloudKit
 
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
@@ -10,14 +11,17 @@ struct SettingsView: View {
     @State private var showingContact = false
     @State private var enableFocusMode = true
     @State private var showPaywall = false
-    @State private var showLanguageSelector = false
+    
     @State private var showingClearDataConfirmation = false
     @State private var showingClearDataAlert = false
     @State private var clearDataMessage = ""
+    @State private var showingDeleteTaskAlert = false
     @StateObject private var focusManager = FocusModeManager()
     @StateObject private var subscriptionManager = SubscriptionManager.shared
-    @StateObject private var localizationManager = LocalizationManager.shared
+    
     @StateObject private var cloudSyncManager = CloudSyncManager()
+    @StateObject private var languageManager = LanguageManager.shared
+    @State private var showingLanguageSelection = false
     
     var body: some View {
         NavigationView {
@@ -29,8 +33,7 @@ struct SettingsView: View {
                     // Settings Sections
                     VStack(spacing: 20) {
                         subscriptionSection
-//                     TODO:   appearanceSection
-//                     TODO:   languageSection
+                        appearanceSection
                         notificationSection
                         dataSection
                         focusSection
@@ -58,28 +61,36 @@ struct SettingsView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
-        .sheet(isPresented: $showLanguageSelector) {
-            LanguageSelectorView()
+        .sheet(isPresented: $showingLanguageSelection) {
+            LanguageSelectionSheet(languageManager: languageManager)
         }
+        
         .confirmationDialog(
-            "Clear All Data",
+            NSLocalizedString("clear_all_data_confirmation", comment: "Clear all data confirmation dialog title"),
             isPresented: $showingClearDataConfirmation,
             titleVisibility: .visible
         ) {
-            Button("Clear All Data", role: .destructive) {
+            Button(NSLocalizedString("clear_all_data", comment: "Clear all data button title"), role: .destructive) {
                 clearAllData()
             }
-            Button("Cancel", role: .cancel) { }
+            Button(NSLocalizedString("cancel", comment: "Cancel button title"), role: .cancel) { }
         } message: {
-            Text("This will permanently delete all tasks, settings, and app data. This action cannot be undone.")
+            Text(NSLocalizedString("clear_all_data_warning", comment: "Clear all data warning message"))
         }
-        .alert("Data Cleared", isPresented: $showingClearDataAlert) {
-            Button("OK") { }
+        .alert(NSLocalizedString("data_cleared", comment: "Data cleared alert title"), isPresented: $showingClearDataAlert) {
+            Button(NSLocalizedString("ok", comment: "OK button title")) { }
         } message: {
             Text(clearDataMessage)
         }
-        .localized()
-        .rtlSupport()
+        .alert("🧪 Delete All Tasks for Testing", isPresented: $showingDeleteTaskAlert) {
+            Button("Delete All Tasks", role: .destructive) {
+                deleteTaskForTesting()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will delete ALL tasks from local data. This action cannot be undone and is for testing purposes only.")
+        }
+        
     }
     
     // MARK: - App Header
@@ -88,7 +99,7 @@ struct SettingsView: View {
             HStack {
                 Spacer()
                 
-                Text(LocalizationKeys.settings.localized)
+                Text(NSLocalizedString("settings", comment: "Settings screen title"))
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textPrimary)
                     .fontWeight(.bold)
@@ -109,12 +120,12 @@ struct SettingsView: View {
                     )
                 
                 VStack(spacing: 4) {
-                    Text(LocalizationKeys.focus.localized)
+                    Text("FocusZen+")
                         .font(AppFonts.headline())
                         .foregroundColor(AppColors.textPrimary)
                         .fontWeight(.semibold)
                     
-                    Text(LocalizationKeys.stayFocusedAchieveMore.localized)
+                    Text(NSLocalizedString("stay_focused_achieve_more", comment: "App tagline"))
                         .font(AppFonts.caption())
                         .foregroundColor(AppColors.secondary)
                 }
@@ -157,12 +168,12 @@ struct SettingsView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(LocalizationKeys.upgradeToPro.localized)
+                            Text(NSLocalizedString("upgrade_to_pro", comment: "Upgrade to Pro button title"))
                                 .font(AppFonts.headline())
                                 .fontWeight(.semibold)
                                 .foregroundColor(AppColors.textPrimary)
                             
-                            Text(LocalizationKeys.unlockAllFeatures.localized)
+                            Text(NSLocalizedString("unlock_all_features_boost_productivity", comment: "Upgrade to Pro description"))
                                 .font(AppFonts.body())
                                 .foregroundColor(AppColors.textSecondary)
                         }
@@ -199,7 +210,7 @@ struct SettingsView: View {
                 }
             } else {
                 // Pro user management options
-                SettingsSection(title: LocalizationKeys.subscription.localized, icon: "crown.fill") {
+                SettingsSection(title: NSLocalizedString("subscription", comment: "Subscription section title"), icon: "crown.fill") {
                     VStack(spacing: 0) {
                         Button(action: {
                             _Concurrency.Task {
@@ -213,10 +224,10 @@ struct SettingsView: View {
                                     .frame(width: 24)
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(LocalizationKeys.restorePurchases.localized)
+                                    Text(NSLocalizedString("restore_purchases", comment: "Restore purchases button title"))
                                         .font(AppFonts.body())
                                         .foregroundColor(AppColors.textPrimary)
-                                    Text(LocalizationKeys.restoreSubscriptionDevice.localized)
+                                    Text(NSLocalizedString("restore_subscription_another_device", comment: "Restore purchases description"))
                                         .font(AppFonts.caption())
                                         .foregroundColor(AppColors.textSecondary)
                                 }
@@ -243,10 +254,10 @@ struct SettingsView: View {
                                     .frame(width: 24)
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(LocalizationKeys.manageSubscription.localized)
+                                    Text(NSLocalizedString("manage_subscription", comment: "Manage subscription button title"))
                                         .font(AppFonts.body())
                                         .foregroundColor(AppColors.textPrimary)
-                                    Text(LocalizationKeys.changeCancelSubscription.localized)
+                                    Text(NSLocalizedString("change_cancel_your_subscription", comment: "Manage subscription description"))
                                         .font(AppFonts.caption())
                                         .foregroundColor(AppColors.textSecondary)
                                 }
@@ -264,38 +275,38 @@ struct SettingsView: View {
     
     // MARK: - Appearance Section
     private var appearanceSection: some View {
-        SettingsSection(title: LocalizationKeys.appearance.localized, icon: "paintbrush") {
+        SettingsSection(title: NSLocalizedString("appearance", comment: "Appearance section title"), icon: "paintbrush") {
             VStack(spacing: 0) {
                 SettingsToggleRow(
-                    title: LocalizationKeys.darkMode.localized,
-                    subtitle: LocalizationKeys.switchLightDarkThemes.localized,
+                    title: NSLocalizedString("dark_mode", comment: "Dark mode toggle title"),
+                    subtitle: NSLocalizedString("switch_light_dark_themes", comment: "Dark mode toggle description"),
                     icon: "moon.circle.fill",
                     isOn: $theme.isDarkMode
                 )
-            }
-        }
-    }
-    
-    // MARK: - Language Section
-    private var languageSection: some View {
-        SettingsSection(title: LocalizationKeys.language.localized, icon: "globe") {
-            VStack(spacing: 0) {
-                LanguageSettingsRow(
-                    localizationManager: localizationManager,
-                    action: { showLanguageSelector = true }
+                
+                Divider()
+                    .padding(.leading, 52)
+                
+                SettingsNavigationRow(
+                    title: NSLocalizedString("language", comment: "Language selection button title"),
+                    subtitle: "\(languageManager.getCurrentLanguageFlag()) \(languageManager.getCurrentLanguageDisplayName())",
+                    icon: "globe",
+                    action: { showingLanguageSelection = true }
                 )
             }
         }
     }
     
+    
+    
     // Focus  Section
     private var focusSection: some View {
-        SettingsSection(title: LocalizationKeys.focus.localized, icon: "target") {
+        SettingsSection(title: NSLocalizedString("focus", comment: "Focus section title"), icon: "target") {
             VStack(spacing: 0) {
                 
                 SettingsToggleRow(
-                    title: LocalizationKeys.focusConcentration.localized,
-                    subtitle: LocalizationKeys.getNotifiedTasksStarting.localized,
+                    title: NSLocalizedString("focus_concentration", comment: "Focus concentration toggle title"),
+                    subtitle: NSLocalizedString("get_notified_tasks_starting", comment: "Focus concentration toggle description"),
                     icon: "bell.circle.fill",
                     isOn: $enableFocusMode
                 )
@@ -307,11 +318,11 @@ struct SettingsView: View {
     
     // MARK: - Notifications Section
     private var notificationSection: some View {
-        SettingsSection(title: LocalizationKeys.notifications.localized, icon: "bell") {
+        SettingsSection(title: NSLocalizedString("notifications", comment: "Notifications section title"), icon: "bell") {
             VStack(spacing: 0) {
                 SettingsToggleRow(
-                    title: LocalizationKeys.taskReminders.localized,
-                    subtitle: LocalizationKeys.getNotifiedTasksStarting.localized,
+                    title: NSLocalizedString("task_reminders", comment: "Task reminders toggle title"),
+                    subtitle: NSLocalizedString("get_notified_tasks_starting", comment: "Task reminders toggle description"),
                     icon: "bell.circle.fill",
                     isOn: $notificationsEnabled
                 )
@@ -321,35 +332,49 @@ struct SettingsView: View {
     
     // MARK: - Data Section
     private var dataSection: some View {
-        SettingsSection(title: LocalizationKeys.data.localized, icon: "internaldrive") {
+        SettingsSection(title: NSLocalizedString("data", comment: "Data section title"), icon: "internaldrive") {
             VStack(spacing: 0) {
-     
+                
                 
                 SettingsNavigationRow(
-                    title: LocalizationKeys.clearAllData.localized,
-                    subtitle: LocalizationKeys.resetAllTasksSettings.localized,
+                    title: NSLocalizedString("clear_all_data", comment: "Clear all data button title"),
+                    subtitle: NSLocalizedString("reset_all_tasks_settings", comment: "Clear all data description"),
                     icon: "trash.circle.fill",
                     isDestructive: true,
                     action: { showingClearDataConfirmation = true }
                 )
+                
+                Divider()
+                    .padding(.leading, 52)
+                
+                // Debug Delete All Button (only in debug mode)
+            #if DEBUG
+                SettingsNavigationRow(
+                    title: "🧪 Delete All Tasks for Testing",
+                    subtitle: "Delete all tasks from local data for testing purposes",
+                    icon: "trash.circle.fill",
+                    isDestructive: true,
+                    action: { showingDeleteTaskAlert = true }
+                )
+            #endif
             }
         }
     }
     
     // MARK: - CloudKit Sync Section
     private var cloudKitSyncSection: some View {
-        SettingsSection(title: "iCloud Sync", icon: "icloud") {
+        SettingsSection(title: NSLocalizedString("icloud_sync", comment: "iCloud Sync section title"), icon: "icloud") {
             CloudKitSyncStatusView(cloudSyncManager: cloudSyncManager)
         }
     }
     
     // MARK: - About Section
     private var aboutSection: some View {
-        SettingsSection(title: LocalizationKeys.about.localized, icon: "info.circle") {
+        SettingsSection(title: NSLocalizedString("about", comment: "About section title"), icon: "info.circle") {
             VStack(spacing: 0) {
                 SettingsNavigationRow(
-                    title: "Abous Us",
-                    subtitle: "Version 1.0",
+                    title: NSLocalizedString("about_us", comment: "About us button title"),
+                    subtitle: NSLocalizedString("version_1_0", comment: "App version"),
                     icon: "app.badge.checkmark",
                     action: { showingAbout = true }
                 )
@@ -359,8 +384,8 @@ struct SettingsView: View {
                     .padding(.leading, 52)
                 
                 SettingsNavigationRow(
-                    title: LocalizationKeys.contactSupport.localized,
-                    subtitle: LocalizationKeys.getHelpSendFeedback.localized,
+                    title: NSLocalizedString("contact_support", comment: "Contact support button title"),
+                    subtitle: NSLocalizedString("get_help_send_feedback", comment: "Contact support description"),
                     icon: "envelope.circle.fill",
                     action: { showingContact = true }
                 )
@@ -415,7 +440,7 @@ struct SettingsView: View {
                     enableFocusMode = true
                     theme.resetToDefaults()
                     
-                    clearDataMessage = "All data has been successfully cleared. The app will now restart to apply changes."
+                    clearDataMessage = NSLocalizedString("all_data_successfully_cleared", comment: "Success message when data is cleared")
                     showingClearDataAlert = true
                 }
                 
@@ -426,7 +451,47 @@ struct SettingsView: View {
                 
             } catch {
                 await MainActor.run {
-                    clearDataMessage = "Error clearing data: \(error.localizedDescription)"
+                    clearDataMessage = String(format: NSLocalizedString("error_clearing_data", comment: "Error message when clearing data fails"), error.localizedDescription)
+                    showingClearDataAlert = true
+                }
+            }
+        }
+    }
+    
+    private func deleteTaskForTesting() {
+        _Concurrency.Task {
+            do {
+                // Fetch all tasks
+                let taskDescriptor = FetchDescriptor<Task>()
+                let allTasks = try modelContext.fetch(taskDescriptor)
+                
+                let taskCount = allTasks.count
+                print("🧪 Testing: Found \(taskCount) tasks to delete")
+                
+                if taskCount > 0 {
+                    // Delete all tasks from local SwiftData
+                    for task in allTasks {
+                        modelContext.delete(task)
+                    }
+                    try modelContext.save()
+                    
+                    await MainActor.run {
+                        clearDataMessage = "✅ Successfully deleted \(taskCount) tasks from local data (CloudKit sync will handle remote deletion)"
+                        showingClearDataAlert = true
+                    }
+                    
+                    print("🧪 Testing: All \(taskCount) tasks deleted successfully")
+                    
+                } else {
+                    await MainActor.run {
+                        clearDataMessage = "ℹ️ No tasks found to delete"
+                        showingClearDataAlert = true
+                    }
+                }
+                
+            } catch {
+                await MainActor.run {
+                    clearDataMessage = "❌ Error deleting tasks: \(error.localizedDescription)"
                     showingClearDataAlert = true
                 }
             }
@@ -453,7 +518,7 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-              
+                
             }
             .padding(.horizontal, 4)
             
@@ -542,7 +607,7 @@ struct SettingsNavigationRow: View {
             .padding(.vertical, 14)
         }
         .onChange(of: isDestructive) { newValue in
-          
+            
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -561,7 +626,7 @@ struct AboutSheet: View {
                             .font(.system(size: 60))
                             .foregroundColor(AppColors.accent)
                         
-                        Text(LocalizationKeys.focus.localized)
+                        Text("Focus")
                             .font(AppFonts.title())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.bold)
@@ -573,12 +638,12 @@ struct AboutSheet: View {
                     
                     // About Us Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("About FocusZen+")
+                        Text(NSLocalizedString("about_focuszen_plus", comment: "About FocusZen+ title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
                         
-                        Text("FocusZen+ is your personal productivity companion designed to help you stay focused, manage tasks efficiently, and achieve your goals through intelligent time management and distraction-free work sessions.")
+                        Text(NSLocalizedString("focuszen_plus_description", comment: "About FocusZen+ description"))
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.textSecondary)
                             .lineSpacing(4)
@@ -591,12 +656,12 @@ struct AboutSheet: View {
                     
                     // Mission Statement
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Our Mission")
+                        Text(NSLocalizedString("our_mission", comment: "Our mission title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
                         
-                        Text("To empower individuals to take control of their time, eliminate distractions, and create meaningful progress in their personal and professional lives through focused work sessions and intelligent task management.")
+                        Text(NSLocalizedString("our_mission_description", comment: "Our mission description"))
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.textSecondary)
                             .lineSpacing(4)
@@ -609,17 +674,17 @@ struct AboutSheet: View {
                     
                     // Key Features
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Key Features")
+                        Text(NSLocalizedString("key_features", comment: "Key features title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
                         
                         VStack(alignment: .leading, spacing: 12) {
-                            _FeatureRow(icon: "target", title: "Focus Sessions", description: "Dedicated time blocks for deep work")
-                            _FeatureRow(icon: "brain.head.profile", title: "AI-Powered Insights", description: "Smart suggestions for better productivity")
-                            _FeatureRow(icon: "bell.badge", title: "Smart Notifications", description: "Intelligent reminders that don't interrupt")
-                            _FeatureRow(icon: "chart.line.uptrend.xyaxis", title: "Progress Tracking", description: "Visual insights into your productivity")
-                            _FeatureRow(icon: "gear", title: "Customizable Focus Modes", description: "Tailored settings for different work types")
+                            _FeatureRow(icon: "target", title: NSLocalizedString("focus_sessions", comment: "Focus sessions feature"), description: NSLocalizedString("focus_sessions_description", comment: "Focus sessions description"))
+                            _FeatureRow(icon: "brain.head.profile", title: NSLocalizedString("ai_powered_insights", comment: "AI-powered insights feature"), description: NSLocalizedString("ai_powered_insights_description", comment: "AI-powered insights description"))
+                            _FeatureRow(icon: "bell.badge", title: NSLocalizedString("smart_notifications", comment: "Smart notifications feature"), description: NSLocalizedString("smart_notifications_description", comment: "Smart notifications description"))
+                            _FeatureRow(icon: "chart.line.uptrend.xyaxis", title: NSLocalizedString("progress_tracking", comment: "Progress tracking feature"), description: NSLocalizedString("progress_tracking_description", comment: "Progress tracking description"))
+                            _FeatureRow(icon: "gear", title: NSLocalizedString("customizable_focus_modes", comment: "Customizable focus modes feature"), description: NSLocalizedString("customizable_focus_modes_description", comment: "Customizable focus modes description"))
                         }
                     }
                     .padding()
@@ -630,22 +695,22 @@ struct AboutSheet: View {
                     
                     // Technology Stack
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Built With")
+                        Text(NSLocalizedString("built_with", comment: "Built with title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
                         
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("• SwiftUI & iOS 15+")
+                            Text(NSLocalizedString("swiftui_ios_15", comment: "SwiftUI iOS 15+"))
                                 .font(AppFonts.body())
                                 .foregroundColor(AppColors.textSecondary)
-                            Text("• Core Data for persistence")
+                            Text(NSLocalizedString("core_data_persistence", comment: "Core Data persistence"))
                                 .font(AppFonts.body())
                                 .foregroundColor(AppColors.textSecondary)
-                            Text("• WidgetKit for home screen widgets")
+                            Text(NSLocalizedString("widgetkit_home_screen", comment: "WidgetKit home screen"))
                                 .font(AppFonts.body())
                                 .foregroundColor(AppColors.textSecondary)
-                            Text("• Localization for global users")
+                            Text(NSLocalizedString("localization_global_users", comment: "Localization for global users"))
                                 .font(AppFonts.body())
                                 .foregroundColor(AppColors.textSecondary)
                         }
@@ -658,7 +723,7 @@ struct AboutSheet: View {
                     
                     // Contact & Support
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Get in Touch")
+                        Text(NSLocalizedString("get_in_touch", comment: "Get in touch title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
@@ -701,11 +766,11 @@ struct AboutSheet: View {
                     
                     // Copyright
                     VStack(spacing: 8) {
-                        Text("© 2024 FocusZen+")
+                        Text(NSLocalizedString("copyright_2024", comment: "Copyright text"))
                             .font(AppFonts.caption())
                             .foregroundColor(AppColors.textSecondary)
                         
-                        Text("Made with ❤️ for productivity")
+                        Text(NSLocalizedString("made_with_love_productivity", comment: "Made with love for productivity"))
                             .font(AppFonts.caption())
                             .foregroundColor(AppColors.textSecondary)
                     }
@@ -713,11 +778,11 @@ struct AboutSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle(LocalizationKeys.about.localized)
+            .navigationTitle(NSLocalizedString("about", comment: "About navigation title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(LocalizationKeys.done.localized) {
+                    Button(NSLocalizedString("done", comment: "Done button title")) {
                         dismiss()
                     }
                 }
@@ -767,12 +832,12 @@ struct ContactSheet: View {
                             .font(.system(size: 60))
                             .foregroundColor(AppColors.accent)
                         
-                        Text("Contact & Support")
+                        Text(NSLocalizedString("contact_support", comment: "Contact & Support title"))
                             .font(AppFonts.title())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.bold)
                         
-                        Text("We're here to help! Get in touch with our support team or send us feedback.")
+                        Text(NSLocalizedString("contact_support_description", comment: "Contact & Support description"))
                             .font(AppFonts.body())
                             .foregroundColor(AppColors.textSecondary)
                             .multilineTextAlignment(.center)
@@ -782,7 +847,7 @@ struct ContactSheet: View {
                     
                     // Support Options
                     VStack(spacing: 16) {
-                        Text("Support Options")
+                        Text(NSLocalizedString("support_options", comment: "Support options title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
@@ -790,8 +855,8 @@ struct ContactSheet: View {
                         VStack(spacing: 12) {
                             ContactOptionRow(
                                 icon: "envelope.fill",
-                                title: "Email Support",
-                                subtitle: "Get help via email",
+                                title: NSLocalizedString("email_support", comment: "Email support option"),
+                                subtitle: NSLocalizedString("get_help_via_email", comment: "Email support description"),
                                 action: {
                                     if let url = URL(string: "mailto:support@focuszenplus.app") {
                                         UIApplication.shared.open(url)
@@ -801,8 +866,8 @@ struct ContactSheet: View {
                             
                             ContactOptionRow(
                                 icon: "globe",
-                                title: "Website",
-                                subtitle: "Visit our website for help",
+                                title: NSLocalizedString("website", comment: "Website option"),
+                                subtitle: NSLocalizedString("visit_website_help", comment: "Website help description"),
                                 action: {
                                     if let url = URL(string: "https://focuszenplus.app") {
                                         UIApplication.shared.open(url)
@@ -812,8 +877,8 @@ struct ContactSheet: View {
                             
                             ContactOptionRow(
                                 icon: "questionmark.circle.fill",
-                                title: "FAQ & Help Center",
-                                subtitle: "Find answers to common questions",
+                                title: NSLocalizedString("faq_help_center", comment: "FAQ & Help Center option"),
+                                subtitle: NSLocalizedString("find_answers_common_questions", comment: "FAQ help description"),
                                 action: {
                                     if let url = URL(string: "https://focuszenplus.app/help") {
                                         UIApplication.shared.open(url)
@@ -830,7 +895,7 @@ struct ContactSheet: View {
                     
                     // Feedback Section
                     VStack(spacing: 16) {
-                        Text("Send Feedback")
+                        Text(NSLocalizedString("send_feedback", comment: "Send feedback title"))
                             .font(AppFonts.headline())
                             .foregroundColor(AppColors.textPrimary)
                             .fontWeight(.semibold)
@@ -838,8 +903,8 @@ struct ContactSheet: View {
                         VStack(spacing: 12) {
                             ContactOptionRow(
                                 icon: "star.fill",
-                                title: "Rate the App",
-                                subtitle: "Share your experience on the App Store",
+                                title: NSLocalizedString("rate_app", comment: "Rate the app option"),
+                                subtitle: NSLocalizedString("share_experience_app_store", comment: "Rate app description"),
                                 action: {
                                     rateApp()
                                 }
@@ -847,8 +912,8 @@ struct ContactSheet: View {
                             
                             ContactOptionRow(
                                 icon: "paperplane.fill",
-                                title: "Feature Request",
-                                subtitle: "Suggest new features or improvements",
+                                title: NSLocalizedString("feature_request", comment: "Feature request option"),
+                                subtitle: NSLocalizedString("suggest_new_features_improvements", comment: "Feature request description"),
                                 action: {
                                     if let url = URL(string: "mailto:feedback@focuszenplus.app?subject=Feature%20Request") {
                                         UIApplication.shared.open(url)
@@ -858,8 +923,8 @@ struct ContactSheet: View {
                             
                             ContactOptionRow(
                                 icon: "exclamationmark.triangle.fill",
-                                title: "Report Bug",
-                                subtitle: "Help us fix issues you encounter",
+                                title: NSLocalizedString("report_bug", comment: "Report bug option"),
+                                subtitle: NSLocalizedString("help_us_fix_issues", comment: "Report bug description"),
                                 action: {
                                     if let url = URL(string: "mailto:bugs@focuszenplus.app?subject=Bug%20Report") {
                                         UIApplication.shared.open(url)
@@ -882,12 +947,12 @@ struct ContactSheet: View {
                                 .foregroundColor(AppColors.accent)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Response Time")
+                                Text(NSLocalizedString("response_time", comment: "Response time title"))
                                     .font(AppFonts.body())
                                     .foregroundColor(AppColors.textPrimary)
                                     .fontWeight(.medium)
                                 
-                                Text("We typically respond within 24 hours during business days")
+                                Text(NSLocalizedString("response_time_description", comment: "Response time description"))
                                     .font(AppFonts.caption())
                                     .foregroundColor(AppColors.textSecondary)
                             }
@@ -906,11 +971,11 @@ struct ContactSheet: View {
                 .padding(.horizontal, 20)
             }
             .background(AppColors.background.ignoresSafeArea())
-            .navigationTitle("Contact & Support")
+            .navigationTitle(NSLocalizedString("contact_support", comment: "Contact & Support navigation title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(NSLocalizedString("done", comment: "Done button title")) {
                         dismiss()
                     }
                 }
@@ -994,4 +1059,89 @@ struct ContactOptionRow: View {
 #Preview {
     SettingsView()
         .environmentObject(ThemeManager())
+}
+
+// MARK: - Language Selection Sheet
+struct LanguageSelectionSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var languageManager: LanguageManager
+    @State private var selectedLanguage: String
+    @State private var showingRestartAlert = false
+    
+    init(languageManager: LanguageManager) {
+        self.languageManager = languageManager
+        self._selectedLanguage = State(initialValue: languageManager.currentLanguage)
+    }
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(languageManager.supportedLanguages, id: \.0) { language in
+                    Button(action: {
+                        selectedLanguage = language.0
+                    }) {
+                        HStack(spacing: 16) {
+                            Text(language.2)
+                                .font(.title2)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(language.1)
+                                    .font(AppFonts.body())
+                                    .foregroundColor(AppColors.textPrimary)
+                                    .fontWeight(.medium)
+                                
+                                if language.0 == "en" {
+                                    Text(NSLocalizedString("system_default", comment: "System default language description"))
+                                        .font(AppFonts.caption())
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if selectedLanguage == language.0 {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(AppColors.accent)
+                                    .font(.title2)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .navigationTitle(NSLocalizedString("language", comment: "Language selection navigation title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(NSLocalizedString("cancel", comment: "Cancel button title")) {
+                        dismiss()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(NSLocalizedString("done", comment: "Done button title")) {
+                        if selectedLanguage != languageManager.currentLanguage {
+                            languageManager.currentLanguage = selectedLanguage
+                            showingRestartAlert = true
+                        } else {
+                            dismiss()
+                        }
+                    }
+                    .disabled(selectedLanguage == languageManager.currentLanguage)
+                }
+            }
+        }
+        .alert(NSLocalizedString("language_change_restart_required", comment: "Language change restart alert title"), isPresented: $showingRestartAlert) {
+            Button(NSLocalizedString("restart_now", comment: "Restart now button"), role: .destructive) {
+                // Restart the app
+                exit(0)
+            }
+            Button(NSLocalizedString("restart_later", comment: "Restart later button"), role: .cancel) {
+                dismiss()
+            }
+        } message: {
+            Text(NSLocalizedString("language_change_restart_message", comment: "Language change restart message"))
+        }
+    }
 }
