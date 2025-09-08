@@ -58,6 +58,17 @@ class LiveActivityManager: ObservableObject {
         
         print("🚀 Starting Live Activity for task: \(task.title)")
         
+        // Calculate actual progress based on time already spent
+        let totalDuration = TimeInterval(task.durationMinutes * 60)
+        let timeAlreadySpent = totalDuration - sessionDuration
+        let progress = timeAlreadySpent / totalDuration
+        
+        print("🎯 LiveActivityManager: Progress calculation:")
+        print("🎯 - Total duration: \(totalDuration) seconds (\(task.durationMinutes) minutes)")
+        print("🎯 - Session duration: \(sessionDuration) seconds")
+        print("🎯 - Time already spent: \(timeAlreadySpent) seconds")
+        print("🎯 - Calculated progress: \(progress) (\(Int(progress * 100))%)")
+        
         let attributes = FocusZoneWidgetAttributes(
             taskId: task.id.uuidString,
             taskType: task.taskTypeRawValue ?? "work",
@@ -73,7 +84,7 @@ class LiveActivityManager: ObservableObject {
             endTime: Date().addingTimeInterval(sessionDuration),
             isActive: true,
             timeRemaining: sessionDuration,
-            progress: 0.0,
+            progress: progress,
             currentPhase: .focus,
             totalSessions: 1,
             completedSessions: 0

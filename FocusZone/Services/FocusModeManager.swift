@@ -594,12 +594,14 @@ extension FocusModeManager: UNUserNotificationCenterDelegate {
             timeRemaining -= 1.0
             let progress = max(0, (duration - timeRemaining) / duration)
             
-            self.liveActivityManager.updateLiveActivity(
-                timeRemaining: timeRemaining,
-                progress: progress,
-                currentPhase: .focus,
-                isActive: self.isActiveFocus
-            )
+            // Disabled FocusModeManager Live Activity updates to prevent conflicts
+            // with TaskTimerService progress calculation
+            // self.liveActivityManager.updateLiveActivity(
+            //     timeRemaining: timeRemaining,
+            //     progress: progress,
+            //     currentPhase: .focus,
+            //     isActive: self.isActiveFocus
+            // )
             
             if timeRemaining <= 0 {
                 self.stopLiveActivityTimer()
