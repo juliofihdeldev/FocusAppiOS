@@ -381,6 +381,11 @@ class TimelineViewModel: ObservableObject {
     func completeTask(_ task: Task) {
         notificationService.cancelNotifications(for: task.id.uuidString)
 
+        // Stop Live Activity if this task is currently active
+        if let currentTask = TaskTimerService.shared.currentTask, currentTask.id == task.id {
+            TaskTimerService.shared.stopCurrentTask()
+        }
+
         // If it's a virtual task, convert it to a real completed task
         if task.isGeneratedFromRepeat {
             guard let modelContext = modelContext else { return }
