@@ -127,7 +127,7 @@
 
 // MARK: - Contact Sheet
 "contact_support" = "Contact & Support";
-"contact_support_description" = "We’re here to help! Contact our support team or send us your feedback.";
+"contact_support_description" = "We're here to help! Contact our support team or send us your feedback.";
 "support_options" = "Support Options";
 "email_support" = "Email Support";
 "get_help_via_email" = "Get help via email";
@@ -144,3 +144,282 @@
 "help_us_fix_issues" = "Help us fix issues you encounter";
 "response_time" = "Response Time";
 "response_time_description" = "We usually reply within 24 hours on business days";
+
+// MARK: - Break Suggestions
+"long_task_stretch" = "Long task - stretch break recommended";
+"quick_snack_time" = "Perfect time for a quick snack";
+"movement_opportunity" = "Great opportunity to move around";
+"proper_rest_break" = "Time for a proper rest break";
+"stay_hydrated" = "Stay hydrated for optimal focus";
+"working_streak" = "You've been working for %@ hours - time to move!";
+"intense_work_rest" = "Intense session - rest will help you recharge";
+"mental_break_time" = "Perfect time for a mental break";
+"lunch_break" = "Fuel up with a lunch break";
+"fresh_air_break" = "Some fresh air will clear your mind";
+"eye_break" = "Give your eyes a break from the screen";
+"social_connection" = "Connect with others to boost your mood";
+
+// MARK: - Task Status
+"no_active_task" = "No active task";
+"time_up" = "Time's up!";
+
+// MARK: - Widget
+"configuration" = "Configuration";
+"widget_description" = "This is an example widget.";
+"favorite_emoji" = "Favorite emoji";
+"world" = "World";
+"focus_tracker" = "Focus Tracker";
+"widget_description_long" = "Stay focused with your current and upcoming tasks at a glance.";
+"timer" = "Timer";
+"timer_on" = "On";
+"timer_off" = "Off";
+"start_timer" = "Start Timer";
+"timer_name_configuration" = "Timer Name Configuration";
+"timer_name" = "Timer Name";
+"start_timer_action" = "Start a timer";
+"timer_is_running" = "Timer is running";
+
+// MARK: - Task Types
+"work" = "Work";
+"exercise" = "Exercise";
+"deep_work_session" = "Deep Work Session";
+"team_meeting" = "Team Meeting";
+"morning_exercise" = "Morning Exercise";
+"code_review" = "Code Review";
+
+// MARK: - Time and Duration
+"percentage_complete" = "%@% complete";
+"time_remaining" = "Time remaining";
+"time_until_start" = "Time until start";
+"formatted_time_range" = "Time range";
+"formatted_start_time" = "Start time";
+
+// MARK: - Errors and Messages
+"failed_load_products" = "Failed to load products: %@";
+"product_not_available" = "Product not available";
+"purchase_failed" = "Purchase failed: %@";
+"no_active_subscription" = "No active subscription found";
+"failed_restore_purchases" = "Failed to restore purchases: %@";
+
+// MARK: - Language Selection
+"language_selection" = "Language Selection";
+"system_default" = "System Default";
+"language_change_restart_required" = "Language change requires restart";
+"language_change_restart_message" = "The app needs to restart to apply the language change. Would you like to restart now or later?";
+"restart_now" = "Restart Now";
+"restart_later" = "Restart Later";
+
+// MARK: - TaskFormView
+"new_task" = "New Task";
+"task_title" = "Task Title";
+"when" = "When?";
+"more" = "More...";
+"quick_select" = "Quick Select";
+"tomorrow" = "Tomorrow";
+"next_week" = "Next Week";
+"select_date" = "Select Date";
+"select_time" = "Select Time";
+"change" = "Change";
+"how_long" = "How long?";
+"hide" = "Hide";
+"custom" = "Custom...";
+"select_duration" = "Select Duration";
+"minutes" = "Minutes";
+"set" = "Set";
+"what_type_of_task" = "What type of task is this?";
+"how_often" = "How often?";
+"notifications_enabled" = "Notifications enabled";
+"notifications_disabled" = "Notifications disabled";
+"you_will_receive" = "You will receive:";
+"five_minutes_before" = "• 5 minutes before task starts";
+"when_task_starts" = "• When task is scheduled to start";
+"completion_confirmation" = "• Completion confirmation";
+"enable_notifications_settings" = "Enable notifications in Settings to receive task reminders";
+"task_created" = "✅ Task created";
+"task_scheduled_for" = "'%@' scheduled for %@";
+"at_start_of_task" = "At start of task";
+
+// MARK: - Repeat Rules
+"repeat_none" = "None";
+"repeat_daily" = "Daily";
+"repeat_weekdays" = "Weekdays";
+"repeat_weekends" = "Weekends";
+"repeat_weekly" = "Weekly";
+"repeat_monthly" = "Monthly";
+
+// MARK: - OnboardingView
+"previous" = "Previous";
+"next" = "Next";
+"skip" = "Skip";
+"transform_your_productivity" = "Transform Your Productivity";
+"onboarding_description_1" = "Discover the ultimate focus companion that helps you accomplish more in less time. Our AI-powered app combines smart time management with personalized insights to boost your productivity and maintain work-life balance.";
+"powerful_features" = "Powerful Features";
+"ai_assistant" = "AI Assistant";
+"analytics" = "Analytics";
+"smart_timers" = "Smart Timers";
+"break_suggestions" = "Break Suggestions";
+"focus_modes" = "Focus Modes";
+"cloud_sync" = "Cloud Sync";
+"ready_to_focus" = "Ready to Focus?";
+"onboarding_description_3" = "Start your productivity journey today. Create tasks, set focus sessions, and watch your progress grow with our smart insights and recommendations.";
+"slide_to_get_started" = "Slide to Get Started";
+"welcome" = "Welcome!";
+
+// MARK: - TimelineView
+"no_tasks_for_today" = "No tasks for today";
+"tap_plus_to_create_first_task" = "Tap the + button to create your first task";
+"enable_notifications" = "Enable Notifications";
+"enable_notifications_message" = "Enable notifications to receive reminders for your tasks and stay focused!";
+"notifications_disabled_banner" = "Notifications Disabled";
+"enable_to_get_task_reminders" = "Enable to get task reminders";
+
+// MARK: - WeekDateNavigator
+"today" = "Today";
+
+// MARK: - DatePickerSheet
+"select_date" = "Select Date";
+"quick_select" = "Quick Select";
+"tomorrow" = "Tomorrow";
+"next_week" = "Next Week";
+"done" = "Done";
+
+// MARK: - TaskCard
+"starts_in" = "Starts in";
+"remaining" = "remaining";
+"overdue" = "overdue";
+"hrs" = "hrs";
+"min" = "min";
+"s" = "s";
+
+// MARK: - BreakSuggestionCard
+"dismiss" = "Dismiss";
+"not_interested" = "Not interested";
+"add_break" = "Add Break";
+"swipe" = "swipe";
+"plan_a_break" = "Plan a %@ in %@?";
+
+// MARK: - TaskActionsModal
+"repeating_task_instance" = "Repeating task instance";
+"repeating_task_series" = "Repeating task series";
+"progress" = "Progress";
+"start_focus_session" = "Start Focus Session";
+"mark_complete" = "Mark Complete";
+"edit_task" = "Edit Task";
+"duplicate_task" = "Duplicate Task";
+"delete_task" = "Delete Task";
+
+// MARK: - TaskDeletionModal
+"part_of_repeating_series" = "Part of repeating series";
+"what_would_you_like_to_delete" = "What would you like to delete?";
+"delete_this_instance" = "Delete This Instance";
+"remove_only_this_occurrence" = "Remove only this occurrence";
+"delete_all_instances" = "Delete All Instances";
+"remove_the_entire_repeating_series" = "Remove the entire repeating series";
+"delete_future_instances" = "Delete Future Instances";
+"keep_past_remove_upcoming_occurrences" = "Keep past, remove upcoming occurrences";
+"delete_entire_series" = "Delete Entire Series";
+"remove_this_task_and_all_its_instances" = "Remove this task and all its instances";
+"keep_completed_instances_remove_future_ones" = "Keep completed instances, remove future ones";
+"this_action_cannot_be_undone" = "This action cannot be undone";
+"delete_task_navigation_title" = "Delete Task";
+
+// MARK: - Additional Keys
+"now" = "now";
+"m" = "min";
+"h" = "h";
+
+// MARK: - Focus Insights View
+"focus_coach" = "Focus Coach";
+"your_focus_coach" = "Your Focus Coach";
+"ai_powered_insights" = "AI-powered insights from your tasks";
+"this_weeks_insights" = "This Week's Insights";
+"insights_count" = "%d insights";
+"analyzing_focus_patterns" = "Analyzing your focus patterns...";
+"this_may_take_moment" = "This may take a moment";
+"not_enough_data_yet" = "Not enough data yet";
+"complete_tasks_for_insights" = "Complete a few more tasks to unlock personalized insights";
+"view_sample_insights" = "View Sample Insights";
+"refresh_insights" = "Refresh Insights";
+"upgrade_advanced_insights" = "Upgrade for Advanced Insights";
+"peak_performance_window" = "🌅 Peak Performance Window";
+"productive_early_morning" = "You're %d%% more productive during %@";
+"schedule_important_tasks_early" = "Schedule your most important tasks between 6-9 AM";
+"break_power_boost" = "🧘 Break Power Boost";
+"tasks_after_breaks_higher" = "Tasks after breaks have %d%% higher success rates";
+"schedule_breaks_before_tasks" = "Schedule 5-10 minute breaks before important tasks";
+
+// MARK: - Insight Card
+"impact" = "Impact";
+"based_on_tasks" = "Based on %d tasks";
+"collapse" = "Collapse";
+"view_details" = "View Details";
+"recommendation" = "Recommendation";
+"add_to_reminders" = "Add to Reminders";
+
+// MARK: - Insight Types
+"time_pattern" = "Time Pattern";
+"duration" = "Duration";
+"break_time" = "Break Time";
+"completion" = "Completion";
+"weekly_pattern" = "Weekly Pattern";
+
+// MARK: - Time Periods
+"early_morning" = "early morning";
+"late_morning" = "late morning";
+"early_afternoon" = "early afternoon";
+"late_afternoon" = "late afternoon";
+"evening" = "evening";
+"night" = "night";
+"time_6_9_am" = "6-9 AM";
+"time_9_am_12_pm" = "9 AM-12 PM";
+"time_12_3_pm" = "12-3 PM";
+"time_3_6_pm" = "3-6 PM";
+"time_6_9_pm" = "6-9 PM";
+"time_9_plus_pm" = "9+ PM";
+
+// MARK: - Duration Categories
+"short_15_30_min" = "short (15-30 min)";
+"medium_30_60_min" = "medium (30-60 min)";
+"long_1_2_hour" = "long (1-2 hour)";
+"extended_2_plus_hour" = "extended (2+ hours)";
+
+// MARK: - Analytics Engine
+"break_auto" = "Break (Auto)";
+"room_for_growth" = "Room for Growth";
+"catch_up_focus_auto" = "Catch-up Focus (Auto)";
+"more_productive_during_time" = "You're %d%% more productive during %@";
+"schedule_important_tasks_between" = "Schedule your most important tasks between %@";
+"focus_drops_during_time" = "Your focus drops by %d%% during %@";
+"schedule_breaks_admin_tasks" = "Consider scheduling breaks, admin tasks, or lighter work during %@";
+"complete_percentage_duration_tasks" = "You complete %d%% of %@ tasks";
+"break_longer_tasks_chunks" = "Try breaking longer tasks into %d-minute chunks";
+"tasks_after_breaks_higher_completion" = "Tasks after breaks have %d%% higher completion rates";
+"schedule_breaks_before_important_tasks" = "Schedule 5-10 minute breaks before important tasks";
+"completed_percentage_tasks_week" = "You completed %d%% of tasks this week (%d hrs focused)";
+"great_momentum_increase_goals" = "Great momentum! Consider gradually increasing your daily focus goals";
+"away_from_completion_goal" = "You're %d%% away from your completion goal this week";
+"reduce_task_durations_schedule_fewer" = "Try reducing task durations by 25%% or scheduling fewer tasks per day";
+"schedule_challenging_tasks_on_day" = "Schedule your most challenging tasks on %@s";
+"remaining" = "%@ remaining";
+"overdue" = "%@ overdue";
+"starts_in" = "Starts in %@";
+
+// MARK: - Splash Screen
+"stay_focused_achieve_more" = "Stay focused, achieve more";
+"loading" = "Loading...";
+
+// MARK: - Tab Navigation
+"timeline" = "Timeline";
+"insights" = "Insights";
+"settings" = "Settings";
+"pro" = "PRO";
+
+// MARK: - ProGate Translations
+"upgrade_to_pro" = "Upgrade to Pro";
+"task_limit_reached" = "You've reached the limit of %d tasks for free users. Upgrade to Pro for unlimited tasks!";
+"upgrade_now" = "Upgrade Now";
+"maybe_later" = "Maybe Later";
+"unlimited_tasks" = "Unlimited tasks";
+"advanced_insights_recommendations" = "Advanced insights and recommendations";
+"custom_focus_modes" = "Custom focus modes";
+"smart_break_suggestions" = "Smart break suggestions";

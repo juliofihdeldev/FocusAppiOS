@@ -22,14 +22,12 @@ class LanguageManager: ObservableObject {
     ]
     
     private init() {
-        // Get saved language or use system language
+        // Get saved language or default to English
         if let savedLanguage = UserDefaults.standard.string(forKey: "selected_language") {
             self.currentLanguage = savedLanguage
         } else {
-            // Use system language if supported, otherwise default to English
-            let systemLanguage = Locale.current.languageCode ?? "en"
-            let supportedCodes = supportedLanguages.map { $0.0 }
-            self.currentLanguage = supportedCodes.contains(systemLanguage) ? systemLanguage : "en"
+            // Always default to English for new installations
+            self.currentLanguage = "en"
         }
         
         // Immediately set the language preference to ensure proper localization
@@ -56,6 +54,10 @@ class LanguageManager: ObservableObject {
     
     func getCurrentLanguageFlag() -> String {
         return getLanguageFlag(for: currentLanguage)
+    }
+    
+    func resetToEnglish() {
+        currentLanguage = "en"
     }
 }
 

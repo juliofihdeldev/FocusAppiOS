@@ -39,6 +39,8 @@
 	</array>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>FocusZone needs notification access to filter distractions during focus sessions and provide task reminders.</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Regular.ttf</string>
