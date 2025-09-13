@@ -5,7 +5,7 @@
  * Each string has a unique key that can be referenced in the code.
  */
 
-"welcome_message" = "Welcome to Focus App";
+"welcome_message" = "Welcome to the Focus app";
 
 // MARK: - Common UI Elements
 "close" = "Close";
@@ -16,37 +16,37 @@
 "now" = "NOW";
 "live" = "LIVE";
 "next" = "NEXT";
-"tasks" = "tasks";
+"tasks" = "Tasks";
 
 // MARK: - Task Management
 "create_task" = "Create Task";
 "update_task" = "Update Task";
 "no_tasks_today" = "No tasks for today";
 "add_first_task" = "Tap the + button to create your first task";
-"all_done" = "All Done!";
+"all_done" = "All done!";
 "great_work_today" = "Great work today";
-"no_tasks" = "No Tasks";
+"no_tasks" = "No tasks";
 "add_some_tasks" = "Add some tasks";
 "focus" = "Focus";
-"today_focus" = "Today's Focus";
+"today_focus" = "Today’s Focus";
 
 // MARK: - Focus Modes
 "focus_mode" = "Focus Mode";
-"suggested_focus_mode" = "Suggested: %@ for %@";
+"suggested_focus_mode" = "Suggestion: %@ for %@";
 
 // MARK: - Notifications
 "enable_notifications_title" = "Enable Notifications";
-"enable_notifications_message" = "Enable notifications to get reminders for your tasks and stay focused!";
+"enable_notifications_message" = "Turn on notifications to get reminders and stay focused!";
 "notifications_disabled" = "Notifications Disabled";
-"enable_notifications_description" = "Enable to get task reminders";
+"enable_notifications_description" = "Enable to receive task reminders";
 
 // MARK: - Pro Features
 "upgrade_to_pro" = "Upgrade to Pro";
 "pro" = "PRO";
-"free_trial_active" = "Free trial active";
+"free_trial_active" = "Free Trial Active";
 "next_billing" = "Next billing: %@";
 "limited_features" = "Limited features";
-"advanced_analytics_content" = "Advanced Analytics Content";
+"advanced_analytics_content" = "Advanced analytics";
 
 // MARK: - Settings
 "settings" = "Settings";
@@ -67,7 +67,7 @@
 "built_with_swiftui" = "Built with SwiftUI";
 "focus_helps_stay_focused" = "Focus helps you stay focused";
 "stay_focused_achieve_more" = "Stay focused, achieve more";
-"focus_concentration" = "Focus Concentration";
+"focus_concentration" = "Concentration";
 "subscription" = "Subscription";
 "restore_purchases" = "Restore Purchases";
 "restore_subscription_device" = "Restore subscription on this device";
@@ -100,21 +100,21 @@
 "about" = "About";
 "done" = "Done";
 "about_focuszen_plus" = "About FocusZen+";
-"focuszen_plus_description" = "FocusZen+ is your personal productivity companion designed to help you stay focused, manage tasks efficiently, and achieve your goals through intelligent time management and distraction-free work sessions.";
+"focuszen_plus_description" = "FocusZen+ is your personal productivity companion designed to help you stay focused, manage tasks efficiently, and achieve your goals with smart time management and distraction-free work sessions.";
 "our_mission" = "Our Mission";
-"our_mission_description" = "To empower individuals to take control of their time, eliminate distractions, and create meaningful progress in their personal and professional lives through focused work sessions and intelligent task management.";
+"our_mission_description" = "Empower individuals to take control of their time, eliminate distractions, and create meaningful progress in personal and professional life through focused work sessions and intelligent task management.";
 "key_features" = "Key Features";
 "focus_sessions" = "Focus Sessions";
 "focus_sessions_description" = "Dedicated time blocks for deep work";
-"ai_powered_insights" = "AI-Powered Insights";
+"ai_powered_insights" = "AI-powered Insights";
 "ai_powered_insights_description" = "Smart suggestions for better productivity";
 "smart_notifications" = "Smart Notifications";
-"smart_notifications_description" = "Intelligent reminders that don't interrupt";
+"smart_notifications_description" = "Intelligent reminders that don’t interrupt";
 "progress_tracking" = "Progress Tracking";
 "progress_tracking_description" = "Visual insights into your productivity";
 "customizable_focus_modes" = "Customizable Focus Modes";
-"customizable_focus_modes_description" = "Tailored settings for different work types";
-"built_with" = "Built With";
+"customizable_focus_modes_description" = "Settings tailored for different types of work";
+"built_with" = "Built with";
 "swiftui_ios_15" = "• SwiftUI & iOS 15+";
 "core_data_persistence" = "• Core Data for persistence";
 "widgetkit_home_screen" = "• WidgetKit for home screen widgets";
@@ -127,7 +127,7 @@
 
 // MARK: - Contact Sheet
 "contact_support" = "Contact & Support";
-"contact_support_description" = "We're here to help! Get in touch with our support team or send us feedback.";
+"contact_support_description" = "We’re here to help! Contact our support team or send us your feedback.";
 "support_options" = "Support Options";
 "email_support" = "Email Support";
 "get_help_via_email" = "Get help via email";
@@ -136,212 +136,11 @@
 "faq_help_center" = "FAQ & Help Center";
 "find_answers_common_questions" = "Find answers to common questions";
 "send_feedback" = "Send Feedback";
-"rate_app" = "Rate the App";
+"rate_app" = "Rate App";
 "share_experience_app_store" = "Share your experience on the App Store";
 "feature_request" = "Feature Request";
 "suggest_new_features_improvements" = "Suggest new features or improvements";
-"report_bug" = "Report Bug";
+"report_bug" = "Report a Bug";
 "help_us_fix_issues" = "Help us fix issues you encounter";
 "response_time" = "Response Time";
-"response_time_description" = "We typically respond within 24 hours during business days";
-
-// MARK: - Break Suggestions
-"long_task_stretch" = "Long task - stretch break recommended";
-"quick_snack_time" = "Perfect time for a quick snack";
-"movement_opportunity" = "Good opportunity for movement";
-"proper_rest_break" = "Time for a proper rest break";
-"stay_hydrated" = "Stay hydrated for optimal focus";
-"working_streak" = "You've been working for %@ hours - time to move!";
-"intense_work_rest" = "Intense work session - rest will help you recharge";
-"mental_break_time" = "Perfect time for a mental break";
-"lunch_break" = "Fuel up with a healthy lunch break";
-"fresh_air_break" = "Fresh air will clear your mind and boost alertness";
-"eye_break" = "Give your eyes a break from the screen";
-"social_connection" = "Connect with others to boost your mood";
-
-// MARK: - Task Status
-"no_active_task" = "No active task";
-"time_up" = "Time's up!";
-
-// MARK: - Widget
-"configuration" = "Configuration";
-"widget_description" = "This is an example widget.";
-"favorite_emoji" = "Favorite Emoji";
-"world" = "World";
-"focus_tracker" = "Focus Tracker";
-"widget_description_long" = "Stay focused with your current and upcoming tasks at a glance.";
-"timer" = "Timer";
-"timer_on" = "On";
-"timer_off" = "Off";
-"start_timer" = "Start Timer";
-"timer_name_configuration" = "Timer Name Configuration";
-"timer_name" = "Timer Name";
-"start_timer_action" = "Start a timer";
-"timer_is_running" = "Timer is running";
-
-// MARK: - Task Types
-"work" = "Work";
-"exercise" = "Exercise";
-"deep_work_session" = "Deep Work Session";
-"team_meeting" = "Team Meeting";
-"morning_exercise" = "Morning Exercise";
-"code_review" = "Code Review";
-
-// MARK: - Time and Duration
-"percentage_complete" = "%@% complete";
-"time_remaining" = "Time remaining";
-"time_until_start" = "Time until start";
-"formatted_time_range" = "Time range";
-"formatted_start_time" = "Start time";
-
-// MARK: - Errors and Messages
-"failed_load_products" = "Failed to load products: %@";
-"product_not_available" = "Product not available";
-"purchase_failed" = "Purchase failed: %@";
-"no_active_subscription" = "No active subscription found";
-"failed_restore_purchases" = "Failed to restore purchases: %@";
-
-// MARK: - Language Selection
-"language" = "Language";
-"language_selection" = "Language Selection";
-"system_default" = "System default";
-"language_change_restart_required" = "Language Change Requires Restart";
-"language_change_restart_message" = "The app needs to restart to apply the language change. Would you like to restart now or later?";
-"restart_now" = "Restart Now";
-"restart_later" = "Restart Later";
-
-// MARK: - TaskFormView
-"new_task" = "New Task";
-"create_task" = "Create Task";
-"update_task" = "Update Task";
-"task_title" = "Task title";
-"when" = "When?";
-"more" = "More...";
-"quick_select" = "Quick Select";
-"today" = "Today";
-"tomorrow" = "Tomorrow";
-"next_week" = "Next Week";
-"select_date" = "Select Date";
-"select_time" = "Select Time";
-"change" = "Change";
-"how_long" = "How long?";
-"hide" = "Hide";
-"custom" = "Custom...";
-"select_duration" = "Select Duration";
-"minutes" = "Minutes";
-"cancel" = "Cancel";
-"set" = "Set";
-"what_type_of_task" = "What type of task is this?";
-"how_often" = "How often?";
-"notifications" = "Notifications";
-"notifications_enabled" = "Notifications enabled";
-"notifications_disabled" = "Notifications disabled";
-"you_will_receive" = "You'll receive:";
-"five_minutes_before" = "• 5 minutes before task starts";
-"when_task_starts" = "• When task is scheduled to begin";
-"completion_confirmation" = "• Completion confirmation";
-"enable_notifications_settings" = "Enable notifications in Settings to get task reminders";
-"task_created" = "✅ Task Created";
-"task_scheduled_for" = "'%@' scheduled for %@";
-"at_start_of_task" = "At start of task";
-
-// MARK: - Repeat Rules
-"repeat_none" = "None";
-"repeat_daily" = "Daily";
-"repeat_weekdays" = "Weekdays";
-"repeat_weekends" = "Weekends";
-"repeat_weekly" = "Weekly";
-"repeat_monthly" = "Monthly";
-
-// MARK: - Focus Insights View
-"focus_coach" = "Focus Coach";
-"your_focus_coach" = "Your Focus Coach";
-"ai_powered_insights" = "AI-powered insights from your tasks";
-"this_weeks_insights" = "This Week's Insights";
-"insights_count" = "%d insights";
-"analyzing_focus_patterns" = "Analyzing your focus patterns...";
-"this_may_take_moment" = "This may take a moment";
-"not_enough_data_yet" = "Not enough data yet";
-"complete_tasks_for_insights" = "Complete a few more tasks to unlock personalized insights";
-"view_sample_insights" = "View Sample Insights";
-"refresh_insights" = "Refresh Insights";
-"upgrade_advanced_insights" = "Upgrade for Advanced Insights";
-"peak_performance_window" = "🌅 Peak Performance Window";
-"productive_early_morning" = "You're %d%% more productive during %@";
-"schedule_important_tasks_early" = "Schedule your most important tasks between 6-9 AM";
-"break_power_boost" = "🧘 Break Power Boost";
-"tasks_after_breaks_higher" = "Tasks after breaks have %d%% higher completion rates";
-"schedule_breaks_before_tasks" = "Schedule 5-10 minute breaks before important tasks";
-
-// MARK: - Insight Card
-"impact" = "Impact";
-"based_on_tasks" = "Based on %d tasks";
-"collapse" = "Collapse";
-"view_details" = "View details";
-"recommendation" = "Recommendation";
-"add_to_reminders" = "Add to reminders";
-
-// MARK: - Insight Types
-"time_pattern" = "Time Pattern";
-"duration" = "Duration";
-"break_time" = "Break Time";
-"completion" = "Completion";
-"weekly_pattern" = "Weekly Pattern";
-
-// MARK: - Time Periods
-"early_morning" = "early morning";
-"late_morning" = "late morning";
-"early_afternoon" = "early afternoon";
-"late_afternoon" = "late afternoon";
-"evening" = "evening";
-"night" = "night";
-"time_6_9_am" = "6-9 AM";
-"time_9_am_12_pm" = "9 AM-12 PM";
-"time_12_3_pm" = "12-3 PM";
-"time_3_6_pm" = "3-6 PM";
-"time_6_9_pm" = "6-9 PM";
-"time_9_plus_pm" = "9+ PM";
-
-// MARK: - Duration Categories
-"short_15_30_min" = "short (15-30 min)";
-"medium_30_60_min" = "medium (30-60 min)";
-"long_1_2_hour" = "long (1-2 hour)";
-"extended_2_plus_hour" = "extended (2+ hour)";
-
-// MARK: - Analytics Engine
-"break_auto" = "Break (Auto)";
-"room_for_growth" = "Room for Growth";
-"catch_up_focus_auto" = "Catch-up Focus (Auto)";
-"more_productive_during_time" = "You're %d%% more productive during %@";
-"schedule_important_tasks_between" = "Schedule your most important tasks between %@";
-"focus_drops_during_time" = "Your focus drops %d%% during %@";
-"schedule_breaks_admin_tasks" = "Consider scheduling breaks, admin tasks, or lighter work during %@";
-"complete_percentage_duration_tasks" = "You complete %d%% of %@ tasks";
-"break_longer_tasks_chunks" = "Try breaking longer tasks into %d-minute chunks";
-"tasks_after_breaks_higher_completion" = "Tasks after breaks have %d%% higher completion rates";
-"schedule_breaks_before_important_tasks" = "Schedule 5-10 minute breaks before important tasks";
-"completed_percentage_tasks_week" = "You completed %d%% of tasks this week (%d h focused)";
-"great_momentum_increase_goals" = "Great momentum! Consider gradually increasing your daily focus goals";
-"away_from_completion_goal" = "You're %d%% away from your completion goal this week";
-"reduce_task_durations_schedule_fewer" = "Try reducing task durations by 25%% or scheduling fewer tasks per day";
-"schedule_challenging_tasks_on_day" = "Schedule your most challenging tasks on %@s";
-
-// MARK: - Splash Screen
-"stay_focused_achieve_more" = "Stay focused, achieve more";
-"loading" = "Loading...";
-
-// MARK: - Tab Navigation
-"timeline" = "Timeline";
-"insights" = "Insights";
-"settings" = "Settings";
-"pro" = "PRO";
-
-// MARK: - ProGate Translations
-"upgrade_to_pro" = "Upgrade to Pro";
-"task_limit_reached" = "You've reached the limit of %d tasks for free users. Upgrade to Pro for unlimited tasks!";
-"upgrade_now" = "Upgrade Now";
-"maybe_later" = "Maybe Later";
-"unlimited_tasks" = "Unlimited tasks";
-"advanced_insights_recommendations" = "Advanced insights & recommendations";
-"custom_focus_modes" = "Custom focus modes";
-"smart_break_suggestions" = "Smart break suggestions";
+"response_time_description" = "We usually reply within 24 hours on business days";

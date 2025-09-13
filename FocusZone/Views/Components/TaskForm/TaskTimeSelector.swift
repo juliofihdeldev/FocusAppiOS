@@ -3,11 +3,17 @@ import SwiftUI
 struct TaskTimeSelector: View {
     @Binding var selectedDate: Date
     @Binding var startTime: Date
-    @State private var showingTimeSlots: Bool = false
+    @State private var showingTimePicker: Bool = false
     @State private var showingDatePicker: Bool = false
     
-    private var timeSlots: [String] {
-        generateTimeSlots(for: selectedDate)
+    // Time picker state
+    @State private var selectedHour: Int = 12
+    @State private var selectedMinute: Int = 0
+    @State private var selectedPeriod: TimePeriod = .am
+    
+    enum TimePeriod: String, CaseIterable {
+        case am = "AM"
+        case pm = "PM"
     }
     
     private var selectedTimeString: String {
@@ -40,76 +46,63 @@ struct TaskTimeSelector: View {
         }
     }
     
-    private func generateTimeSlots(for date: Date) -> [String] {
-        var slots: [String] = []
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        
-        let calendar = Calendar.current
-        let startOfSelectedDay = calendar.startOfDay(for: date)
-        let now = Date()
-        
-        // If selecting today, start from current time + 15 minutes
-        // If selecting future date, start from 6:00 AM
-        var startHour: Int
-        var startMinute: Int
-        
-        if calendar.isDateInToday(date) {
-            let currentHour = calendar.component(.hour, from: now)
-            let currentMinute = calendar.component(.minute, from: now)
-            startHour = currentHour
-            startMinute = ((currentMinute / 15) + 1) * 15 // Next 15-minute slot
-            if startMinute >= 60 {
-                startHour += 1
-                startMinute = 0
-            }
-        } else {
-            startHour = 6
-            startMinute = 0
-        }
-        
-        // Generate time slots from start time to 11:45 PM in 15-minute intervals
-        for hour in startHour...23 {
-            let minuteRange = hour == startHour ? stride(from: startMinute, to: 60, by: 15) : stride(from: 0, to: 60, by: 15)
-            for minute in minuteRange {
-                if let timeSlot = calendar.date(byAdding: .hour, value: hour, to: startOfSelectedDay),
-                   let finalTime = calendar.date(byAdding: .minute, value: minute, to: timeSlot) {
-                    slots.append(formatter.string(from: finalTime))
-                }
-            }
-        }
-        
-        return slots
+    private var hours: [Int] {
+        Array(1...12)
     }
     
-    private func selectTime(_ timeString: String) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
+    private var minutes: [Int] {
+        Array(stride(from: 0, to: 60, by: 5))
+    }
+    
+    private var periods: [TimePeriod] {
+        TimePeriod.allCases
+    }
+    
+    private func updateStartTime() {
+        let calendar = Calendar.current
+        var hour24 = selectedHour
         
-        if let time = formatter.date(from: timeString) {
-            let calendar = Calendar.current
-            let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
-            
-            if let newStartTime = calendar.date(bySettingHour: timeComponents.hour ?? 0,
-                  minute: timeComponents.minute ?? 0,
-                  second: 0,
-                  of: selectedDate) {
-                startTime = newStartTime
-            }
+        if selectedPeriod == .pm && selectedHour != 12 {
+            hour24 += 12
+        } else if selectedPeriod == .am && selectedHour == 12 {
+            hour24 = 0
         }
+        
+        if let newStartTime = calendar.date(bySettingHour: hour24,
+              minute: selectedMinute,
+              second: 0,
+              of: selectedDate) {
+            startTime = newStartTime
+        }
+    }
+    
+    private func loadCurrentTime() {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: startTime)
+        let minute = calendar.component(.minute, from: startTime)
+        
+        // Convert to 12-hour format
+        if hour == 0 {
+            selectedHour = 12
+            selectedPeriod = .am
+        } else if hour < 12 {
+            selectedHour = hour
+            selectedPeriod = .am
+        } else if hour == 12 {
+            selectedHour = 12
+            selectedPeriod = .pm
+        } else {
+            selectedHour = hour - 12
+            selectedPeriod = .pm
+        }
+        
+        // Round to nearest 5 minutes
+        selectedMinute = (minute / 5) * 5
     }
     
     private func selectDate(_ date: Date) {
         selectedDate = date
-        // Update startTime to maintain the same time on the new date
-        let calendar = Calendar.current
-        let timeComponents = calendar.dateComponents([.hour, .minute], from: startTime)
-        if let newStartTime = calendar.date(bySettingHour: timeComponents.hour ?? 0,
-              minute: timeComponents.minute ?? 0,
-              second: 0,
-              of: date) {
-            startTime = newStartTime
-        }
+        updateStartTime()
     }
     
     private func quickDateSelection(_ daysOffset: Int) {
@@ -129,14 +122,17 @@ struct TaskTimeSelector: View {
                 Spacer()
                 
                 Button(NSLocalizedString("more", comment: "More button for time selection")) {
-                    showingTimeSlots.toggle()
+                    showingTimePicker.toggle()
+                    if showingTimePicker {
+                        loadCurrentTime()
+                    }
                 }
                 .font(.system(size: 16))
                 .foregroundColor(.blue)
             }
             
-            if showingTimeSlots {
-                VStack(spacing: 16) {
+            if showingTimePicker {
+                VStack(spacing: 20) {
                     // Quick date selection
                     VStack(alignment: .leading, spacing: 12) {
                         Text(NSLocalizedString("quick_select", comment: "Quick select section title"))
@@ -167,18 +163,6 @@ struct TaskTimeSelector: View {
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(isTomorrow ? Color.blue : Color.blue.opacity(0.1))
                             )
-                            
-                            Button(NSLocalizedString("next_week", comment: "Next week button")) {
-                                quickDateSelection(7)
-                            }
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.blue)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.blue.opacity(0.1))
-                            )
                         }
                     }
                     
@@ -196,34 +180,24 @@ struct TaskTimeSelector: View {
                             }
                     }
                     
-                    // Time slots
+                    // Native-style time picker
                     VStack(alignment: .leading, spacing: 8) {
                         Text(NSLocalizedString("select_time", comment: "Select time label"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.secondary)
                         
-                        ScrollView {
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 8) {
-                                ForEach(timeSlots, id: \.self) { time in
-                                    Button(action: {
-                                        selectTime(time)
-                                    }) {
-                                        Text(time)
-                                            .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(time == selectedTimeString ? .white : .primary)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 10)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 16)
-                                                    .fill(time == selectedTimeString ? Color.blue : Color.gray.opacity(0.1))
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 200)
+                        TimePickerView(
+                            selectedHour: $selectedHour,
+                            selectedMinute: $selectedMinute,
+                            selectedPeriod: $selectedPeriod,
+                            hours: hours,
+                            minutes: minutes,
+                            periods: periods
+                        )
+                        .onChange(of: selectedHour) { _ in updateStartTime() }
+                        .onChange(of: selectedMinute) { _ in updateStartTime() }
+                        .onChange(of: selectedPeriod) { _ in updateStartTime() }
                     }
-                    
                 }
             } else {
                 // Compact view
@@ -239,7 +213,10 @@ struct TaskTimeSelector: View {
                                 .fill(Color.blue)
                         )
                         .onTapGesture {
-                            showingTimeSlots.toggle()
+                            showingTimePicker.toggle()
+                            if showingTimePicker {
+                                loadCurrentTime()
+                            }
                         }
                     
                     // Date display
@@ -252,7 +229,10 @@ struct TaskTimeSelector: View {
                         Spacer()
                         
                         Button(NSLocalizedString("change", comment: "Change button for time selection")) {
-                            showingTimeSlots.toggle()
+                            showingTimePicker.toggle()
+                            if showingTimePicker {
+                                loadCurrentTime()
+                            }
                         }
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.blue)
@@ -266,6 +246,63 @@ struct TaskTimeSelector: View {
                 }
             }
         }
+    }
+}
+
+struct TimePickerView: View {
+    @Binding var selectedHour: Int
+    @Binding var selectedMinute: Int
+    @Binding var selectedPeriod: TaskTimeSelector.TimePeriod
+    
+    let hours: [Int]
+    let minutes: [Int]
+    let periods: [TaskTimeSelector.TimePeriod]
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            // Hours column
+            Picker("Hour", selection: $selectedHour) {
+                ForEach(hours, id: \.self) { hour in
+                    Text("\(hour)")
+                        .tag(hour)
+                }
+            }
+            .pickerStyle(WheelPickerStyle())
+            .frame(maxWidth: .infinity)
+            .clipped()
+            
+            // Minutes column
+            Picker("Minute", selection: $selectedMinute) {
+                ForEach(minutes, id: \.self) { minute in
+                    Text(String(format: "%02d", minute))
+                        .tag(minute)
+                }
+            }
+            .pickerStyle(WheelPickerStyle())
+            .frame(maxWidth: .infinity)
+            .clipped()
+            
+            // AM/PM column
+            Picker("Period", selection: $selectedPeriod) {
+                ForEach(periods, id: \.self) { period in
+                    Text(period.rawValue)
+                        .tag(period)
+                }
+            }
+            .pickerStyle(WheelPickerStyle())
+            .frame(maxWidth: .infinity)
+            .clipped()
+        }
+        .frame(height: 200)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        )
+        .overlay(
+            // Selection highlight
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+        )
     }
 }
 
