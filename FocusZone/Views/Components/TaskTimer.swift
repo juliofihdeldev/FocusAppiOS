@@ -10,7 +10,6 @@ struct TaskTimer: View {
     @State private var showCompletionAlert = false
     @State private var showCelebration = false
     @State private var isAutoCompleted = false
-    @State private var isLocked = false
     @StateObject private var focusManager = FocusModeManager()
 
     var body: some View {
@@ -98,81 +97,62 @@ struct TaskTimer: View {
                     }
                 }
                 
-                // Lock Screen Toggle and Controls
-                Toggle("Lock Screen", isOn: $isLocked)
-                    .font(AppFonts.caption())
-                    .padding(.horizontal)
-                    .padding(.vertical, 6)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
-                    .onChange(of: isLocked) { _, _ in
-                        
-                        let generator = UIImpactFeedbackGenerator(style: .medium)
-                        generator.impactOccurred()
-            
-                    }
-                if !isLocked {
-                    VStack(spacing: 16) {
-                        if timerService.currentTask == nil || timerService.currentTask?.isCompleted == true {
-                            // Start/Restart button
-                            Button(action: {
-                                if timerService.currentTask?.isCompleted == true {
-                                    // Reset and restart
-                                    timerService.stopCurrentTask()
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        timerService.startTask(task)
-                                    }
-                                } else {
+                // Task Controls
+                VStack(spacing: 16) {
+                    if timerService.currentTask == nil || timerService.currentTask?.isCompleted == true {
+                        // Start/Restart button
+                        Button(action: {
+                            if timerService.currentTask?.isCompleted == true {
+                                // Reset and restart
+                                timerService.stopCurrentTask()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                     timerService.startTask(task)
                                 }
+                            } else {
+                                timerService.startTask(task)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: timerService.currentTask?.isCompleted == true ? "arrow.clockwise" : "play.fill")
+                                    .font(.title2)
+                                Text(timerService.currentTask?.isCompleted == true ? "Restart" : "Start")
+                                    .font(AppFonts.headline())
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(task.color)
+                            .cornerRadius(25)
+                        }
+                    } else if timerService.currentTask?.isActive ?? false {
+                        // Active task controls
+                        HStack(spacing: 16) {
+                            
+                            // Complete button
+                            Button(action: {
+                                timerService.completeTask()
                             }) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: timerService.currentTask?.isCompleted == true ? "arrow.clockwise" : "play.fill")
-                                        .font(.title2)
-                                    Text(timerService.currentTask?.isCompleted == true ? "Restart" : "Start")
-                                        .font(AppFonts.headline())
+                                HStack(spacing: 8) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                    Text("Complete")
                                 }
+                                .font(AppFonts.subheadline())
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(task.color)
-                                .cornerRadius(25)
-                            }
-                        } else if timerService.currentTask?.isActive ?? false {
-                            // Active task controls
-                            HStack(spacing: 16) {
-                                
-                                // Complete button
-                                Button(action: {
-                                    timerService.completeTask()
-                                }) {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                        Text("Complete")
-                                    }
-                                    .font(AppFonts.subheadline())
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background(Color.green)
-                                    .cornerRadius(20)
-                                }
+                                .padding(.vertical, 14)
+                                .background(Color.green)
+                                .cornerRadius(20)
                             }
                         }
-
                     }
-                } else {
-                    if focusManager.isActiveFocus {
-                          FocusStatusBanner(
-                              mode: focusManager.currentFocusMode,
-                              blockedNotifications: focusManager.blockedNotifications
-                          )
-                      }
                     
-                    Text("Controls are locked until the timer ends.")
-                        .font(AppFonts.subheadline())
-                        .foregroundColor(.gray)
-                        .padding()
+                    // Focus Status Banner
+                    if focusManager.isActiveFocus {
+                        FocusStatusBanner(
+                            mode: focusManager.currentFocusMode,
+                            blockedNotifications: focusManager.blockedNotifications
+                        )
+                    }
                 }
                 
                 
@@ -231,27 +211,21 @@ struct TaskTimer: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()
             .toolbar {
-                if !isLocked {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Close") {
-                            if timerService.isTimerRunning {
-                                timerService.pauseTask()
-                            }
-                            dismiss()
-                        }
-                        .foregroundColor(AppColors.accent)
-                    }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Close") {
                     
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            if timerService.currentTask != nil {
-                                timerService.stopCurrentTask()
-                            }
-                            dismiss()
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
+                        dismiss()
+                    }
+                    .foregroundColor(AppColors.accent)
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                       
+                        dismiss()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
                     }
                 }
             }
@@ -261,7 +235,6 @@ struct TaskTimer: View {
             // Auto-start the timer when view appears
             if timerService.currentTask == nil {
                 timerService.startTask(task)
-                isLocked = true
             }
 
             if ((task.focusSettings?.isEnabled) != nil) {
@@ -279,11 +252,6 @@ struct TaskTimer: View {
                     showCelebration = true
                     timerService.completeTask()
                 }
-            }
-        }
-        .onChange(of: timerService.currentRemainingMinutes) { _, remaining in
-            if remaining <= 0 {
-                isLocked = false
             }
         }
         .overlay {
