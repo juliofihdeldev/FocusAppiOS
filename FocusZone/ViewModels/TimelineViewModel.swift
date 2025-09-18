@@ -415,7 +415,7 @@ class TimelineViewModel: ObservableObject {
             }
             
             saveContext()
-            notificationService.sendTaskCompletionNotification(for: realTask, actualDuration: realTask.durationMinutes)
+            // Removed completion notification - no notifications on task completion
 
         } else {
             // For real tasks, just update the completion status
@@ -424,8 +424,7 @@ class TimelineViewModel: ObservableObject {
             task.updatedAt = Date()
             saveContext()
             
-            // Send completion notification
-            notificationService.sendTaskCompletionNotification(for: task, actualDuration: task.durationMinutes)
+            // Removed completion notification - no notifications on task completion
         }
         
         refreshTasks()
