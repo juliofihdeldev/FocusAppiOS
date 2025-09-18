@@ -59,6 +59,7 @@
 		<string>remote-notification</string>
 		<string>background-processing</string>
 		<string>background-fetch</string>
+		<string>background-app-refresh</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
