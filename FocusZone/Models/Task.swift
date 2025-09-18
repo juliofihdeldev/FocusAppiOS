@@ -30,6 +30,7 @@ class Task {
     var parentTaskId: UUID? // Track the original task for virtual tasks
     var isGeneratedFromRepeat: Bool = false
     var focusSettingsData: Data?
+    var calendarEventId: String? // Store calendar event ID for sync
 
     
     // SwiftData relationships (one-to-many)

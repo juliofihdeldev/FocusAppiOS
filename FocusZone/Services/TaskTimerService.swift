@@ -1,6 +1,7 @@
 import SwiftUI
 import Combine
 import SwiftData
+import EventKit
 
 class TaskTimerService: ObservableObject {
     static let shared = TaskTimerService()
@@ -61,6 +62,12 @@ class TaskTimerService: ObservableObject {
             breakDuration: nil
         )
         print("🎯 TaskTimerService: Live Activity start call completed")
+        
+        // Create calendar event if sync is enabled
+        if CalendarSyncService.shared.syncEnabled && task.calendarEventId == nil {
+            task.calendarEventId = CalendarSyncService.shared.createCalendarEvent(from: task)
+            saveContext()
+        }
         
         // Also start focus session if needed
         _Concurrency.Task {
@@ -173,6 +180,12 @@ class TaskTimerService: ObservableObject {
         task.updatedAt = Date()
         
         print("TaskTimerService: Completed task with \(totalTimeSpent)m total time")
+        
+        // Update calendar event if sync is enabled
+        if CalendarSyncService.shared.syncEnabled, let eventId = task.calendarEventId {
+            CalendarSyncService.shared.updateCalendarEvent(eventId: eventId, from: task)
+        }
+        
         saveContext()
         
         // Update Live Activity to show completed state
@@ -198,7 +211,7 @@ class TaskTimerService: ObservableObject {
     }
     
     // Stop the current task
-    func stopCurrentTask() {
+    @MainActor func stopCurrentTask() {
         stopTimer()
         
         // Save current progress before stopping
@@ -206,6 +219,12 @@ class TaskTimerService: ObservableObject {
             let totalTimeSpent = elapsedSeconds / 60
             task.status = .scheduled
             task.updatedAt = Date()
+            
+            // Update calendar event if sync is enabled
+            if CalendarSyncService.shared.syncEnabled, let eventId = task.calendarEventId {
+                CalendarSyncService.shared.updateCalendarEvent(eventId: eventId, from: task)
+            }
+            
             saveContext()
             
             print("TaskTimerService: Stopped task with \(totalTimeSpent)m total time")
