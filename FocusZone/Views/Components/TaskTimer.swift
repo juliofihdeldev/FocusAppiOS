@@ -97,6 +97,8 @@ struct TaskTimer: View {
                     }
                 }
                 
+                Spacer()
+                
                 // Task Controls
                 VStack(spacing: 16) {
                     if timerService.currentTask == nil || timerService.currentTask?.isCompleted == true {
