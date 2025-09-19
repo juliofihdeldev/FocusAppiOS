@@ -230,6 +230,8 @@ class TaskTimerService: ObservableObject {
             print("TaskTimerService: Stopped task with \(totalTimeSpent)m total time")
         }
         
+        // Close Live Activity when stopping task
+        LiveActivityManager.shared.endCurrentActivity()
         
         _Concurrency.Task {
             await focusManager.deactivateFocus()
@@ -332,6 +334,9 @@ class TaskTimerService: ObservableObject {
         saveContext()
         
         print("TaskTimerService: Auto-completed task '\(task.title)' after \(task.durationMinutes) minutes")
+        
+        // Close Live Activity when timer completes
+        LiveActivityManager.shared.endCurrentActivity()
         
         // Clear after a brief delay to show completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
