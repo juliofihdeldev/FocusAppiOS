@@ -61,6 +61,8 @@ class TaskTimerService: ObservableObject {
             sessionDuration: remainingSeconds,
             breakDuration: nil
         )
+        // Register with scheduled task service to prevent duplicates
+        ScheduledTaskLiveActivityService.shared.registerActiveLiveActivity(taskId: task.id)
         print("🎯 TaskTimerService: Live Activity start call completed")
         
         // Create calendar event if sync is enabled
@@ -201,6 +203,10 @@ class TaskTimerService: ObservableObject {
         // End Live Activity after showing completion
         _Concurrency.Task { @MainActor in
             LiveActivityManager.shared.endCurrentActivity()
+            // Unregister from scheduled task service
+            if let task = self.currentTask {
+                ScheduledTaskLiveActivityService.shared.unregisterActiveLiveActivity(taskId: task.id)
+            }
         }
         
         // Clear after a brief delay to show completion
@@ -230,8 +236,13 @@ class TaskTimerService: ObservableObject {
             print("TaskTimerService: Stopped task with \(totalTimeSpent)m total time")
         }
         
-        // Close Live Activity when stopping task
+            // Close Live Activity when stopping task
         LiveActivityManager.shared.endCurrentActivity()
+        
+        // Unregister from scheduled task service
+        if let task = currentTask {
+            ScheduledTaskLiveActivityService.shared.unregisterActiveLiveActivity(taskId: task.id)
+        }
         
         _Concurrency.Task {
             await focusManager.deactivateFocus()

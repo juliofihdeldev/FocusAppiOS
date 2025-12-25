@@ -28,6 +28,26 @@ class AlarmNotificationHandler: NSObject, UNUserNotificationCenterDelegate {
             handleAlarmNotification(for: taskId)
         }
         
+        // Handle scheduled task start notifications
+        if let type = userInfo["type"] as? String, type == "scheduledTaskStart",
+           let taskIdString = userInfo["taskId"] as? String,
+           let taskId = UUID(uuidString: taskIdString) {
+            
+            _Concurrency.Task { @MainActor in
+                ScheduledTaskLiveActivityService.shared.handleTaskStartNotification(taskId: taskId)
+            }
+        }
+        
+        // Handle scheduled task end notifications
+        if let type = userInfo["type"] as? String, type == "scheduledTaskEnd",
+           let taskIdString = userInfo["taskId"] as? String,
+           let taskId = UUID(uuidString: taskIdString) {
+            
+            _Concurrency.Task { @MainActor in
+                ScheduledTaskLiveActivityService.shared.handleTaskEndNotification(taskId: taskId)
+            }
+        }
+        
         completionHandler()
     }
     
@@ -36,6 +56,28 @@ class AlarmNotificationHandler: NSObject, UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
+        let userInfo = notification.request.content.userInfo
+        
+        // Handle scheduled task start notifications when app is in foreground
+        if let type = userInfo["type"] as? String, type == "scheduledTaskStart",
+           let taskIdString = userInfo["taskId"] as? String,
+           let taskId = UUID(uuidString: taskIdString) {
+            
+            _Concurrency.Task { @MainActor in
+                ScheduledTaskLiveActivityService.shared.handleTaskStartNotification(taskId: taskId)
+            }
+        }
+        
+        // Handle scheduled task end notifications when app is in foreground
+        if let type = userInfo["type"] as? String, type == "scheduledTaskEnd",
+           let taskIdString = userInfo["taskId"] as? String,
+           let taskId = UUID(uuidString: taskIdString) {
+            
+            _Concurrency.Task { @MainActor in
+                ScheduledTaskLiveActivityService.shared.handleTaskEndNotification(taskId: taskId)
+            }
+        }
+        
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound, .badge])
     }
