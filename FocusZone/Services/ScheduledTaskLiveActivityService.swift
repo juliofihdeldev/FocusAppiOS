@@ -2,6 +2,7 @@ import Foundation
 import SwiftData
 import ActivityKit
 import UserNotifications
+import UIKit
 
 /// Service that automatically starts Live Activities for scheduled tasks when they reach their start time
 @MainActor
@@ -30,7 +31,7 @@ class ScheduledTaskLiveActivityService: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in
+            _Concurrency.Task { @MainActor in
                 self?.handleAppBecameActive()
             }
         }
@@ -40,7 +41,7 @@ class ScheduledTaskLiveActivityService: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in
+            _Concurrency.Task { @MainActor in
                 self?.handleAppWillResignActive()
             }
         }
@@ -81,9 +82,10 @@ class ScheduledTaskLiveActivityService: ObservableObject {
         }
         
         let now = Date()
+        let scheduledStatusRawValue = TaskStatus.scheduled.rawValue
         let descriptor = FetchDescriptor<Task>(
             predicate: #Predicate<Task> { task in
-                task.statusRawValue == TaskStatus.scheduled.rawValue &&
+                task.statusRawValue == scheduledStatusRawValue &&
                 task.startTime <= now &&
                 !task.isCompleted
             },
@@ -125,9 +127,10 @@ class ScheduledTaskLiveActivityService: ObservableObject {
         
         let now = Date()
         // We need to check tasks manually since we can't use computed properties in predicates
+        let completedStatusRawValue = TaskStatus.completed.rawValue
         let descriptor = FetchDescriptor<Task>(
             predicate: #Predicate<Task> { task in
-                task.isCompleted || task.statusRawValue == TaskStatus.completed.rawValue
+                task.isCompleted || task.statusRawValue == completedStatusRawValue
             }
         )
         
@@ -141,7 +144,8 @@ class ScheduledTaskLiveActivityService: ObservableObject {
             }
             
             // Also check tasks that have passed their end time
-            let allActiveTasks = try modelContext.fetch(FetchDescriptor<Task>())
+            let allTasksDescriptor = FetchDescriptor<Task>()
+            let allActiveTasks = try modelContext.fetch(allTasksDescriptor)
             for task in allActiveTasks {
                 if activeLiveActivityTaskIds.contains(task.id) {
                     let endTime = task.startTime.addingTimeInterval(TimeInterval(task.durationMinutes * 60))
@@ -239,14 +243,14 @@ class ScheduledTaskLiveActivityService: ObservableObject {
         
         // Check every 30 seconds when app is active
         checkTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
+            _Concurrency.Task { @MainActor in
                 self?.checkScheduledTasks()
             }
         }
         
         // Also check every minute for tasks that should end
         Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
+            _Concurrency.Task { @MainActor in
                 self?.checkTasksToEnd()
             }
         }
@@ -275,10 +279,12 @@ class ScheduledTaskLiveActivityService: ObservableObject {
             }
         }
         
+        let now = Date()
+        let scheduledStatusRawValue = TaskStatus.scheduled.rawValue
         let descriptor = FetchDescriptor<Task>(
             predicate: #Predicate<Task> { task in
-                task.statusRawValue == TaskStatus.scheduled.rawValue &&
-                task.startTime > Date() &&
+                task.statusRawValue == scheduledStatusRawValue &&
+                task.startTime > now &&
                 !task.isCompleted
             },
             sortBy: [SortDescriptor(\.startTime)]
