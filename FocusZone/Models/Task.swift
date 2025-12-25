@@ -31,6 +31,8 @@ class Task {
     var isGeneratedFromRepeat: Bool = false
     var focusSettingsData: Data?
     var calendarEventId: String? // Store calendar event ID for sync
+    var alarmEnabled: Bool = false // Enable alarm for this task
+    var alarmId: String? // Store alarm ID for management
 
     
     // SwiftData relationships (one-to-many)
@@ -57,7 +59,8 @@ class Task {
         repeatRule: RepeatRule = .none,
         isGeneratedFromRepeat: Bool = false,
         parentTaskId: UUID? = nil,
-        parentTask: Task? = nil
+        parentTask: Task? = nil,
+        alarmEnabled: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -75,6 +78,7 @@ class Task {
         self.parentTaskId = parentTaskId
         self.isGeneratedFromRepeat = isGeneratedFromRepeat
         self.parentTask = parentTask
+        self.alarmEnabled = alarmEnabled
     }
     
     var focusSettings: FocusSettings? {

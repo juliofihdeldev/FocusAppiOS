@@ -30,6 +30,18 @@ struct MainTabView: View {
                     Label(NSLocalizedString("settings", comment: "Settings tab label"), systemImage: "gear")
                 }
                 .tag(2)
+            
+            AlarmTestView()
+                .tabItem {
+                    Label("Alarm Test", systemImage: "alarm")
+                }
+                .tag(3)
+            
+            PermissionCheckerView()
+                .tabItem {
+                    Label("Permissions", systemImage: "exclamationmark.triangle")
+                }
+                .tag(4)
         }
         .environmentObject(subscriptionManager)
         .onAppear {

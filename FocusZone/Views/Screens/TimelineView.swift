@@ -142,6 +142,39 @@ struct TimelineView: View {
                     }
                 }
             }
+            
+            // Floating Alarm Test Button
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        // Quick test alarm - 5 seconds from now
+                        let testTask = Task(
+                            title: "Quick Test Alarm",
+                            icon: "🧪",
+                            startTime: Date().addingTimeInterval(5),
+                            durationMinutes: 1,
+                            alarmEnabled: true
+                        )
+                        
+                        _Concurrency.Task {
+                            let success = await AlarmService.shared.scheduleAlarm(for: testTask)
+                            print("Quick test alarm scheduled: \(success)")
+                        }
+                    }) {
+                        Image(systemName: "alarm.fill")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.orange)
+                            .clipShape(Circle())
+                            .shadow(radius: 4)
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 100)
+                }
+            }
         }
         .navigationBarHidden(true)
         .onAppear {

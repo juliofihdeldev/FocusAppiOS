@@ -423,3 +423,12 @@
 "advanced_insights_recommendations" = "Advanced insights and recommendations";
 "custom_focus_modes" = "Custom focus modes";
 "smart_break_suggestions" = "Smart break suggestions";
+
+// MARK: - Alarm Features
+"task_alarm" = "Task Alarm";
+"task_alarm_description" = "Get notified when it's time to start this task";
+"alarmkit_supported" = "AlarmKit supported - Enhanced alarm experience";
+"alarmkit_fallback" = "Using fallback notifications - Update to iOS 18+ for AlarmKit";
+"grant_alarm_permission" = "Grant Alarm Permission";
+"alarm_triggered" = "Time to Focus!";
+"alarm_triggered_message" = "Your task '%@' is starting now";
