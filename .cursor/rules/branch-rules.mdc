@@ -1,0 +1,5 @@
+---
+description: Always create a new branch for each new feature. Do not commit any changes until I have reviewed them. Before submitting, run the app and ensure there are no compilation errors. never do Task { @MainActor in always use  _Concurrency.Task instead to prevent conflict.
+globs:
+    alwaysApply: true
+---

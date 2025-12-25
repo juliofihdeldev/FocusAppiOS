@@ -142,6 +142,8 @@ struct TimelineView: View {
                     }
                 }
             }
+            
+
         }
         .navigationBarHidden(true)
         .onAppear {

@@ -383,7 +383,9 @@ class TimelineViewModel: ObservableObject {
 
         // Stop Live Activity if this task is currently active
         if let currentTask = TaskTimerService.shared.currentTask, currentTask.id == task.id {
-            TaskTimerService.shared.stopCurrentTask()
+            // Complete the task properly to close Live Activity
+            TaskTimerService.shared.completeTask()
+            return // Exit early since completeTask() already handles everything
         }
 
         // If it's a virtual task, convert it to a real completed task

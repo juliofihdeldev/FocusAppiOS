@@ -30,10 +30,12 @@ struct TaskFormView: View {
     @State private var notes: String = ""
     @State private var showingTimeSlots: Bool = false
     @State private var showingPreviewTasks: Bool = false
+    @State private var alarmEnabled: Bool = false
     @StateObject private var taskCreationState = TaskCreationState.shared
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.modelContext) private var modelContext
     private let notificationService = NotificationService.shared
+    @StateObject private var alarmService = AlarmService.shared
     
     init(taskToEdit: Task? = nil) {
         self.taskToEdit = taskToEdit
@@ -77,6 +79,12 @@ struct TaskFormView: View {
                             TaskColorPicker(selectedColor: $selectedColor)
                             
                             TaskRepeatSelector(repeatRule: $repeatRule)
+                            
+                            // Alarm Toggle Section
+                            AlarmToggleSection(
+                                alarmEnabled: $alarmEnabled,
+                                alarmService: alarmService
+                            )
                             
                             // Create/Update Task Button
                             Button(action: {
@@ -163,6 +171,7 @@ struct TaskFormView: View {
         selectedTaskType = task.taskType
         selectedIcon = task.icon
         repeatRule = task.repeatRule
+        alarmEnabled = task.alarmEnabled
     }
     
     private func saveTask() {
@@ -204,6 +213,7 @@ struct TaskFormView: View {
             taskToEdit.color = selectedColor
             taskToEdit.taskType = selectedTaskType
             taskToEdit.repeatRule = repeatRule
+            taskToEdit.alarmEnabled = alarmEnabled
             taskToEdit.updatedAt = Date()
             taskToEdit.isCompleted = false
             
@@ -216,6 +226,17 @@ struct TaskFormView: View {
                 // Schedule new notifications for updated task
                 notificationService.scheduleTaskReminders(for: taskToEdit)
                 print("TaskFormView: Rescheduled notifications for updated task")
+                
+                // Schedule alarm if enabled
+                if alarmEnabled {
+                    _Concurrency.Task {
+                        await alarmService.scheduleAlarm(for: taskToEdit)
+                    }
+                } else {
+                    _Concurrency.Task {
+                        await alarmService.cancelAlarm(for: taskToEdit)
+                    }
+                }
                 
             } catch {
                 print("TaskFormView: Error updating task: \(error)")
@@ -255,7 +276,8 @@ struct TaskFormView: View {
                 durationMinutes: duration,
                 color: selectedColor,
                 taskType: selectedTaskType,
-                repeatRule: repeatRule
+                repeatRule: repeatRule,
+                alarmEnabled: alarmEnabled
             )
             
             print("TaskFormView: New task created with ID: \(newTask.id)")
@@ -279,6 +301,13 @@ struct TaskFormView: View {
                 // Schedule notifications for new task
                 notificationService.scheduleTaskReminders(for: newTask)
                 print("TaskFormView: Scheduled notifications for new task")
+                
+                // Schedule alarm if enabled
+                if alarmEnabled {
+                    _Concurrency.Task {
+                        await alarmService.scheduleAlarm(for: newTask)
+                    }
+                }
 
                 // Prepare suggested next start time = end of this task
                 let next = finalStartTime.addingTimeInterval(TimeInterval(duration * 60))

@@ -1,4 +1,3 @@
-import SwiftUICore
 import Foundation
 import SwiftUI
 import SwiftData

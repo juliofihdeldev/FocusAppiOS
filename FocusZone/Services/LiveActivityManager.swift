@@ -33,8 +33,31 @@ class LiveActivityManager: ObservableObject {
     @Published var currentActivity: Activity<FocusZoneWidgetAttributes>?
     @Published var isLiveActivitySupported: Bool = false
     
+    /// Current task ID that has an active Live Activity
+    private var currentTaskId: UUID?
+    
     private init() {
         checkLiveActivitySupport()
+        restoreActiveActivity()
+    }
+    
+    /// Restore active Live Activity if app was relaunched
+    private func restoreActiveActivity() {
+        // Check for existing activities
+        let activities = Activity<FocusZoneWidgetAttributes>.activities
+        if let activity = activities.first {
+            currentActivity = activity
+            if let taskId = UUID(uuidString: activity.attributes.taskId) {
+                currentTaskId = taskId
+                print("✅ LiveActivityManager: Restored active Live Activity for task: \(activity.content.state.taskTitle)")
+            }
+        }
+    }
+    
+    /// Check if a task already has an active Live Activity
+    func hasActiveActivity(for task: Task) -> Bool {
+        guard let currentTaskId = currentTaskId else { return false }
+        return currentTaskId == task.id && currentActivity != nil
     }
     
     private func checkLiveActivitySupport() {
@@ -53,7 +76,13 @@ class LiveActivityManager: ObservableObject {
             return
         }
         
-        // End any existing activity
+        // Check if this task already has an active Live Activity
+        if hasActiveActivity(for: task) {
+            print("⏭️ LiveActivityManager: Live Activity already exists for task: \(task.title)")
+            return
+        }
+        
+        // End any existing activity (iOS only allows one Live Activity at a time)
         endCurrentActivity()
         
         print("🚀 Starting Live Activity for task: \(task.title)")
@@ -98,11 +127,13 @@ class LiveActivityManager: ObservableObject {
             )
             
             currentActivity = activity
+            currentTaskId = task.id
             print("✅ Live Activity started successfully for task: \(task.title)")
             print("✅ Activity ID: \(activity.id)")
         } catch {
             print("❌ Failed to start Live Activity: \(error)")
             print("❌ Error details: \(error.localizedDescription)")
+            currentTaskId = nil
         }
     }
     
@@ -168,6 +199,7 @@ class LiveActivityManager: ObservableObject {
         }
         
         currentActivity = nil
+        currentTaskId = nil
         print("Live Activity ended")
     }
     
@@ -185,6 +217,12 @@ class LiveActivityManager: ObservableObject {
         }
         
         currentActivity = nil
+        currentTaskId = nil
         print("Live Activity ended with delay")
+    }
+    
+    /// Get the current task ID with active Live Activity
+    func getCurrentTaskId() -> UUID? {
+        return currentTaskId
     }
 }

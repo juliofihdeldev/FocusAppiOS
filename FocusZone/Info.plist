@@ -39,6 +39,10 @@
 	</array>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>FocusZone needs notification access to filter distractions during focus sessions and provide task reminders.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>FocusZone needs calendar access to sync your focus tasks with your calendar and help you manage your time effectively.</string>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>FocusZone needs alarm access to schedule task reminders and help you stay focused on your goals.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>UIAppFonts</key>
@@ -57,6 +61,9 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>background-processing</string>
+		<string>background-app-refresh</string>
+		<string>fetch</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

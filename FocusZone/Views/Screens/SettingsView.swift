@@ -39,6 +39,7 @@ struct SettingsView: View {
                         focusSection
                         aboutSection
                         cloudKitSyncSection
+                        calendarSyncSection
                     }
                     .padding(.horizontal, 20)
                     
@@ -365,6 +366,13 @@ struct SettingsView: View {
     private var cloudKitSyncSection: some View {
         SettingsSection(title: NSLocalizedString("icloud_sync", comment: "iCloud Sync section title"), icon: "icloud") {
             CloudKitSyncStatusView(cloudSyncManager: cloudSyncManager)
+        }
+    }
+    
+    // MARK: - Calendar Sync Section
+    private var calendarSyncSection: some View {
+        SettingsSection(title: "Calendar Sync", icon: "calendar") {
+            CalendarSyncSettingsView()
         }
     }
     

@@ -15,6 +15,7 @@ struct FocusZoneApp: App {
     @StateObject private var notificationService = NotificationService.shared
     @StateObject private var cloudSyncManager = CloudSyncManager()
     @StateObject private var languageManager = LanguageManager.shared
+    @StateObject private var scheduledTaskLiveActivityService = ScheduledTaskLiveActivityService.shared
     // CloudKit-backed SwiftData container
     let modelContainer: ModelContainer = {
         do {
@@ -37,6 +38,11 @@ struct FocusZoneApp: App {
                     _ = languageManager.currentLanguage
                     // Request notification permission when app launches
                     await requestNotificationPermission()
+                    // Initialize alarm notification handler
+                    _ = AlarmNotificationHandler.shared
+                    // Set up scheduled task Live Activity service
+                    scheduledTaskLiveActivityService.setModelContext(modelContainer.mainContext)
+                    scheduledTaskLiveActivityService.startMonitoring()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .CKAccountChanged)) { _ in
                     cloudSyncManager.refreshAccountStatus()
@@ -46,6 +52,8 @@ struct FocusZoneApp: App {
                     _Concurrency.Task {
                         await cloudSyncManager.syncData(modelContext: modelContainer.mainContext)
                     }
+                    // Check for scheduled tasks that should start Live Activities
+                    scheduledTaskLiveActivityService.checkScheduledTasks()
                 }
                 .task {
                     cloudSyncManager.refreshAccountStatus()
@@ -62,6 +70,15 @@ struct FocusZoneApp: App {
                 print("FocusZoneApp: Notification permission granted")
             } else {
                 print("FocusZoneApp: Notification permission denied")
+            }
+            
+            // Also request AlarmKit authorization
+            let alarmService = AlarmService.shared
+            let alarmGranted = await alarmService.requestAuthorization()
+            if alarmGranted {
+                print("FocusZoneApp: AlarmKit permission granted")
+            } else {
+                print("FocusZoneApp: AlarmKit permission denied")
             }
         }
 }
